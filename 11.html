@@ -51,7 +51,29 @@
     <main class="main-content">
         <h1>第11章 数字签名与认证</h1>
 
-        <figure id="fig-11" class="paper-figure"></figure>
+        <figure id="fig-11" class="paper-figure">
+          <svg viewBox="0 0 920 300" role="img" aria-labelledby="fig-11-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-11-title">数字签名：签名方用私钥签发，验证方用公钥核验</title>
+            <defs><marker id="fig11-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <text x="20" y="40" text-anchor="start" font-weight="700" fill="#334155">签名（持有私钥 d）</text>
+              <rect x="20" y="55" width="150" height="56" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="95" y="90" fill="#334155">消息 M</text>
+              <rect x="250" y="55" width="150" height="56" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="325" y="90" fill="#5b21b6">哈希 H(M)</text>
+              <rect x="480" y="55" width="190" height="56" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="575" y="90" fill="#92400e">私钥签名 Sign_d</text>
+              <rect x="730" y="55" width="170" height="56" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="815" y="90" fill="#075985">签名 σ</text>
+              <text x="20" y="185" text-anchor="start" font-weight="700" fill="#334155">验证（持有公钥 e）</text>
+              <rect x="20" y="200" width="150" height="56" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="95" y="235" fill="#334155">M 与 σ</text>
+              <rect x="250" y="200" width="150" height="56" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="325" y="235" fill="#5b21b6">重算 H(M)</text>
+              <rect x="480" y="200" width="190" height="56" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="575" y="235" fill="#115e59">公钥验证 Verify_e</text>
+              <rect x="730" y="200" width="170" height="56" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="815" y="235" fill="#115e59">通过 / 拒绝</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig11-arw)">
+              <path d="M170 83 H246"/><path d="M400 83 H476"/><path d="M670 83 H726"/>
+              <path d="M170 228 H246"/><path d="M400 228 H476"/><path d="M670 228 H726"/>
+            </g>
+          </svg>
+          <figcaption><b>图 11.</b> 数字签名先对消息做哈希，再用私钥对摘要签名；验证方用公钥核验。私钥的唯一性带来<strong>不可否认性</strong>，而签名作用于定长摘要，因此可对任意长度的消息先哈希再签名。</figcaption>
+        </figure>
 
         <p>同学们，想象一下这个场景：你收到一封来自老板的邮件，写着"立即给这个账户转账10万元"。你如何确认这封邮件确实是老板发的？如果老板事后说"我没发过这条消息"，你怎么证明他确实发了？</p>
 

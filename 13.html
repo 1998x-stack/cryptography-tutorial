@@ -51,7 +51,30 @@
     <main class="main-content">
         <h1>第13章 国密算法体系</h1>
 
-        <figure id="fig-13" class="paper-figure"></figure>
+        <figure id="fig-13" class="paper-figure">
+          <svg viewBox="0 0 920 310" role="img" aria-labelledby="fig-13-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-13-title">国密算法体系与国际对应：SM2、SM3、SM4、SM9、ZUC</title>
+            <defs><marker id="fig13-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#94a3b8"/></marker></defs>
+            <text x="230" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6">国密算法</text>
+            <text x="690" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#075985">国际对应</text>
+            <g font-size="13">
+              <rect x="40" y="44" width="360" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="60" y="71" fill="#5b21b6">SM2 · 椭圆曲线公钥（签名 / 加密）</text>
+              <rect x="500" y="44" width="380" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="520" y="71" fill="#075985">ECDSA / RSA</text>
+              <rect x="40" y="96" width="360" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="60" y="123" fill="#5b21b6">SM3 · 密码哈希（256 位）</text>
+              <rect x="500" y="96" width="380" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="520" y="123" fill="#075985">SHA-256</text>
+              <rect x="40" y="148" width="360" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="60" y="175" fill="#5b21b6">SM4 · 分组密码（128 位分组）</text>
+              <rect x="500" y="148" width="380" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="520" y="175" fill="#075985">AES-128</text>
+              <rect x="40" y="200" width="360" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="60" y="227" fill="#5b21b6">SM9 · 标识密码（IBE）</text>
+              <rect x="500" y="200" width="380" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="520" y="227" fill="#075985">IBE / 基于身份加密</text>
+              <rect x="40" y="252" width="360" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="60" y="279" fill="#5b21b6">ZUC · 流密码</text>
+              <rect x="500" y="252" width="380" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="520" y="279" fill="#075985">128-EEA3 / 128-EIA3（移动通信）</text>
+            </g>
+            <g stroke="#94a3b8" stroke-width="1.6" fill="none" marker-end="url(#fig13-arw)">
+              <path d="M406 65 H492"/><path d="M406 117 H492"/><path d="M406 169 H492"/><path d="M406 221 H492"/><path d="M406 273 H492"/>
+            </g>
+          </svg>
+          <figcaption><b>图 13.</b> 国密算法体系与其国际对应。它们覆盖了对称、哈希、非对称与身份标识四类需求，其中 SM4 已在 TLS 及大量国产硬件中落地。对应关系描述的是功能与安全强度层级，具体参数与设计各不相同。</figcaption>
+        </figure>
 
         <p>同学们，前面我们学的大多是国际标准算法——AES、RSA、SHA-256等。但在中国，还有一套独立的密码算法体系不容忽视：<strong>国密算法</strong>。它由中国国家密码管理局制定和发布，是中国法定商用密码标准，广泛应用于政府、金融、电信、电力等关键基础设施领域。</p>
 

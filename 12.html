@@ -51,7 +51,35 @@
     <main class="main-content">
         <h1>第12章 PKI与证书体系</h1>
 
-        <figure id="fig-12" class="paper-figure"></figure>
+        <figure id="fig-12" class="paper-figure">
+          <svg viewBox="0 0 920 240" role="img" aria-labelledby="fig-12-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-12-title">PKI 证书信任链：根 CA 到中间 CA 再到服务器证书</title>
+            <defs><marker id="fig12-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="65" width="200" height="105" rx="14" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="120" y="100" font-weight="700" font-size="14" fill="#92400e">根 CA</text>
+              <text x="120" y="128" fill="#475569">自签名证书</text>
+              <text x="120" y="152" fill="#475569">离线保存（信任锚）</text>
+              <rect x="270" y="65" width="200" height="105" rx="14" fill="#f5f3ff" stroke="#7c3aed"/>
+              <text x="370" y="100" font-weight="700" font-size="14" fill="#5b21b6">中间 CA</text>
+              <text x="370" y="128" fill="#475569">由根 CA 签发</text>
+              <text x="370" y="152" fill="#475569">隔离签发风险</text>
+              <rect x="520" y="65" width="200" height="105" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="620" y="100" font-weight="700" font-size="14" fill="#075985">服务器证书</text>
+              <text x="620" y="128" fill="#475569">含域名 + 公钥</text>
+              <text x="620" y="152" fill="#475569">由中间 CA 签发</text>
+              <rect x="770" y="65" width="130" height="105" rx="14" fill="#ccfbf1" stroke="#14b8a6"/>
+              <text x="835" y="100" font-weight="700" font-size="14" fill="#115e59">浏览器</text>
+              <text x="835" y="128" fill="#475569">逐级验证</text>
+              <text x="835" y="152" fill="#475569">签名链</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig12-arw)">
+              <path d="M220 117 H266"/><path d="M470 117 H516"/><path d="M720 117 H766"/>
+            </g>
+            <text x="460" y="210" text-anchor="middle" font-size="13" fill="#475569">信任自上而下传递：只要根 CA 可信，整条链上签发的证书即可被验证</text>
+          </svg>
+          <figcaption><b>图 12.</b> 证书信任链（X.509）。根 CA 作为离线信任锚，通过中间 CA 分层签发服务器证书；浏览器从叶子证书逐级验证到根。任何一级签名不匹配，整条链即告失效。</figcaption>
+        </figure>
 
         <p>同学们，前面几章我们学了公钥密码学和数字签名——你已经知道如何用私钥签名、用公钥验证。但这里有一个隐藏的问题：当你拿到一个公钥时，你怎么知道它真的属于你声称的那个人？</p>
 

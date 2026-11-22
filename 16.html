@@ -51,7 +51,26 @@
     <main class="main-content">
         <h1>第16章 密钥管理与随机数</h1>
 
-        <figure id="fig-16" class="paper-figure"></figure>
+        <figure id="fig-16" class="paper-figure">
+          <svg viewBox="0 0 920 280" role="img" aria-labelledby="fig-16-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-16-title">密钥生命周期：生成、分发、存储、使用、轮换与销毁</title>
+            <defs><marker id="fig16-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <rect x="20" y="70" width="130" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="85" y="112" fill="#5b21b6">生成</text>
+              <rect x="170" y="70" width="130" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="235" y="112" fill="#5b21b6">分发</text>
+              <rect x="320" y="70" width="130" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="385" y="112" fill="#5b21b6">存储</text>
+              <rect x="470" y="70" width="130" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="535" y="112" fill="#5b21b6">使用</text>
+              <rect x="620" y="70" width="130" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="685" y="112" fill="#5b21b6">轮换</text>
+              <rect x="770" y="70" width="130" height="70" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="835" y="112" fill="#92400e">销毁</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig16-arw)">
+              <path d="M150 105 H166"/><path d="M300 105 H316"/><path d="M450 105 H466"/><path d="M600 105 H616"/><path d="M750 105 H766"/>
+            </g>
+            <path d="M835 140 V205 H85 V144" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#fig16-arw)"/>
+            <text x="460" y="245" text-anchor="middle" font-size="13" fill="#475569">任一环节的疏漏（弱随机、明文存储、永不轮换）都会使整体安全性归零</text>
+          </svg>
+          <figcaption><b>图 16.</b> 密钥生命周期。密钥的安全性不仅取决于算法，更取决于全流程管理：生成必须使用 CSPRNG，存储应置于 HSM/KMS，并进行定期轮换与安全销毁。</figcaption>
+        </figure>
 
         <p>讲一个真实的故事。2019年，某大型企业部署了一套新的加密系统，用了最先进的AES-256-GCM，请了第三方做安全审计，一切看起来都很完美。直到审计师发现了一个问题：<strong>所有服务器的加密密钥都存放在同一个配置文件里，文件名是"keys_backup_2020_final_really_final.txt"，以777权限存在服务器上。</strong></p>
 

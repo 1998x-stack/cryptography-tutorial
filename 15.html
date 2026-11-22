@@ -51,7 +51,31 @@
     <main class="main-content">
         <h1>第15章 密码分析基础</h1>
 
-        <figure id="fig-15" class="paper-figure"></figure>
+        <figure id="fig-15" class="paper-figure">
+          <svg viewBox="0 0 920 300" role="img" aria-labelledby="fig-15-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-15-title">密码分析的三个层面：数学分析、实现攻击与量子威胁</title>
+            <rect x="360" y="14" width="200" height="48" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="460" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="#5b21b6">密码分析</text>
+            <g stroke="#94a3b8" stroke-width="1.6" fill="none">
+              <path d="M460 62 V98 H160 V126"/><path d="M460 62 V126"/><path d="M460 62 V98 H760 V126"/>
+            </g>
+            <g text-anchor="middle" font-size="13">
+              <rect x="30" y="130" width="260" height="150" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="160" y="164" font-weight="700" font-size="14" fill="#075985">数学分析</text>
+              <text x="160" y="200" fill="#475569">差分分析</text>
+              <text x="160" y="228" fill="#475569">线性分析</text>
+              <text x="160" y="256" fill="#475569">代数攻击</text>
+              <rect x="330" y="130" width="260" height="150" rx="14" fill="#fee2e2" stroke="#ef4444"/>
+              <text x="460" y="164" font-weight="700" font-size="14" fill="#b91c1c">实现攻击</text>
+              <text x="460" y="200" fill="#475569">侧信道：时序 / 功耗 / 电磁</text>
+              <text x="460" y="228" fill="#475569">故障注入</text>
+              <rect x="630" y="130" width="260" height="150" rx="14" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="760" y="164" font-weight="700" font-size="14" fill="#92400e">量子威胁</text>
+              <text x="760" y="200" fill="#475569">Shor：破解 RSA / ECC</text>
+              <text x="760" y="228" fill="#475569">Grover：搜索平方加速</text>
+            </g>
+          </svg>
+          <figcaption><b>图 15.</b> 密码学的安全性有三个被攻击的层面：算法的<strong>数学结构</strong>、实现中的<strong>物理泄漏</strong>，以及未来<strong>量子算法</strong>带来的新威胁。工程实践往往不输在算法上，而输在实现与密钥管理上。</figcaption>
+        </figure>
 
         <p>同学们好。前面十四章我们一直在学"怎么加密"——古典密码、对称加密、公钥密码、哈希函数、数字签名……都是站在密码设计者的角度。但密码学还有另一张面孔：<strong>怎么攻破它？</strong>这就是本章的主题——密码分析（Cryptanalysis）。</p>
 
