@@ -45,7 +45,28 @@
     <main class="main-content">
         <h1>第5章 对称密码基础</h1>
 
-        <figure id="fig-05" class="paper-figure"></figure>
+        <figure id="fig-05" class="paper-figure">
+          <svg viewBox="0 0 860 330" role="img" aria-labelledby="fig-05-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-05-title">Feistel 结构的一个轮：右半经轮函数 F 后与左半异或，然后左右交换</title>
+            <defs><marker id="fig05-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <rect x="40" y="30" width="220" height="50" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="150" y="61" fill="#334155">L(i) 左半</text>
+              <rect x="560" y="30" width="260" height="50" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="690" y="61" fill="#334155">R(i) 右半</text>
+              <rect x="560" y="130" width="260" height="50" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="690" y="161" fill="#5b21b6">轮函数 F(R(i), K)</text>
+              <circle cx="150" cy="155" r="26" fill="#fef3c7" stroke="#f59e0b"/><text x="150" y="163" font-size="20" fill="#92400e">⊕</text>
+              <rect x="560" y="250" width="260" height="50" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="690" y="281" fill="#075985">L(i+1) = R(i)</text>
+              <rect x="40" y="250" width="220" height="50" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="150" y="281" fill="#075985">R(i+1) = L(i) ⊕ F</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig05-arw)">
+              <path d="M690 80 V126"/>
+              <path d="M560 155 H178"/>
+              <path d="M150 80 V127"/>
+              <path d="M150 181 V246"/>
+              <path d="M690 80 V246"/>
+            </g>
+          </svg>
+          <figcaption><b>图 5.</b> Feistel 结构的一个轮。轮函数 F 只需“混乱”而不必可逆，因此解密可复用同一硬件：只要把子密钥逆序使用即可。DES 采用 16 轮这样的结构。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。前面几章我们走过了从古典密码到香农信息论的完整理论路线：我们知道了替换和置换是最基本的操作，知道了混淆和扩散是设计原则，知道了完美的 OTP 虽然安全但不实用。现在，让我们进入现代密码学的第一个实践领域——<strong>对称密码</strong>。</p>
 

@@ -45,7 +45,25 @@
     <main class="main-content">
         <h1>第4章 信息论与香农</h1>
 
-        <figure id="fig-04" class="paper-figure"></figure>
+        <figure id="fig-04" class="paper-figure">
+          <svg viewBox="0 0 820 255" role="img" aria-labelledby="fig-04-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-04-title">一次一密：明文与等长随机密钥逐比特异或得到密文</title>
+            <g font-size="13" fill="#475569" text-anchor="end">
+              <text x="150" y="74">明文 m</text><text x="150" y="130">密钥 k</text><text x="150" y="202">密文 c</text>
+            </g>
+            <g font-family="'JetBrains Mono',monospace" font-size="22" font-weight="700" text-anchor="middle">
+              <rect x="170" y="46" width="600" height="44" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+              <text x="470" y="76" fill="#334155">1 0 1 1 0 0 1 0</text>
+              <rect x="170" y="102" width="600" height="44" rx="10" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="470" y="132" fill="#92400e">0 1 1 0 1 1 0 0</text>
+              <rect x="170" y="174" width="600" height="44" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="470" y="204" fill="#075985">1 1 0 1 1 1 1 0</text>
+            </g>
+            <text x="80" y="168" font-size="26" fill="#7c3aed">⊕</text>
+            <text x="470" y="246" text-anchor="middle" font-size="14" fill="#7c3aed">|k| = |m|，且同一密钥永不重复使用</text>
+          </svg>
+          <figcaption><b>图 4.</b> 一次一密（OTP）。香农证明：当密钥与消息等长、真随机且从不重复时，密文与消息在统计上独立，达到<strong>完全保密</strong>。其代价是密钥分发与管理，这正是公钥密码出场的主要动机之一。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。前面的章节中，我们看到的加密方案——无论是凯撒密码、维吉尼亚密码还是 Enigma——都有一个共同特点：它们是被"发明"而非被"推导"出来的。工程师们根据自己的直觉设计密码，如果暂时没人能破解，就认为是安全的。但这种经验主义的方法在密码学中是非常危险的——正如我们所见，单表替换密码的"安全"在我了 600 年，维吉尼亚密码的"安全"维持了 300 年，最终都被攻破。</p>
 

@@ -45,7 +45,29 @@
     <main class="main-content">
         <h1>第1章 密码学概述</h1>
 
-        <figure id="fig-01" class="paper-figure"></figure>
+        <figure id="fig-01" class="paper-figure">
+          <svg viewBox="0 0 900 250" role="img" aria-labelledby="fig-01-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-01-title">CIA 三元组：三类安全目标及其主要技术手段</title>
+            <g text-anchor="middle" font-size="14">
+              <rect x="20" y="30" width="270" height="190" rx="16" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="155" y="72" font-size="16" font-weight="700" fill="#92400e">机密性</text>
+              <text x="155" y="96" fill="#94a3b8" font-size="12">Confidentiality</text>
+              <text x="155" y="136" fill="#475569">不授权者无法读取明文</text>
+              <text x="155" y="166" fill="#475569">技术：对称 / 非对称加密</text>
+              <rect x="315" y="30" width="270" height="190" rx="16" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="450" y="72" font-size="16" font-weight="700" fill="#075985">完整性</text>
+              <text x="450" y="96" fill="#94a3b8" font-size="12">Integrity</text>
+              <text x="450" y="136" fill="#475569">内容未被悄悄篡改</text>
+              <text x="450" y="166" fill="#475569">技术：哈希 / 消息认证码</text>
+              <rect x="610" y="30" width="270" height="190" rx="16" fill="#ccfbf1" stroke="#14b8a6"/>
+              <text x="745" y="72" font-size="16" font-weight="700" fill="#115e59">可用性与认证</text>
+              <text x="745" y="96" fill="#94a3b8" font-size="12">Availability · Authenticity</text>
+              <text x="745" y="136" fill="#475569">服务可达、身份真实可信</text>
+              <text x="745" y="166" fill="#475569">技术：数字签名 / 不可否认</text>
+            </g>
+          </svg>
+          <figcaption><b>图 1.</b> CIA 三元组。机密性依赖加密，完整性依赖哈希与 MAC，认证与不可否认性依赖数字签名——三者在一次 TLS 握手中协同完成。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。今天我们从最基础的问题开始：<strong>什么是密码学？</strong></p>
 

@@ -45,7 +45,26 @@
     <main class="main-content">
         <h1>第3章 机械密码与二战</h1>
 
-        <figure id="fig-03" class="paper-figure"></figure>
+        <figure id="fig-03" class="paper-figure">
+          <svg viewBox="0 0 960 260" role="img" aria-labelledby="fig-03-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-03-title">Enigma 信号路径：键盘→插线板→三个转子→反射器→原路返回</title>
+            <defs><marker id="fig03-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="60" width="130" height="56" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="85" y="93" fill="#334155">键盘</text>
+              <rect x="180" y="60" width="130" height="56" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="245" y="93" fill="#92400e">插线板</text>
+              <rect x="340" y="60" width="130" height="56" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="405" y="93" fill="#5b21b6">转子 3</text>
+              <rect x="500" y="60" width="130" height="56" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="565" y="93" fill="#5b21b6">转子 2</text>
+              <rect x="660" y="60" width="130" height="56" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="725" y="93" fill="#5b21b6">转子 1</text>
+              <rect x="820" y="60" width="120" height="56" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="880" y="93" fill="#075985">反射器</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig03-arw)">
+              <path d="M150 88 H176"/><path d="M310 88 H336"/><path d="M470 88 H496"/><path d="M630 88 H656"/><path d="M790 88 H816"/>
+            </g>
+            <path d="M880 120 Q880 185 480 200 Q150 205 85 122" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#fig03-arw)"/>
+            <text x="480" y="240" text-anchor="middle" font-size="14" fill="#475569">返回路径：电流经转子与插线板折返，点亮显示灯</text>
+          </svg>
+          <figcaption><b>图 3.</b> 恩尼格玛的信号路径是<strong>对称</strong>的：同一天设置下，加密与解密是同一机械过程。每按一次键转子便转动一格，使同一字母的替换关系不断变化——这正是它比固定替换难以破译的原因。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。上一章我们学习了凯撒密码和维吉尼亚密码等古典方案。但这些手工操作的方法在工业革命和电气化的浪潮面前，显得越来越过时——尤其是当信息量爆炸式增长、需要加密的报文每天数以万计时。于是，<strong>机械密码时代</strong>降临了。</p>
 

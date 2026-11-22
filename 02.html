@@ -45,7 +45,23 @@
     <main class="main-content">
         <h1>第2章 古典密码</h1>
 
-        <figure id="fig-02" class="paper-figure"></figure>
+        <figure id="fig-02" class="paper-figure">
+          <svg viewBox="0 0 860 250" role="img" aria-labelledby="fig-02-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-02-title">凯撒密码：字母表循环右移 3 位后的替换关系</title>
+            <defs><marker id="fig02-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker></defs>
+            <g font-size="19" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono',monospace">
+              <rect x="40" y="46" width="780" height="48" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+              <text x="430" y="79" fill="#334155">A  B  C  D  E  …  X  Y  Z</text>
+              <rect x="40" y="150" width="780" height="48" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="430" y="183" fill="#075985">D  E  F  G  H  …  A  B  C</text>
+            </g>
+            <g stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#fig02-arw)">
+              <path d="M95 98 V146"/><path d="M790 98 V146"/>
+            </g>
+            <text x="430" y="232" text-anchor="middle" font-size="15" fill="#7c3aed">c = (p + 3) mod 26　　（26 个字母首尾相接循环移位）</text>
+          </svg>
+          <figcaption><b>图 2.</b> 凯撒密码把每个明文字母按固定移位量替换为表中的另一个字母。密钥空间只有 25 个有效移位，枚举即可破译，是理解“替换密码”与频率分析的最小型模型。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。在上一章中我们介绍了密码学的整体框架和核心概念。今天，让我们回到一切开始的地方——<strong>古典密码</strong>。</p>
 
