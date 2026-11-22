@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,29 @@
     <main class="main-content">
         <h1>第23章 OpenSSL命令行实战</h1>
 
-        <figure id="fig-23" class="paper-figure"></figure>
+        <figure id="fig-23" class="paper-figure">
+          <svg viewBox="0 0 920 240" role="img" aria-labelledby="fig-23-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-23-title">OpenSSL 搭建私有 CA 与签发证书的命令流程</title>
+            <defs><marker id="fig23-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="40" width="200" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="120" y="75" fill="#5b21b6">① 生成 CA 私钥</text><text x="120" y="100" fill="#475569">离线保存</text>
+              <rect x="250" y="40" width="200" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="350" y="75" fill="#5b21b6">② 自签名根证书</text><text x="350" y="100" fill="#475569">信任锚</text>
+              <rect x="480" y="40" width="200" height="80" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="580" y="75" fill="#075985">③ 服务器密钥 + CSR</text><text x="580" y="100" fill="#475569">提交给 CA</text>
+              <rect x="710" y="40" width="200" height="80" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="810" y="75" fill="#115e59">④ CA 签发证书</text><text x="810" y="100" fill="#475569">链到根证书</text>
+            </g>
+            <g font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#475569">
+              <text x="120" y="162">openssl genrsa</text>
+              <text x="350" y="162">openssl req -x509</text>
+              <text x="580" y="162">openssl req -new</text>
+              <text x="810" y="162">openssl x509 -req</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig23-arw)">
+              <path d="M220 80 H246"/><path d="M450 80 H476"/><path d="M680 80 H706"/>
+            </g>
+            <text x="460" y="208" text-anchor="middle" font-size="13" fill="#475569">签发后用 openssl verify 可逐级校验证书链</text>
+          </svg>
+          <figcaption><b>图 23.</b> 用 OpenSSL 搭建私有 CA 的典型四步：先生成 CA 私钥并自签根证书，再为服务器生成密钥与 CSR，最后由 CA 用其私钥签发服务器证书。命令参数示意，实际使用中应搭配更强的密钥长度与安全存储。</figcaption>
+        </figure>
 
         <p>学了大半本密码学的理论，你可能一直在想一个问题：这些东西到底怎么在我的电脑上跑起来？RSA 的密钥长什么样？证书文件里到底存了什么？TLS 握手时客户端和服务器到底互相发了什么？这一章我们就来动手——打开终端，用 OpenSSL 把一个真实的密码学工具箱交到你手里。</p>
 

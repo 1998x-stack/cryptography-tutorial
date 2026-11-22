@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,26 @@
     <main class="main-content">
         <h1>第25章 区块链中的密码学</h1>
 
-        <figure id="fig-25" class="paper-figure"></figure>
+        <figure id="fig-25" class="paper-figure">
+          <svg viewBox="0 0 900 320" role="img" aria-labelledby="fig-25-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-25-title">区块链中的 Merkle 树：交易两两哈希合并，根哈希写入区块头</title>
+            <g text-anchor="middle" font-size="12">
+              <rect x="50" y="230" width="140" height="56" rx="10" fill="#fef3c7" stroke="#f59e0b"/><text x="120" y="263" fill="#92400e">tx1 → H(tx1)</text>
+              <rect x="250" y="230" width="140" height="56" rx="10" fill="#fef3c7" stroke="#f59e0b"/><text x="320" y="263" fill="#92400e">tx2 → H(tx2)</text>
+              <rect x="450" y="230" width="140" height="56" rx="10" fill="#fef3c7" stroke="#f59e0b"/><text x="520" y="263" fill="#92400e">tx3 → H(tx3)</text>
+              <rect x="650" y="230" width="140" height="56" rx="10" fill="#fef3c7" stroke="#f59e0b"/><text x="720" y="263" fill="#92400e">tx4 → H(tx4)</text>
+              <rect x="140" y="140" width="160" height="56" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="220" y="173" fill="#5b21b6">H(h1‖h2)</text>
+              <rect x="540" y="140" width="160" height="56" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="620" y="173" fill="#5b21b6">H(h3‖h4)</text>
+              <rect x="320" y="46" width="200" height="56" rx="10" fill="#ccfbf1" stroke="#14b8a6"/><text x="420" y="79" fill="#115e59">Merkle 根 → 区块头</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="1.8" fill="none">
+              <path d="M120 230 L214 198"/><path d="M320 230 L226 198"/>
+              <path d="M520 230 L614 198"/><path d="M720 230 L626 198"/>
+              <path d="M220 140 L220 100 L380 100 L380 104"/><path d="M620 140 L620 100 L460 100 L460 104"/>
+            </g>
+          </svg>
+          <figcaption><b>图 25.</b> 区块链中的 Merkle 树。交易两两哈希逐层合并，只有根哈希写入区块头。验证一笔交易是否属于某区块，只需其到根的路径上的少量哈希（Merkle 证明），无需下载全部交易。</figcaption>
+        </figure>
 
         <p>如果密码学是一门学科，区块链就是它最闪耀的应用舞台。中本聪在 2008 年的比特币白皮书中几乎没有发明任何新的密码学原语——他用到的是 ECDSA（椭圆曲线数字签名算法，1985 年提出）、SHA-256（2001 年标准化）、Merkle 树（1979 年发明）。但把这些已有技术以一种精巧的方式组合在一起，就创造出了一个去中心化的、无需信任第三方的"数字黄金"系统。</p>
 

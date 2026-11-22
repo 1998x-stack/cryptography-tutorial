@@ -111,6 +111,7 @@ pre code { overflow-wrap: normal; }
 /* === Tables === */
 table {
     width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+    display: block; overflow-x: auto;
 }
 
 th, td {

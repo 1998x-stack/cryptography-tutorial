@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,26 @@
     <main class="main-content">
         <h1>第26章 后量子密码</h1>
 
-        <figure id="fig-26" class="paper-figure"></figure>
+        <figure id="fig-26" class="paper-figure">
+          <svg viewBox="0 0 920 300" role="img" aria-labelledby="fig-26-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-26-title">后量子密码迁移：量子算法的威胁与各类抗量子算法族</title>
+            <g text-anchor="middle" font-size="13">
+              <rect x="30" y="40" width="380" height="220" rx="16" fill="#fee2e2" stroke="#ef4444"/>
+              <text x="220" y="78" font-size="15" font-weight="700" fill="#b91c1c">量子算法的威胁</text>
+              <text x="220" y="122" fill="#475569">Shor：多项式时间分解与离散对数</text>
+              <text x="220" y="152" fill="#475569">→ 破解 RSA、DH、ECC</text>
+              <text x="220" y="198" fill="#475569">Grover：无序搜索平方加速</text>
+              <text x="220" y="228" fill="#475569">→ 对称密钥需加倍长度（AES-256）</text>
+              <rect x="490" y="40" width="400" height="220" rx="16" fill="#ccfbf1" stroke="#14b8a6"/>
+              <text x="690" y="78" font-size="15" font-weight="700" fill="#115e59">抗量子算法族</text>
+              <text x="690" y="122" fill="#475569">格密码（LWE / Lattice）— ML-KEM、ML-DSA</text>
+              <text x="690" y="152" fill="#475569">编码密码、多变量方程</text>
+              <text x="690" y="182" fill="#475569">哈希签名 — SLH-DSA</text>
+              <text x="690" y="228" fill="#475569">NIST 已于 2024 年发布首批后量子标准</text>
+            </g>
+          </svg>
+          <figcaption><b>图 26.</b> 量子计算带来的迁移压力与当前的应对路线。Shor 算法使公钥密码失去基础，而 Grover 只带来平方加速——因此迁移的重点是替换 RSA/ECC，同时把对称密钥长度加倍。</figcaption>
+        </figure>
 
         <p>同学们，我们先来做一个思想实验。假设现在是2035年，你是一家银行的CTO。一台稳定的量子计算机已经问世，它可以在几个小时内分解1024位的RSA模数。这意味着什么？这意味着所有基于RSA和ECC的TLS证书瞬间失效、所有HTTPS连接不再安全、所有数字签名不再可信——整个互联网的公钥基础设施，在量子计算机面前就像纸糊的一样脆弱。这不是科幻小说的情节，而是密码学界过去二十年一直在准备应对的真实危机。</p>
 

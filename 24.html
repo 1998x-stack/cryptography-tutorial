@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,24 @@
     <main class="main-content">
         <h1>第24章 Python密码学编程</h1>
 
-        <figure id="fig-24" class="paper-figure"></figure>
+        <figure id="fig-24" class="paper-figure">
+          <svg viewBox="0 0 920 240" role="img" aria-labelledby="fig-24-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-24-title">Python 认证加密流程：KDF 派生密钥，AES-GCM 加密并输出标签</title>
+            <defs><marker id="fig24-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="60" width="150" height="70" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="95" y="101" fill="#334155">口令 / 主密钥</text>
+              <rect x="210" y="60" width="150" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="285" y="92" fill="#5b21b6">KDF</text><text x="285" y="114" fill="#94a3b8" font-size="11">PBKDF2 / Argon2</text>
+              <rect x="400" y="60" width="150" height="70" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="475" y="101" fill="#92400e">对称密钥</text>
+              <rect x="590" y="60" width="150" height="70" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="665" y="92" fill="#075985">AES-GCM</text><text x="665" y="114" fill="#94a3b8" font-size="11">nonce + AAD</text>
+              <rect x="780" y="60" width="130" height="70" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="845" y="92" fill="#115e59">密文</text><text x="845" y="114" fill="#115e59">+ 标签</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig24-arw)">
+              <path d="M170 95 H206"/><path d="M360 95 H396"/><path d="M550 95 H586"/><path d="M740 95 H776"/>
+            </g>
+            <text x="460" y="188" text-anchor="middle" font-size="13" fill="#475569">解密时先校验标签，校验失败则报错而不返回任何明文</text>
+          </svg>
+          <figcaption><b>图 24.</b> Python 中的认证加密流程（以 <code>cryptography</code> 库为例）。用 KDF 从口令派生密钥，再以 AES-GCM 加密；GCM 会在解密时校验认证标签，一旦密文被篡改就拒绝输出明文。</figcaption>
+        </figure>
 
         <p>上一章我们用 OpenSSL 命令行操作了密钥、证书和加密——但命令行能做的事情终究有限。当你的应用需要自动生成密钥、在运行时动态加密数据、或者通过网络建立安全信道时，你需要用编程语言来调用密码学函数。而在 Python 生态中，你有一批成熟、活跃且经过安全审计的密码学库可供选择。</p>
 

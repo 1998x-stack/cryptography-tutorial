@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,26 @@
     <main class="main-content">
         <h1>第27章 量子密钥分发</h1>
 
-        <figure id="fig-27" class="paper-figure"></figure>
+        <figure id="fig-27" class="paper-figure">
+          <svg viewBox="0 0 900 320" role="img" aria-labelledby="fig-27-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-27-title">BB84 协议：随机偏振基发送比特，公开比对基后保留匹配结果</title>
+            <rect x="20" y="34" width="860" height="40" rx="8" fill="#f1f5f9"/>
+            <g font-size="13" fill="#334155" text-anchor="middle" font-weight="700">
+              <text x="70" y="60">轮次</text><text x="230" y="60">Alice 比特</text><text x="390" y="60">Alice 基</text><text x="550" y="60">Bob 基</text><text x="760" y="60">结果</text>
+            </g>
+            <g font-size="15" text-anchor="middle" fill="#475569">
+              <text x="70" y="106">1</text><text x="230" y="106">0</text><text x="390" y="106">+</text><text x="550" y="106">+</text><text x="760" y="106" fill="#115e59">保留</text>
+              <text x="70" y="156">2</text><text x="230" y="156">1</text><text x="390" y="156">×</text><text x="550" y="156">+</text><text x="760" y="156" fill="#b91c1c">丢弃</text>
+              <text x="70" y="206">3</text><text x="230" y="206">1</text><text x="390" y="206">+</text><text x="550" y="206">+</text><text x="760" y="206" fill="#115e59">保留</text>
+              <text x="70" y="256">4</text><text x="230" y="256">0</text><text x="390" y="256">×</text><text x="550" y="256">×</text><text x="760" y="256" fill="#115e59">保留</text>
+            </g>
+            <g stroke="#e2e8f0" stroke-width="1">
+              <line x1="20" y1="126" x2="880" y2="126"/><line x1="20" y1="176" x2="880" y2="176"/><line x1="20" y1="226" x2="880" y2="226"/>
+            </g>
+            <text x="450" y="298" text-anchor="middle" font-size="13" fill="#475569">基不匹配时结果随机无用，公开比对后直接丢弃（筛后保留约一半比特）。表内数值为教学示意。</text>
+          </svg>
+          <figcaption><b>图 27.</b> BB84 协议（Bennett 与 Brassard，1984）。Alice 随机选择比特与偏振基，Bob 随机选基测量；双方事后公开比对基，只保留基相同的结果。任何窃听都会扰动量子态而被发现。</figcaption>
+        </figure>
 
         <p>上一章我们讨论的后量子密码，走的是"在经典计算机上跑新的数学困难问题"这条路线。但还有另一条完全不同的路径——不使用任何数学假设，而是利用量子力学的基本原理来保证安全。这条路通向<strong>量子密钥分发（Quantum Key Distribution, QKD）</strong>。</p>
 

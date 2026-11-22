@@ -8,6 +8,7 @@
     <style>
         img, svg { max-width: 100%; height: auto; }
         pre { overflow-x: auto; }
+        table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
     </style>
@@ -51,7 +52,33 @@
     <main class="main-content">
         <h1>第28章 综合实战项目：端到端加密消息系统</h1>
 
-        <figure id="fig-28" class="paper-figure"></figure>
+        <figure id="fig-28" class="paper-figure">
+          <svg viewBox="0 0 900 320" role="img" aria-labelledby="fig-28-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-28-title">综合实战：混合加密系统用非对称算法封装对称密钥</title>
+            <defs><marker id="fig28-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <text x="20" y="34" text-anchor="start" font-size="14" font-weight="700" fill="#5b21b6">发送方</text>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="50" width="180" height="70" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="110" y="92" fill="#92400e">① 随机会话密钥 K</text>
+              <rect x="230" y="50" width="180" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="320" y="92" fill="#5b21b6">② 公钥封装 K</text>
+              <rect x="440" y="50" width="180" height="70" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="530" y="92" fill="#075985">③ AES-GCM 加密</text>
+              <rect x="650" y="50" width="200" height="70" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="750" y="92" fill="#115e59">④ 追加签名并发送</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig28-arw)">
+              <path d="M200 85 H226"/><path d="M410 85 H436"/><path d="M620 85 H646"/>
+            </g>
+            <text x="20" y="172" text-anchor="start" font-size="14" font-weight="700" fill="#075985">接收方</text>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="188" width="200" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="120" y="230" fill="#5b21b6">⑤ 私钥解封得到 K</text>
+              <rect x="250" y="188" width="200" height="70" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="350" y="230" fill="#075985">⑥ AES-GCM 解密校验</text>
+              <rect x="480" y="188" width="180" height="70" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="570" y="230" fill="#115e59">⑦ 验证签名</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig28-arw)">
+              <path d="M220 223 H246"/><path d="M450 223 H476"/>
+            </g>
+            <text x="450" y="300" text-anchor="middle" font-size="13" fill="#475569">对称加密保证速度，非对称算法只用于封装短密钥与签名</text>
+          </svg>
+          <figcaption><b>图 28.</b> 混合加密系统（KEM/DEM 思路）。用非对称算法只为“封装一条短会话密钥”与签名，正文则由 AES-GCM 等对称认证加密处理，兼顾了安全性与性能，正是 TLS、Signal 等协议的共同做法。</figcaption>
+        </figure>
 
         <p>同学们，欢迎来到最后一章。你走到这里，已经走过了从古典密码到后量子时代、从数学理论到工程实践的完整旅程。现在是时候把所有这些知识串联起来，动手构建一个真正能用的东西了。</p>
 
