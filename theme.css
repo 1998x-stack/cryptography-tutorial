@@ -104,6 +104,10 @@ code {
 
 pre code { background: none; padding: 0; }
 
+/* 长哈希/密钥等不间断字符串在窄屏换行，避免横向溢出 */
+code { overflow-wrap: anywhere; }
+pre code { overflow-wrap: normal; }
+
 /* === Tables === */
 table {
     width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
