@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第7章 哈希函数</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        img, svg { max-width: 100%; height: auto; }
+        pre { overflow-x: auto; }
+        code { overflow-wrap: anywhere; }
+        pre code { overflow-wrap: normal; }
+    </style>
 </head>
 <body>
 <div class="double-border">
@@ -45,7 +51,28 @@
     <main class="main-content">
         <h1>第7章 哈希函数</h1>
 
-        <figure id="fig-07" class="paper-figure"></figure>
+        <figure id="fig-07" class="paper-figure">
+          <svg viewBox="0 0 920 200" role="img" aria-labelledby="fig-07-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-07-title">Merkle–Damgård 结构：消息分块后与前一块输出链式压缩</title>
+            <defs><marker id="fig07-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <rect x="20" y="75" width="80" height="50" rx="12" fill="#f1f5f9" stroke="#64748b"/><text x="60" y="106" fill="#334155">IV</text>
+              <rect x="140" y="70" width="120" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="200" y="106" fill="#5b21b6">压缩 f</text>
+              <rect x="340" y="70" width="120" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="400" y="106" fill="#5b21b6">压缩 f</text>
+              <rect x="540" y="70" width="120" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="600" y="106" fill="#5b21b6">压缩 f</text>
+              <rect x="740" y="75" width="160" height="50" rx="12" fill="#e0f2fe" stroke="#0ea5e9"/><text x="820" y="106" fill="#075985">摘要 H(m)</text>
+              <rect x="140" y="8" width="120" height="44" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="200" y="36" fill="#92400e">块 M₁</text>
+              <rect x="340" y="8" width="120" height="44" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="400" y="36" fill="#92400e">块 M₂</text>
+              <rect x="540" y="8" width="120" height="44" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="600" y="36" fill="#92400e">块 Mₙ</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig07-arw)">
+              <path d="M100 100 H136"/><path d="M260 100 H336"/><path d="M460 100 H536"/><path d="M660 100 H736"/>
+              <path d="M200 52 V66"/><path d="M400 52 V66"/><path d="M600 52 V66"/>
+            </g>
+            <text x="460" y="170" text-anchor="middle" font-size="13" fill="#475569">每块先与前一块的链接值一起送入压缩函数，再输出新的链接值</text>
+          </svg>
+          <figcaption><b>图 7.</b> Merkle–Damgård 迭代结构（SHA-1 / SHA-2 家族采用）。消息填充后分块，逐块与前一块的链值压缩，最终得到定长摘要。因此输入的任意微小改动都会经多轮放大成完全不同的摘要（雪崩效应）。</figcaption>
+        </figure>
 
         <p>大家好，我是你们的讲师。在学习了对称密码（DES、AES）之后，你可能觉得密码学就是关于加密和解密的技术。但信息安全还有一个同样重要的目标——<strong>完整性</strong>：如何确保你收到的信息没有被篡改？如何验证一个文件就是原始的、未被修改过的版本？</p>
 

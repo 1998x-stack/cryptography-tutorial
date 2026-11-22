@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第8章 公钥密码革命</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        img, svg { max-width: 100%; height: auto; }
+        pre { overflow-x: auto; }
+        code { overflow-wrap: anywhere; }
+        pre code { overflow-wrap: normal; }
+    </style>
 </head>
 <body>
 <div class="double-border">
@@ -45,7 +51,33 @@
     <main class="main-content">
         <h1>第8章 公钥密码革命</h1>
 
-        <figure id="fig-08" class="paper-figure"></figure>
+        <figure id="fig-08" class="paper-figure">
+          <svg viewBox="0 0 900 330" role="img" aria-labelledby="fig-08-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-08-title">Diffie–Hellman 密钥交换：在公开信道上协商共享密钥</title>
+            <defs><marker id="fig08-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <rect x="40" y="30" width="300" height="110" rx="16" fill="#f1f5f9" stroke="#64748b"/>
+              <text x="190" y="62" font-weight="700" fill="#334155">Alice</text>
+              <text x="190" y="92" fill="#475569">私钥 a（保密）</text>
+              <text x="190" y="122" fill="#5b21b6">A = gᵃ mod p</text>
+              <rect x="560" y="30" width="300" height="110" rx="16" fill="#f1f5f9" stroke="#64748b"/>
+              <text x="710" y="62" font-weight="700" fill="#334155">Bob</text>
+              <text x="710" y="92" fill="#475569">私钥 b（保密）</text>
+              <text x="710" y="122" fill="#5b21b6">B = gᵇ mod p</text>
+              <rect x="40" y="210" width="820" height="100" rx="16" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="450" y="248" fill="#92400e">公开信道：公开参数 (g, p)，公开交换 A 与 B</text>
+              <text x="450" y="284" fill="#92400e">双方各自算出共享密钥 K = Bᵃ = Aᵇ = g^(ab) mod p</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig08-arw)">
+              <path d="M190 144 V206"/><path d="M710 144 V206"/>
+            </g>
+            <g stroke="#0ea5e9" stroke-width="2" fill="none" marker-end="url(#fig08-arw)">
+              <path d="M560 172 H356"/><path d="M340 190 H544"/>
+            </g>
+            <text x="450" y="181" text-anchor="middle" font-size="13" fill="#075985">A ⇄ B</text>
+          </svg>
+          <figcaption><b>图 8.</b> Diffie–Hellman 密钥交换。窃听者能看到 g、p、A、B，但在离散对数困难假设下无法从 A = gᵃ mod p 反推出 a，因而算不出 K。DH 本身<strong>只协商密钥</strong>、不认证身份，所以实际部署常与签名或证书配合以抵抗中间人攻击。</figcaption>
+        </figure>
 
         <p>同学们好。在前面的章节里，我们学过的所有密码系统都有一个共同点：<strong>加密和解密用的是同一个密钥</strong>。AES也好，DES也好，包括古典的凯撒和维吉尼亚密码，都是对称的。这意味着什么？意味着如果你想跟远在纽约的同事安全通信，你必须先想办法把密钥送到他手上——而如果你们已经有安全渠道送密钥了，那还要加密干吗？</p>
 

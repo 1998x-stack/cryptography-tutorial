@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第9章 RSA算法</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        img, svg { max-width: 100%; height: auto; }
+        pre { overflow-x: auto; }
+        code { overflow-wrap: anywhere; }
+        pre code { overflow-wrap: normal; }
+    </style>
 </head>
 <body>
 <div class="double-border">
@@ -45,7 +51,34 @@
     <main class="main-content">
         <h1>第9章 RSA算法</h1>
 
-        <figure id="fig-09" class="paper-figure"></figure>
+        <figure id="fig-09" class="paper-figure">
+          <svg viewBox="0 0 920 330" role="img" aria-labelledby="fig-09-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-09-title">RSA：由一对大素数生成公钥与私钥，再用模幂完成加解密</title>
+            <defs><marker id="fig09-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="30" width="270" height="120" rx="14" fill="#f5f3ff" stroke="#7c3aed"/>
+              <text x="155" y="58" font-weight="700" font-size="14" fill="#5b21b6">① 密钥生成</text>
+              <text x="155" y="86" fill="#475569">选大素数 p、q → n = p·q</text>
+              <text x="155" y="110" fill="#475569">φ(n) = (p−1)(q−1)</text>
+              <text x="155" y="134" fill="#475569">选 e，求 d 使 e·d ≡ 1 (mod φ)</text>
+              <rect x="325" y="30" width="260" height="120" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/>
+              <text x="455" y="58" font-weight="700" font-size="14" fill="#075985">② 公钥 (n, e)</text>
+              <text x="455" y="90" fill="#475569">可公开分发</text>
+              <text x="455" y="120" fill="#075985">加密 c = mᵉ mod n</text>
+              <rect x="625" y="30" width="275" height="120" rx="14" fill="#fef3c7" stroke="#f59e0b"/>
+              <text x="762" y="58" font-weight="700" font-size="14" fill="#92400e">③ 私钥 (n, d)</text>
+              <text x="762" y="90" fill="#475569">必须严格保密</text>
+              <text x="762" y="120" fill="#92400e">解密 m = cᵈ mod n</text>
+              <rect x="180" y="205" width="560" height="95" rx="14" fill="#f1f5f9" stroke="#64748b"/>
+              <text x="460" y="240" fill="#334155">安全性根基：已知 n 反推 p、q 需要分解大整数</text>
+              <text x="460" y="272" fill="#334155">（RSA-2048 的 n 约 617 位十进制数字）</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig09-arw)">
+              <path d="M290 90 H321"/><path d="M585 90 H621"/>
+            </g>
+          </svg>
+          <figcaption><b>图 9.</b> RSA 的三步：由两个大素数构造模数，选一对互逆的指数分别作为公钥与私钥，再通过模幂完成加解密。实际实现必须使用 OAEP 等填充，直接使用“教科书式 RSA”是不安全的。</figcaption>
+        </figure>
 
         <p>上一章我们讲到，Diffie和Hellman在1976年提出了公钥密码的思想，但他们没有给出一个能直接用于加密的完整方案。他们证明了"公钥加密是可能的"，但没有告诉大家具体怎么做。这个"怎么做"的任务，落在了MIT三位年轻的学者身上：Ron Rivest、Adi Shamir和Len Adleman。</p>
 
