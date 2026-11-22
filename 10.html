@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,9 +41,11 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第10章 椭圆曲线密码学</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第10章 椭圆曲线密码学</h1>
+
+        <figure id="fig-10" class="paper-figure"></figure>
 
         <p>同学们，上一章学完RSA后，你可能会有一个疑惑：既然RSA能用，为什么还需要椭圆曲线密码学（Elliptic Curve Cryptography, ECC）？答案是两个字：<strong>效率</strong>。</p>
 
@@ -53,7 +55,7 @@
             <strong>🔑 核心数据：</strong>256位的ECC密钥提供的安全性等同于3072位的RSA密钥。也就是说，ECC用不到RSA十分之一的密钥长度，达到了相同的安全等级。不仅更小，而且更快——在移动设备上，ECC的密钥生成速度比RSA快数十倍。
         </div>
 
-        <h3>10.1 椭圆曲线是什么？</h3>
+        <h2>10.1 椭圆曲线是什么？</h2>
 
         <p>不要被名字吓到。虽然椭圆曲线在数学中有复杂的背景，但在密码学的语境下，你只需要理解一个概念：<strong>椭圆曲线是一个可以在上面"做加法"的点的集合</strong>。</p>
 
@@ -70,7 +72,7 @@
 
         <p>椭圆曲线密码学的安全性依赖于<strong>椭圆曲线离散对数问题（ECDLP）</strong>：给定曲线上两个点G和Q = k×G（即G自加k次），求k。对于精心选择的曲线参数，这个问题没有比完全穷举更有效的解法。</p>
 
-        <h3>10.2 点乘运算</h3>
+        <h2>10.2 点乘运算</h2>
 
         <p>ECC的核心运算叫作<strong>标量乘法</strong>：Q = k × G，其中k是一个大整数（私钥），G是曲线上的一个基点（公开参数），Q是结果点（公钥）。</p>
 
@@ -94,7 +96,7 @@ result = O（无穷远点）
 
         <p>这样只需要约log₂(k)次加倍和约log₂(k)/2次加法——对于256位的k，只需要几百次运算，瞬间完成。</p>
 
-        <h3>10.3 ECDH密钥交换</h3>
+        <h2>10.3 ECDH密钥交换</h2>
 
         <p>ECC版本的Diffie-Hellman密钥交换称为ECDH。它的原理与DH一样，但使用椭圆曲线运算：</p>
 
@@ -110,7 +112,7 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
 
         <p>ECDH被广泛应用于TLS 1.3中，是当前互联网主流密钥交换方案。值得注意的是，在实际部署中ECDH通常使用<strong>临时密钥</strong>（即每次连接生成新的密钥对），以实现前向安全性（Forward Secrecy）——即使服务器的长期私钥泄露，过去的会话也不能被解密。</p>
 
-        <h3>10.4 ECDSA签名</h3>
+        <h2>10.4 ECDSA签名</h2>
 
         <p>ECDSA是ECC版本的DSA签名算法。签名过程需要一对密钥和一个随机数k（这个k非常关键！）：</p>
 
@@ -132,7 +134,7 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
             <strong>⚠️ 踩坑故事——索尼PlayStation 3的悲惨教训：</strong>2010年，黑客团队fail0verflow宣布成功获取了索尼PS3的ECDSA私钥，这意味着他们可以签署任何未授权的游戏和软件在PS3上运行。漏洞出在哪里？索尼在ECDSA签名中使用了<strong>固定的k值</strong>（k = 4）。这意味着签名的(r, s)中的r值完全相同——每款游戏的签名都有相同的r。黑客只需要拿到两个不同的签名，就可以通过简单的数学计算恢复出私钥。这个漏洞让索尼的整个数字版权管理系统形同虚设。索尼的工程师显然知道ECDSA需要一个随机k——但他们选择了"省事"的固定值，结果付出了沉重的代价。
         </div>
 
-        <h3>10.5 Curve25519与EdDSA</h3>
+        <h2>10.5 Curve25519与EdDSA</h2>
 
         <p>2006年，著名密码学家Daniel J. Bernstein设计了一个新的椭圆曲线——<strong>Curve25519</strong>（也称为X25519）。它解决了很多困扰NIST曲线的问题：</p>
 
@@ -175,7 +177,7 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
             <strong>💡 为什么EdDSA更安全？</strong>在ECDSA中，如果你没有好的随机数生成器（比如在嵌入式设备上），k值的质量就无法保证。而EdDSA完全消除了对随机数的依赖——它用哈希函数从私钥和消息中派生出k，确保每次签名都有唯一的、不可预测的k值。这是一个"默认安全"的设计哲学，避免了最常见的ECDSA实现错误。
         </div>
 
-        <h3>10.6 踩坑故事：NSA后门争议</h3>
+        <h2>10.6 踩坑故事：NSA后门争议</h2>
 
         <p>椭圆曲线密码学历史上最持续的争议，是围绕NIST P-256（即secp256r1）曲线的<strong>参数来源问题</strong>。</p>
 
@@ -196,7 +198,7 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
             <a href="index.html">📖 返回目录</a>
             <a href="11.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

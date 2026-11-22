@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,15 +41,17 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第24章 Python密码学编程</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第24章 Python密码学编程</h1>
+
+        <figure id="fig-24" class="paper-figure"></figure>
 
         <p>上一章我们用 OpenSSL 命令行操作了密钥、证书和加密——但命令行能做的事情终究有限。当你的应用需要自动生成密钥、在运行时动态加密数据、或者通过网络建立安全信道时，你需要用编程语言来调用密码学函数。而在 Python 生态中，你有一批成熟、活跃且经过安全审计的密码学库可供选择。</p>
 
         <p>为什么专门要讲 Python？因为 Python 是安全工程师、DevOps 工程师和数据科学家最常用的脚本语言。用 Python 写密码学代码，你可以在半小时内实现一个加密聊天工具、一个文件加密器、或者一个密钥管理系统——如果换成 C 或者 Java，同样的功能可能需要数天。但便利也伴随着风险：Python 生态中有大量的密码学"玩具库"和恶意包，用错一个就可能让整个系统形同虚设。</p>
 
-        <h3>24.1 两大主力库</h3>
+        <h2>24.1 两大主力库</h2>
 
         <p>Python 生态中有两个最可靠的密码学库，它们的定位和适用场景不同：</p>
 
@@ -76,7 +78,7 @@
 
         <p>简单来说：<strong>cryptography</strong> 提供了更安全的高层 API（比如 Fernet 让你几乎不可能用错），而 <strong>PyCryptodome</strong> 让你能精细控制每一个密码学操作。前者适合 90% 的应用场景，后者适合协议实现和底层开发。</p>
 
-        <h3>24.2 cryptography 库：Fernet 与 hazmat</h3>
+        <h2>24.2 cryptography 库：Fernet 与 hazmat</h2>
 
         <p>Fernet 是 cryptography 库中最推荐的对称加密方案。它使用 AES-128-CBC 加密 + HMAC-SHA256 认证，解决了"加密但没认证"这个经典陷阱。</p>
 
@@ -122,7 +124,7 @@ print(f"认证标签: {tag.hex()}")</code></pre>
             <strong>💡 实践经验：</strong>除非你明确知道自己需要定制某些参数，否则始终优先使用 Fernet 而非 hazmat。hazmat 的名字不是开玩笑的——一个常见的错误是用了 ECB 模式、或者忘记验证 GCM 的 tag、或者硬编码了 IV。这些错误在代码审查中很难发现，但攻击者可以轻易利用。
         </div>
 
-        <h3>24.3 PyCryptodome：精细控制</h3>
+        <h2>24.3 PyCryptodome：精细控制</h2>
 
         <p>PyCryptodome 是 PyCrypto 的活跃分支，提供了更丰富的底层算法支持。下面的例子展示如何用 RSA 公钥加密一个对称密钥（和上一章 OpenSSL 的混合加密完全对应）：</p>
 
@@ -172,7 +174,7 @@ try:
 except ValueError:
     print("签名验证失败！")</code></pre>
 
-        <h3>24.4 实现加密聊天协议</h3>
+        <h2>24.4 实现加密聊天协议</h2>
 
         <p>学了这么多 API，我们来做一个有实际意义的项目——一个简单的端到端加密聊天协议。客户端和服务器之间传输的消息经过 AES-GCM 加密，密钥通过 ECDH 密钥交换协商：</p>
 
@@ -196,7 +198,7 @@ except ValueError:
             <strong>🔑 设计要点：</strong>（1）每个会话生成临时的 ECDH 密钥对，确保前向安全性——即使服务器长期私钥泄露，历史会话也无法解密；（2）每条消息使用独立的 nonce，绝对不能用重复的 nonce 加密不同的消息——GCM 中 nonce 重用会彻底摧毁安全性；（3）decrypt_and_verify 是原子操作，绝不能先解密后验证——攻击者可能构造密文让你解密出恶意内容。
         </div>
 
-        <h3>24.5 hashlib 与 HMAC</h3>
+        <h2>24.5 hashlib 与 HMAC</h2>
 
         <p>Python 标准库中的 <code>hashlib</code> 提供了哈希和 HMAC 功能。虽然它的 API 简单，但正确使用仍然需要一些注意：</p>
 
@@ -224,7 +226,7 @@ print(f"HMAC: {mac}")</code></pre>
             <strong>⚠️ 常见错误：</strong>很多开发者直接用 SHA-256 哈希密码。这是一个严重的安全错误——没有加盐的哈希可以被彩虹表快速破解；即使加了盐，单次 SHA-256 也太快，每秒可以计算数亿次。始终使用专门的密码哈希函数：PBKDF2、bcrypt、scrypt 或 Argon2。<code>hashlib.pbkdf2_hmac</code> 可以胜任，但推荐使用专门的库如 <code>bcrypt</code> 或 <code>argon2-cffi</code>。
         </div>
 
-        <h3>24.6 密钥安全存储</h3>
+        <h2>24.6 密钥安全存储</h2>
 
         <p>密码学中有一条铁律：<strong>密钥泄露 = 一切归零</strong>。在 Python 应用中有几个常见的密钥管理实践：</p>
 
@@ -275,7 +277,7 @@ key = os.environ["ENCRYPTION_KEY"].encode()
 cipher = Fernet(key)
 # ...</code></pre>
 
-        <h3>24.7 踩坑故事：PyPI 仿冒包事件</h3>
+        <h2>24.7 踩坑故事：PyPI 仿冒包事件</h2>
 
         <p>2020 年，安全研究人员在 Python 包索引（PyPI）上发现了一系列恶意包，它们采用了"仿冒"（typo-squatting）策略——包名和流行的密码学库极其相似：<code>cryptographhy</code>（多了一个 h）、<code>cryptography2</code>、<code>pycryptographhy</code> 等。</p>
 
@@ -296,7 +298,7 @@ cipher = Fernet(key)
             <a href="index.html">📖 返回目录</a>
             <a href="25.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

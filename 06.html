@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,9 +41,11 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第6章 DES与AES</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第6章 DES与AES</h1>
+
+        <figure id="fig-06" class="paper-figure"></figure>
 
         <p>大家好，我是你们的讲师。上一章我们学习了对称密码的基本概念——分组密码与流密码的区别、Feistel 网络与 SPN 结构、以及各种工作模式。今天，我们把焦点放在两个具体的对称密码算法上：一个开创了现代密码标准的先河（DES），另一个至今仍是全球最广泛使用的加密算法（AES）。</p>
 
@@ -53,7 +55,7 @@
             <strong>🎯 本章核心：</strong>DES → 3DES → AES 的演进过程是密码学标准化的教科书式案例。每个阶段都涉及安全性、性能和实用性的复杂权衡。我们将深入 AES 的 SPN 结构，理解为什么它被认为是设计得近乎完美的对称密码。
         </div>
 
-        <h3>6.1 DES：数据加密标准的诞生</h3>
+        <h2>6.1 DES：数据加密标准的诞生</h2>
 
         <p>1972 年，美国国家标准局（NBS，即后来的 NIST）开始征集一个标准化的数据加密算法。1974 年，IBM 提交了基于 Horst Feistel 的 Lucifer 算法改进的方案。1977 年，这个方案被正式采纳为<strong>联邦信息处理标准（FIPS 46-3）</strong>，命名为<strong>数据加密标准（Data Encryption Standard, DES）</strong>。</p>
 
@@ -98,7 +100,7 @@
             <strong>💡 历史争议：</strong>多年后解密的 NSA 文件显示，故事比想象的更复杂。NSA 确实要求将密钥从 IBM 原方案的 64 位减少到了 56 位，但他们同时也帮助 IBM 改进了 S-box 的设计，使其更能抵抗当时尚未公开的<strong>差分密码分析</strong>攻击。换言之，NSA 在削弱了 DES 的同时，也通过改进 S-box 让它对当时最先进的攻击方法保持了安全——直到 1990 年代差分分析被公开后，密码学界才发现 DES 的 S-box 是经过精心设计以抵抗差分分析的。这场争议教会了密码学界一个教训：<strong>公开透明的标准化过程比任何"保密增强"都更可靠</strong>。
         </div>
 
-        <h3>6.2 DES 的内部结构</h3>
+        <h2>6.2 DES 的内部结构</h2>
 
         <p>DES 使用经典的 Feistel 网络。每一轮的轮函数 F 由以下步骤组成：</p>
 
@@ -129,7 +131,7 @@ Rᵢ (32 位)
     ▼
 F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
-        <h3>6.3 Triple-DES 与金融业</h3>
+        <h2>6.3 Triple-DES 与金融业</h2>
 
         <p>随着 1990 年代计算能力的飞速提升，DES 的 56 位密钥逐渐变得脆弱。1998 年，电子前哨基金会（EFF）花费不到 25 万美元建造了一台名为 <strong>Deep Crack</strong> 的专用机器，在 56 小时内破解了一个 DES 密钥。到 1999 年，Deep Crack 与互联网上的分布式计算网络合作，将破解时间缩短到了 22 小时 15 分钟。</p>
 
@@ -153,7 +155,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
             有一个著名的案例：某金融机构从 3DES 迁移到 AES 时，他们发现老旧的 ATM 硬件不支持 AES。于是他们做了一个"聪明"的决定——在服务器端与 ATM 之间建立一条使用 DES 的"兼容通道"。问题在于，这个"兼容通道"使用了一个固定的、不可更改的 DES 密钥（硬编码在 ATM 固件中）。攻击者只需要破解一个 56 位的 DES 密钥，就能解密整个金融网络中的所有交易。这个故事告诉我们：<strong>兼容性是重要的，但你不能在最薄弱的一环中放弃安全</strong>。
         </div>
 
-        <h3>6.4 AES 竞赛：一个全球性的科学实验</h3>
+        <h2>6.4 AES 竞赛：一个全球性的科学实验</h2>
 
         <p>1997 年 1 月，NIST 宣布征集<strong>高级加密标准（Advanced Encryption Standard, AES）</strong>，候选算法必须满足：</p>
 
@@ -210,7 +212,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
         <p>2000 年 10 月，NIST 宣布 <strong>Rijndael</strong>（发音：Rhine-dahl）获胜。Rijndael 由比利时的 Joan Daemen 和 Vincent Rijmen 设计。它的名字就来源于两位设计师姓氏的组合（Rijmen + Daemen → Rijndael）。Rijndael 获胜的原因是它在安全性、性能、简洁性和灵活性之间取得了最好的平衡。</p>
 
-        <h3>6.5 AES（Rijndael）算法详解</h3>
+        <h2>6.5 AES（Rijndael）算法详解</h2>
 
         <p>AES 是 SPN 结构的典范。它维护一个称为"状态（State）"的 4×4 字节矩阵（共 16 字节 = 128 位）。算法的每一轮对状态进行四种操作：</p>
 
@@ -247,7 +249,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
         <p>AES 有 128、192、256 三种密钥长度，对应的轮数分别为 10、12、14 轮。轮数越多，安全余量越大。</p>
 
-        <h3>6.6 AES-128 与 AES-256：选择哪一个？</h3>
+        <h2>6.6 AES-128 与 AES-256：选择哪一个？</h2>
 
         <p>AES-128 和 AES-256 之间的选择是一个经典的工程权衡问题：</p>
 
@@ -288,7 +290,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
             <strong>🔑 重要的后量子考量：</strong>Grover 量子搜索算法可以将任何对称密码的暴力破解复杂度降低到平方根级别。具体来说，攻击 AES-128 需要 2⁶⁴ 次 Grover 迭代，而攻击 AES-256 需要 2¹²⁸ 次。目前主流观点认为，2⁶⁴ 次 Grover 迭代在可预见的未来仍然是不现实的——但如果你在加密需要保密 30 年以上的数据（比如政府机密、长期商业机密），AES-256 是更安全的选择。作为参考，NIST 在 2016 年的指南中明确建议：对于最高安全级别的应用，应使用 AES-256。
         </div>
 
-        <h3>6.7 2011 年"DES 已死"的最终证明</h3>
+        <h2>6.7 2011 年"DES 已死"的最终证明</h2>
 
         <p>2011 年，安全研究员 <strong>Kyle Willhoit</strong> 领导的一个团队做了一个实验：他们使用当时可用的云计算资源（亚马逊 EC2 的 GPU 实例），展示了破解一个 DES 密钥需要多少时间和金钱。答案是：不到 24 小时，约 2,600 美元。作为对比，同样的资源在 1977 年（DES 发布的那一年）需要花费超过 1,000 亿美元。</p>
 
@@ -309,7 +311,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
             <a href="index.html">📖 返回目录</a>
             <a href="07.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,9 +41,11 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第18章 安全实现实践</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第18章 安全实现实践</h1>
+
+        <figure id="fig-18" class="paper-figure"></figure>
 
         <p>我们来做一个思想实验。假设你是一个刚入职的工程师，你的任务是实现一个TLS 1.3客户端。你很认真——认真读了RFC 8446的每一页，认真调用了正确的加密库API，写了详尽的单元测试。一切测试都通过了。然后你把代码提交到生产环境。</p>
 
@@ -65,7 +67,7 @@ if (memcmp(signature, expected_sig, 32) != 0) {
 
         <p>这听起来像科幻小说，但它是真实存在的攻击方式。本章我们来系统学习密码学安全实现的工程原则——那些在论文中看不出来、但实际写代码时处处踩坑的知识。</p>
 
-        <h3>18.1 恒定时间编程</h3>
+        <h2>18.1 恒定时间编程</h2>
 
         <p>恒定时间编程是密码学实现的<strong>第一课</strong>。它的核心理念极其简单：<strong>代码的执行时间不应依赖于任何秘密数据。</strong></p>
 
@@ -120,7 +122,7 @@ int constant_time_memcmp(const void *a, const void *b, size_t n) {
 
         <p>恒定时间编程还有一个更微妙的维度：<strong>CPU指令本身的时序差异</strong>。整数乘法在不同Intel微架构上耗时可能不同；除法指令的耗时取决于操作数的具体值；浮点运算的时序更是难以预测。这就是为什么密码学实现几乎只用整数运算，并且避免使用除法（用蒙哥马利模约减等替代）。</p>
 
-        <h3>18.2 内存安全与秘密清理</h3>
+        <h2>18.2 内存安全与秘密清理</h2>
 
         <p>密钥在内存中的生命周期结束之后，你在代码里"用完就扔"了吗？大部分人的答案是"是的，我让变量出了作用域"，但这在C/C++/Go/Rust这些编译型语言中远不够。</p>
 
@@ -149,7 +151,7 @@ int constant_time_memcmp(const void *a, const void *b, size_t n) {
             <strong>📌 黄金法则：</strong>秘密数据应该像放射性废料一样处理——从创建到销毁的每一步都要有明确的安全策略，并且"销毁"步骤永远不应该依赖语言运行时帮你完成。
         </div>
 
-        <h3>18.3 常见实现漏洞</h3>
+        <h2>18.3 常见实现漏洞</h2>
 
         <p>以下是密码学实现中反复出现的几类漏洞——不是算法本身的问题，而是实现方式的问题。</p>
 
@@ -211,7 +213,7 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
             </tr>
         </table>
 
-        <h3>18.4 "不要自己造轮子"的深层含义</h3>
+        <h2>18.4 "不要自己造轮子"的深层含义</h2>
 
         <p>你可能听过这个原则无数次：<strong>"不要自己实现密码学"</strong>（Don't roll your own crypto）。这是一个好原则，但很多人理解得太简单了。</p>
 
@@ -235,7 +237,7 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
             6. 在可能的情况下使用 <strong>内存安全的语言</strong>（Rust > C/C++ > Go > Java/Python）
         </div>
 
-        <h3>18.5 密码学审计的原则</h3>
+        <h2>18.5 密码学审计的原则</h2>
 
         <p>如果你的组织需要对密码学实现进行安全审计，以下是最常被发现的薄弱环节：</p>
 
@@ -252,7 +254,7 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
 
         <p>一个被反复验证的经验是：<strong>大多数密码学漏洞不是出在核心加密逻辑上，而是出在边缘逻辑上</strong>——比如错误处理、日志记录、配置管理、回退机制。攻击者很少正面挑战AES，他们更喜欢寻找"如果解密失败会怎样"这个问题的答案。</p>
 
-        <h3>18.6 真实故事：2018年EFAIL攻击</h3>
+        <h2>18.6 真实故事：2018年EFAIL攻击</h2>
 
         <p>2018年5月，一群来自德国波鸿鲁尔大学（Ruhr University Bochum）的安全研究人员公开了 <strong>EFAIL</strong> 攻击——对OpenPGP和S/MIME邮件加密的严重攻击，能够在某些条件下恢复邮件明文。</p>
 
@@ -288,7 +290,7 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
             <a href="index.html">📖 返回目录</a>
             <a href="19.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

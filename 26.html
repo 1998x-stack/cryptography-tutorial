@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,9 +41,11 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第26章 后量子密码</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第26章 后量子密码</h1>
+
+        <figure id="fig-26" class="paper-figure"></figure>
 
         <p>同学们，我们先来做一个思想实验。假设现在是2035年，你是一家银行的CTO。一台稳定的量子计算机已经问世，它可以在几个小时内分解1024位的RSA模数。这意味着什么？这意味着所有基于RSA和ECC的TLS证书瞬间失效、所有HTTPS连接不再安全、所有数字签名不再可信——整个互联网的公钥基础设施，在量子计算机面前就像纸糊的一样脆弱。这不是科幻小说的情节，而是密码学界过去二十年一直在准备应对的真实危机。</p>
 
@@ -53,7 +55,7 @@
             <strong>⚠️ 紧迫性声明：</strong>2024年，NIST已正式发布首批后量子密码标准（FIPS 203/204/205），美国国家安全局（NSA）要求所有国家安全系统在2035年前完成迁移。这不是"要不要做"的问题，而是"什么时候做"的问题。
         </div>
 
-        <h3>26.1 量子威胁：Shor与Grover</h3>
+        <h2>26.1 量子威胁：Shor与Grover</h2>
 
         <p>为什么量子计算机对现有密码体系构成威胁？关键在于两种量子算法从根本上改变了某些数学问题的计算复杂度。</p>
 
@@ -98,7 +100,7 @@
             <strong>🔴 踩坑故事：</strong>2019年，有研究人员发现某知名VPN厂商在其产品中使用了"量子安全"的专有算法——但实际上该算法根本没有经过同行评审，核心思想只是把RSA的模数换成更大的数值。这种"用量换安全"的做法完全误解了Shor算法的威力：Shor算法的时间复杂度与模数长度是多项式关系，把RSA-2048换成RSA-4096或RSA-8192根本无济于事。真正的后量子密码需要全新的数学基础，而不是简单地加大参数。
         </div>
 
-        <h3>26.2 格密码：后量子的中流砥柱</h3>
+        <h2>26.2 格密码：后量子的中流砥柱</h2>
 
         <p>在所有后量子密码候选方案中，<strong>格密码（Lattice-based Cryptography）</strong>是最受关注、应用前景最广的一类。它的安全性基于格上的困难问题，这些问题目前被认为即使量子计算机也无法有效求解。</p>
 
@@ -123,7 +125,7 @@
             <strong>💡 ML-KEM名字的由来：</strong>NIST在标准化过程中给这些方案取了新的官方名称。ML-KEM = Module-Lattice Key Encapsulation Mechanism，ML-DSA = Module-Lattice Digital Signature Algorithm，FN-DSA = Fast Fourier NTRU-based Digital Signature Algorithm。但业界习惯上仍使用原项目名Kyber、Dilithium和FALCON。
         </div>
 
-        <h3>26.3 编码密码：McEliece的坚守</h3>
+        <h2>26.3 编码密码：McEliece的坚守</h2>
 
         <p>1978年，比RSA还早一年，Robert McEliece就提出了基于编码理论的公钥加密方案。然而，由于McEliece的公钥尺寸巨大（当时被认为不实用），它一直未能获得广泛应用。但正是这个"致命缺点"——超大公钥——在量子时代反而成为了它的优势：基于编码的密码方案被认为对量子攻击具有极高的抵抗力。</p>
 
@@ -142,7 +144,7 @@
             <strong>🔑 设计哲学对比：</strong>格密码追求"足够小、足够快、足够安全"的平衡，适合日常场景；编码密码追求"最大安全裕度"，代价是公钥尺寸大了三个数量级。二者不是替代关系，而是适应不同场景：云服务中一台服务器可以预存1MB的McEliece公钥，但物联网传感器可能连1KB都存不下——后者只能用格密码。
         </div>
 
-        <h3>26.4 哈希签名：SPHINCS+的哲学</h3>
+        <h2>26.4 哈希签名：SPHINCS+的哲学</h2>
 
         <p>有一类后量子签名方案走了一条完全不同的路——<strong>基于哈希的签名（Hash-based Signatures）</strong>。它的安全性不依赖任何数论困难问题，而是仅仅依赖哈希函数的抗碰撞性和抗原像性。既然SHA-256经过几十年的审视仍然是安全的，那么基于SHA-256的签名方案理论上就继承了同等强度的安全保障。</p>
 
@@ -193,7 +195,7 @@
             </tr>
         </table>
 
-        <h3>26.5 NIST标准化进程</h3>
+        <h2>26.5 NIST标准化进程</h2>
 
         <p>NIST的后量子密码标准化项目始于2016年，是全球范围内最具影响力的PQC评估工作。截至2025年，已经经历了完整的四轮：</p>
 
@@ -206,7 +208,7 @@
 
         <p>2024年8月，NIST正式发布了三个最终标准：FIPS 203（ML-KEM）、FIPS 204（ML-DSA）和FIPS 205（SLH-DSA）。这是密码学历史上的里程碑事件——自1970年代公钥密码诞生以来，我们第一次从根本上改变公钥密码的数学基础。</p>
 
-        <h3>26.6 迁移挑战：从理论到工程</h3>
+        <h2>26.6 迁移挑战：从理论到工程</h2>
 
         <p>替换全球互联网的密码基础设施是一项空前的工程挑战。以下是几个关键难题：</p>
 
@@ -231,7 +233,7 @@ openssl list -groups | grep -i kyber</code></pre>
             <strong>🔴 踩坑故事：</strong>2023年，某大型云服务商在试用Kyber混合密钥交换时发现一个诡异的Bug：某些防火墙设备无法正确处理大于1500字节的TLS ClientHello消息。原因在于Kyber的密钥共享数据使TLS握手消息明显增大，而一些老旧的中间盒（Middlebox）会丢弃超过MTU的UDP包或分片的TCP初始消息。这类"协议兼容性"问题在迁移过程中还会大量涌现——你的算法再安全，如果防火墙把它当攻击流量截杀了，用户就根本连不上你的服务器。
         </div>
 
-        <h3>26.7 "先收后解"的真实威胁</h3>
+        <h2>26.7 "先收后解"的真实威胁</h2>
 
         <p>最后我们来谈一个令人不安的现实威胁——<strong>"Harvest Now, Decrypt Later"（先收集，以后再解密）</strong>。</p>
 
@@ -250,7 +252,7 @@ openssl list -groups | grep -i kyber</code></pre>
             <a href="index.html">📖 返回目录</a>
             <a href="27.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

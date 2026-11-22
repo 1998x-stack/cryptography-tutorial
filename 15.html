@@ -9,8 +9,8 @@
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
-        <h3>🔐 课程目录</h3>
+    <nav class="sidebar" aria-label="课程目录">
+        <h2>🔐 课程目录</h2>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 密码学概述</a></li>
             <li><a href="02.html">第2章 古典密码</a></li>
@@ -41,9 +41,11 @@
             <li><a href="27.html">第27章 量子密钥分发</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第15章 密码分析基础</h2>
+    </nav>
+    <main class="main-content">
+        <h1>第15章 密码分析基础</h1>
+
+        <figure id="fig-15" class="paper-figure"></figure>
 
         <p>同学们好。前面十四章我们一直在学"怎么加密"——古典密码、对称加密、公钥密码、哈希函数、数字签名……都是站在密码设计者的角度。但密码学还有另一张面孔：<strong>怎么攻破它？</strong>这就是本章的主题——密码分析（Cryptanalysis）。</p>
 
@@ -51,7 +53,7 @@
 
         <p>本章我们将系统介绍现代密码分析的主要方法：从差异分析到线性分析，从侧信道攻击到量子威胁。每学会一种攻击方法，你对"什么算安全"的理解就会更深一层。</p>
 
-        <h3>15.1 攻击模型分类</h3>
+        <h2>15.1 攻击模型分类</h2>
 
         <p>在讨论具体攻击技术之前，我们先要明确攻击者所处的场景。不同的攻击模型对应着不同的能力假设：</p>
 
@@ -94,7 +96,7 @@
             <strong>🎯 核心观点：</strong>密码分析的目的不是"破解密码"，而是<strong>量化安全余量</strong>。当我们说AES-128是安全的，意思是：在目前已知的最佳攻击下，攻破它需要的计算量仍然接近2^128——而不是某个聪明的算法能一下子降到2^80。
         </div>
 
-        <h3>15.2 差分密码分析</h3>
+        <h2>15.2 差分密码分析</h2>
 
         <p><strong>差分密码分析（Differential Cryptanalysis）</strong>是现代对称密码分析的开山之作。1990年，以色列密码学家 Eli Biham 和 Adi Shamir 发表了这项技术，震惊了整个密码学界。</p>
 
@@ -108,7 +110,7 @@
             <strong>💡 你知道吗？</strong>差分密码分析的思想，其实在1970年代IBM设计DES时就已经被NSA知晓。NSA修改了DES的S盒，使之对差分分析有更强的抵抗力。但Biham和Shamir在1990年"重新发现"这项技术时，并不知道NSA已经秘密知道它二十多年了。这就是密码学史上著名的"DES的S盒秘密"——直到1994年，IBM的原设计文档才被解密，证实了这一点。
         </div>
 
-        <h3>15.3 线性密码分析</h3>
+        <h2>15.3 线性密码分析</h2>
 
         <p>如果说差分分析是"横向比较"，那么<strong>线性密码分析（Linear Cryptanalysis）</strong>就是"纵向穿透"。1993年，日本密码学家 Mitsuru Matsui 发表了这项技术，并很快用它成功攻击了DES。</p>
 
@@ -124,7 +126,7 @@
 
         <p>线性分析的深刻启示是：<strong>S盒的非线性是最关键的。</strong>如果S盒的线性逼近偏差太大，整个密码就会被轻松攻破。AES在设计时就把抵抗线性和差分分析作为首要目标，它的S盒（基于GF(2^8)的乘法逆元）在这两方面都极为优秀。</p>
 
-        <h3>15.4 侧信道攻击</h3>
+        <h2>15.4 侧信道攻击</h2>
 
         <p>以上所有攻击都假设攻击者只能看到算法的输入和输出。但如果攻击者可以观察<strong>算法执行过程中的物理泄露</strong>呢？这就是侧信道攻击的领域——而且它往往比数学攻击有效得多。</p>
 
@@ -175,7 +177,7 @@ bool constant_time_compare_bad(const char *a, const char *b, size_t n) {
 
         <p><strong>缓存时序攻击</strong>是近年来最受关注的侧信道类型。攻击者利用CPU缓存的访问延迟差异：如果某条数据在缓存中，访问只需几个纳秒；如果不在，则需要几百纳秒。通过精密的计时测量，攻击者可以判断受害者访问了哪些内存地址，从而推断出密钥。</p>
 
-        <h3>15.5 量子计算威胁</h3>
+        <h2>15.5 量子计算威胁</h2>
 
         <p>最后，我们要谈谈密码学最深刻的存在威胁——量子计算。这不再是理论推演，而是正在逼近的现实。</p>
 
@@ -238,7 +240,7 @@ bool constant_time_compare_bad(const char *a, const char *b, size_t n) {
             <strong>⚠️ 重要提醒：</strong>"现在的加密数据以后不会被量子计算机破解"是一个常见的误解。正确的做法是<strong>先加密后签名</strong>，而且如果你的数据需要长期保密（比如保密10年以上），现在就应该考虑采用后量子密码方案。攻击者只需现在收集你的加密流量，等量子计算机成熟后再解密——这就是"现在收集，以后解密"（Harvest Now, Decrypt Later）威胁。
         </div>
 
-        <h3>15.6 真实故事：Spectre / Meltdown 与密码泄露</h3>
+        <h2>15.6 真实故事：Spectre / Meltdown 与密码泄露</h2>
 
         <p>2018年1月，Google Project Zero 的 Jann Horn 与其他团队同时披露了 <strong>Spectre</strong>（幽灵）和 <strong>Meltdown</strong>（熔断）两个CPU漏洞。它们不是软件漏洞，而是CPU推测执行和缓存机制本身的设计缺陷——是硬件层面的问题。</p>
 
@@ -266,7 +268,7 @@ bool constant_time_compare_bad(const char *a, const char *b, size_t n) {
             <a href="index.html">📖 返回目录</a>
             <a href="16.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
