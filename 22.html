@@ -51,7 +51,20 @@
     <main class="main-content">
         <h1>第22章 差分隐私与密码学</h1>
 
-        <figure id="fig-22" class="paper-figure"></figure>
+        <figure id="fig-22" class="paper-figure">
+          <svg viewBox="0 0 900 280" role="img" aria-labelledby="fig-22-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-22-title">Laplace 机制：在真实答案上叠加可控噪声以保护个体隐私</title>
+            <line x1="60" y1="200" x2="840" y2="200" stroke="#94a3b8" stroke-width="1.5"/>
+            <path d="M100 198 Q 380 192 450 62 Q 520 192 800 198" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+            <line x1="450" y1="200" x2="450" y2="66" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 4"/>
+            <line x1="560" y1="200" x2="560" y2="130" stroke="#0ea5e9" stroke-width="1.6" stroke-dasharray="4 4"/>
+            <circle cx="450" cy="200" r="6" fill="#f59e0b"/><text x="450" y="226" text-anchor="middle" font-size="13" fill="#92400e">真实答案 q</text>
+            <circle cx="560" cy="200" r="6" fill="#0ea5e9"/><text x="560" y="226" text-anchor="middle" font-size="13" fill="#075985">带噪输出 q̃</text>
+            <text x="450" y="46" text-anchor="middle" font-size="13" fill="#5b21b6">噪声 ~ Laplace(0, 1/ε)</text>
+            <text x="450" y="264" text-anchor="middle" font-size="13" fill="#475569">ε 越小 → 分布越平坦 → 隐私保护越强、但结果精度越低</text>
+          </svg>
+          <figcaption><b>图 22.</b> 差分隐私的 Laplace 机制。对查询结果加入服从拉普拉斯分布的噪声，使相邻数据集（仅相差一条记录）的输出分布几乎不可区分；<em>ε</em> 作为隐私预算，量化了“隐私与精度”的权衡。</figcaption>
+        </figure>
 
         <p>2006 年，Netflix 举办了一场轰动全球的推荐算法竞赛——Netflix Prize。他们公开了一个包含 1 亿条用户匿名化评分数据的训练集，悬赏 100 万美元给能将推荐准确率提升 10% 以上的团队。Netflix 向公众保证：所有用户 ID 都已被替换为随机数字，"个人身份信息"已完全移除，隐私绝对安全。然而，两年后，来自德克萨斯大学的研究人员 Arvind Narayanan 和 Vitaly Shmatikov 只用了一个简单的统计关联攻击就"去匿名化"了多条记录——他们将这些"匿名"评分与 IMDb 上的公开用户评分交叉比对，成功识别出了特定用户，甚至还原了部分用户的性取向和政治倾向等敏感信息。</p>
 

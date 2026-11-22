@@ -51,7 +51,26 @@
     <main class="main-content">
         <h1>第19章 零知识证明</h1>
 
-        <figure id="fig-19" class="paper-figure"></figure>
+        <figure id="fig-19" class="paper-figure">
+          <svg viewBox="0 0 900 300" role="img" aria-labelledby="fig-19-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-19-title">Σ-协议：承诺、挑战、应答三步，验证者无需知道秘密即可确信</title>
+            <defs><marker id="fig19-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <rect x="90" y="16" width="220" height="42" rx="10" fill="#f5f3ff" stroke="#7c3aed"/><text x="200" y="43" text-anchor="middle" font-size="14" fill="#5b21b6">证明者 Prover</text>
+            <rect x="590" y="16" width="220" height="42" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="700" y="43" text-anchor="middle" font-size="14" fill="#075985">验证者 Verifier</text>
+            <line x1="200" y1="58" x2="200" y2="272" stroke="#cbd5e1" stroke-width="2"/>
+            <line x1="700" y1="58" x2="700" y2="272" stroke="#cbd5e1" stroke-width="2"/>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig19-arw)">
+              <path d="M200 96 H696"/><path d="M700 156 H204"/><path d="M200 216 H696"/>
+            </g>
+            <g font-size="13" text-anchor="middle">
+              <text x="450" y="88" fill="#5b21b6">① 承诺 a = gʳ</text>
+              <text x="450" y="148" fill="#075985">② 挑战 c（随机）</text>
+              <text x="450" y="208" fill="#5b21b6">③ 应答 z = r + c·x</text>
+            </g>
+            <text x="450" y="262" text-anchor="middle" font-size="13" fill="#475569">验证者只检查公开等式是否成立，全程得不到秘密 x</text>
+          </svg>
+          <figcaption><b>图 19.</b> Σ-协议（Fiat–Shamir 之前的交互形式）。证明者先承诺、验证者给出随机挑战、证明者再应答；这三步满足<strong>完备性、可靠性、零知识性</strong>。把挑战用哈希生成，就得到非交互证明。</figcaption>
+        </figure>
 
         <p>想象一下这个场景：有人声称自己知道一个古老洞穴的暗门密码，但你完全不信。你跟着他来到洞穴入口，洞穴分岔为两条路 A 和 B，两条路在一个圆形区域汇合——中间有一道暗门，只有知道咒语的人才能打开。如果你想验证他是否真的知道咒语，但又不想让他透露咒语内容，该怎么办？这就是零知识证明要解决的核心问题：<strong>如何让验证者相信你掌握某个秘密，同时又不泄露秘密的任何信息？</strong></p>
 

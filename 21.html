@@ -51,7 +51,24 @@
     <main class="main-content">
         <h1>第21章 安全多方计算</h1>
 
-        <figure id="fig-21" class="paper-figure"></figure>
+        <figure id="fig-21" class="paper-figure">
+          <svg viewBox="0 0 900 300" role="img" aria-labelledby="fig-21-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-21-title">秘密共享（2-of-3）：把秘密拆成三份，任意两份即可重构</title>
+            <defs><marker id="fig21-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <rect x="350" y="16" width="200" height="52" rx="14" fill="#fef3c7" stroke="#f59e0b"/><text x="450" y="48" text-anchor="middle" font-size="14" fill="#92400e">秘密 s</text>
+            <g text-anchor="middle" font-size="14">
+              <rect x="50" y="140" width="170" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="135" y="176" fill="#5b21b6">份额 s₁</text>
+              <rect x="365" y="140" width="170" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="450" y="176" fill="#5b21b6">份额 s₂</text>
+              <rect x="680" y="140" width="170" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="765" y="176" fill="#5b21b6">份额 s₃</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig21-arw)">
+              <path d="M450 68 V100 H135 V136"/><path d="M450 68 V136"/><path d="M450 68 V100 H765 V136"/>
+            </g>
+            <rect x="50" y="232" width="380" height="56" rx="12" fill="#ccfbf1" stroke="#14b8a6"/><text x="240" y="266" text-anchor="middle" font-size="13" fill="#115e59">任意 2 份 → 正确重构 s</text>
+            <rect x="470" y="232" width="380" height="56" rx="12" fill="#fee2e2" stroke="#ef4444"/><text x="660" y="266" text-anchor="middle" font-size="13" fill="#b91c1c">仅 1 份 → 得不到任何信息</text>
+          </svg>
+          <figcaption><b>图 21.</b> 秘密共享（Shamir 2-of-3 示意）。把秘密拆成三份分别交由三方保管，任意两份可恢复秘密，单独一份则毫无帮助。它是安全多方计算与阈值签名的基础构件之一。</figcaption>
+        </figure>
 
         <p>假设有两个亿万富翁，Alice 和 Bob。他们想在不动用自己真实财富的前提下，比较一下谁更有钱。但问题来了——Alice 不想告诉 Bob 自己有多少亿，Bob 也不想告诉 Alice。他们能不能只交换一些信息，就确定到底谁的财富数字更大，同时不泄露任何一方的具体金额？这就是安全计算史上最著名的故事——<strong>姚氏百万富翁问题</strong>（Yao's Millionaires' Problem）。</p>
 

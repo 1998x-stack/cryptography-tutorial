@@ -51,7 +51,28 @@
     <main class="main-content">
         <h1>第20章 同态加密</h1>
 
-        <figure id="fig-20" class="paper-figure"></figure>
+        <figure id="fig-20" class="paper-figure">
+          <svg viewBox="0 0 900 260" role="img" aria-labelledby="fig-20-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-20-title">同态加密：对密文做运算等价于对明文做运算</title>
+            <defs><marker id="fig20-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="13">
+              <rect x="20" y="40" width="140" height="50" rx="10" fill="#f1f5f9" stroke="#64748b"/><text x="90" y="70" fill="#334155">明文 a</text>
+              <rect x="20" y="120" width="140" height="50" rx="10" fill="#f1f5f9" stroke="#64748b"/><text x="90" y="150" fill="#334155">明文 b</text>
+              <rect x="200" y="40" width="120" height="130" rx="12" fill="#f5f3ff" stroke="#7c3aed"/><text x="260" y="112" fill="#5b21b6">加密 E</text>
+              <rect x="360" y="40" width="150" height="50" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="435" y="70" fill="#075985">E(a)</text>
+              <rect x="360" y="120" width="150" height="50" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="435" y="150" fill="#075985">E(b)</text>
+              <rect x="550" y="40" width="150" height="130" rx="12" fill="#fef3c7" stroke="#f59e0b"/><text x="625" y="102" fill="#92400e">同态运算</text><text x="625" y="126" fill="#92400e">⊕ / ⊗</text>
+              <rect x="740" y="80" width="140" height="50" rx="10" fill="#ccfbf1" stroke="#14b8a6"/><text x="810" y="110" fill="#115e59">E(a⊕b)</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig20-arw)">
+              <path d="M160 65 H196"/><path d="M160 145 H196"/>
+              <path d="M320 92 L356 65"/><path d="M320 118 L356 145"/>
+              <path d="M510 65 L546 82"/><path d="M510 145 L546 128"/><path d="M700 105 H736"/>
+            </g>
+            <text x="450" y="222" text-anchor="middle" font-size="13" fill="#475569">对 E(a⊕b) 解密得到 a⊕b，与直接用明文运算的结果一致</text>
+          </svg>
+          <figcaption><b>图 20.</b> 同态加密。数据在加密状态下参与运算，服务端全程看不到明文；解密后结果与直接对明文运算相同。仅支持加法或乘法一种运算的称为<strong>部分同态</strong>，同时支持二者且可组合的称为全同态。</figcaption>
+        </figure>
 
         <p>想象这样一个场景：你把自己最重要的文件锁进了一个保险箱，然后把保险箱交给一家公司，让他们帮你"处理"这些文件——计算其中某些数据的平均值、搜索特定关键词、甚至生成一份完整的分析报告。关键问题是：这家公司全程无法打开保险箱，看不到文件内容，但却能完美地完成所有操作。这听起来像魔法吗？这就是同态加密要解决的问题——<strong>对加密数据进行计算，而无需解密</strong>。</p>
 

@@ -51,7 +51,23 @@
     <main class="main-content">
         <h1>第17章 密码学数论基础</h1>
 
-        <figure id="fig-17" class="paper-figure"></figure>
+        <figure id="fig-17" class="paper-figure">
+          <svg viewBox="0 0 900 300" role="img" aria-labelledby="fig-17-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+            <title id="fig-17-title">中国剩余定理：小模数下的同余条件唯一确定大模数下的解</title>
+            <defs><marker id="fig17-arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker></defs>
+            <g text-anchor="middle" font-size="14">
+              <rect x="40" y="50" width="300" height="72" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/><text x="190" y="93" fill="#075985">x ≡ a₁ (mod m₁)</text>
+              <rect x="40" y="178" width="300" height="72" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/><text x="190" y="221" fill="#075985">x ≡ a₂ (mod m₂)</text>
+              <rect x="560" y="90" width="300" height="120" rx="16" fill="#f5f3ff" stroke="#7c3aed"/><text x="710" y="142" font-weight="700" fill="#5b21b6">唯一解 x</text><text x="710" y="176" fill="#475569">模 m₁·m₂</text>
+            </g>
+            <g stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#fig17-arw)">
+              <path d="M340 86 H500 Q560 86 590 118"/>
+              <path d="M340 214 H500 Q560 214 590 182"/>
+            </g>
+            <text x="450" y="285" text-anchor="middle" font-size="13" fill="#475569">前提：m₁ 与 m₂ 互素（推广到两两互素的 mᵢ 同样成立）</text>
+          </svg>
+          <figcaption><b>图 17.</b> 中国剩余定理把一个大模数上的同余问题分解为若干小模数上的条件，并保证组合解唯一存在。它在 RSA 解密加速（CRT-RSA）与秘密共享中都有直接应用。</figcaption>
+        </figure>
 
         <p>坦白说，这一章可能是整个课程中最"数学"的一章。但我想先给你一个定心丸：<strong>你不需要成为数论专家才能理解公钥密码学</strong>。如果你能理解加减乘除、乘方和模运算——实际上你已经具备了90%的密码学数论基础。</p>
 
