@@ -271,18 +271,48 @@
     </style>
 </head>
 <body>
-<div class="container">
+<main class="container">
     <div class="header">
         <h1><span class="emoji"></span><span class="title-text"></span></h1>
         <div class="sub"></div>
     </div>
 
-    <div id="cardContainer" class="course-grid"></div>
+    <h2>课程目录</h2>
+
+    <nav id="cardContainer" class="course-grid" aria-label="章节目录"></nav>
+
+    <h2>学习路径</h2>
+
+    <figure class="paper-figure">
+      <svg viewBox="0 0 960 190" role="img" aria-labelledby="fig-path-title" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'PingFang SC',sans-serif">
+        <title id="fig-path-title">课程六级学习路径：从古典密码到量子安全</title>
+        <defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c4b5fd"/></marker></defs>
+        <g stroke="#c4b5fd" stroke-width="2" fill="none" marker-end="url(#arw)">
+          <path d="M148 95 H176"/><path d="M308 95 H336"/><path d="M468 95 H496"/>
+          <path d="M628 95 H656"/><path d="M788 95 H816"/>
+        </g>
+        <g font-size="13" text-anchor="middle">
+          <rect x="16" y="55" width="132" height="80" rx="14" fill="#f5f3ff" stroke="#7c3aed"/>
+          <text x="82" y="86" font-weight="700" fill="#5b21b6">基础篇</text><text x="82" y="110" fill="#475569">第 1–7 章</text>
+          <rect x="176" y="55" width="132" height="80" rx="14" fill="#e0f2fe" stroke="#0ea5e9"/>
+          <text x="242" y="86" font-weight="700" fill="#075985">核心机制</text><text x="242" y="110" fill="#475569">第 8–14 章</text>
+          <rect x="336" y="55" width="132" height="80" rx="14" fill="#ccfbf1" stroke="#14b8a6"/>
+          <text x="402" y="86" font-weight="700" fill="#115e59">安全工程</text><text x="402" y="110" fill="#475569">第 15–18 章</text>
+          <rect x="496" y="55" width="132" height="80" rx="14" fill="#fef3c7" stroke="#f59e0b"/>
+          <text x="562" y="86" font-weight="700" fill="#92400e">进阶主题</text><text x="562" y="110" fill="#475569">第 19–22 章</text>
+          <rect x="656" y="55" width="132" height="80" rx="14" fill="#fce7f3" stroke="#ec4899"/>
+          <text x="722" y="86" font-weight="700" fill="#9d174d">工具实践</text><text x="722" y="110" fill="#475569">第 23–25 章</text>
+          <rect x="816" y="55" width="132" height="80" rx="14" fill="#f1f5f9" stroke="#64748b"/>
+          <text x="882" y="86" font-weight="700" fill="#334155">未来展望</text><text x="882" y="110" fill="#475569">第 26–28 章</text>
+        </g>
+      </svg>
+      <figcaption><b>图 0.</b> 课程六级学习路径。先建立<strong>古典密码</strong>的直觉，再深入<strong>对称 / 公钥</strong>核心机制，随后覆盖安全工程与隐私计算等进阶主题，最后落到工具实践与<strong>抗量子迁移</strong>的开放问题。</figcaption>
+    </figure>
 
     <div style="text-align:center;">
         <div class="footer"></div>
     </div>
-</div>
+</main>
 
 <script>
     (function() {

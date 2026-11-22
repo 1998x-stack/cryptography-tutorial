@@ -149,6 +149,36 @@ th {
     background: #ede9fe; transform: translateY(-2px);
 }
 
+/* === Figures / SVG === */
+.paper-figure {
+    margin: 22px 0;
+    padding: 18px 18px 12px;
+    background: #fafafe;
+    border: 1px solid #ddd6fe;
+    border-radius: 18px;
+}
+
+.paper-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.paper-figure figcaption {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #475569;
+}
+
+.paper-figure figcaption b { color: #6d28d9; }
+
+:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+}
+
 /* === Responsive === */
 @media (max-width: 768px) {
     .container { grid-template-columns: 1fr; }
