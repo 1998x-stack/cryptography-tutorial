@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -137,7 +143,21 @@
 5. Bob收到 A 后，计算 s = A^b mod p = g^(a*b) mod p
 6. 现在 Alice 和 Bob 共享了同一个秘密 s！</code></pre>
 
-        <p>监听者Eve可以看到p、g、A和B，但她无法计算出s。为什么？因为她需要从A和B反推出a或b——这就是<strong>离散对数问题</strong>：给定g^x mod p，求x。对于足够大的素数p（比如2048位），这在计算上是不可行的。</p>
+        <div class="math-equation" role="group" aria-label="Diffie–Hellman 共享密钥">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Diffie–Hellman 共享密钥推导公式，可横向滚动">
+            <math display="block" aria-label="s 等于 B 的 a 次方 等于 A 的 b 次方 等于 g 的 a 乘 b 次方，模 p">
+              <mrow>
+                <mi>s</mi><mo>=</mo>
+                <msup><mi>B</mi><mi>a</mi></msup><mo>=</mo>
+                <msup><mi>A</mi><mi>b</mi></msup><mo>=</mo>
+                <msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup>
+                <mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>p</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>监听者Eve可以看到p、g、A和B，但她无法计算出s。为什么？因为她需要从A和B反推出a或b——这就是<strong>离散对数问题</strong>：给定 <math class="math-inline" aria-label="g 的 x 次方 模 p"><mrow><msup><mi>g</mi><mi>x</mi></msup><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>p</mi><mo>)</mo></mrow></math>，求 <math class="math-inline" aria-label="x"><mi>x</mi></math>。对于足够大的素数p（比如2048位），这在计算上是不可行的。</p>
 
         <div class="tip">
             <strong>💡 直观理解：</strong>离散对数就像调制一杯鸡尾酒。Alice加入自己的"秘密配方"a（比如几滴柠檬汁），得到A。Bob加入自己的"秘密配方"b（比如几滴糖浆），得到B。Eve可以看到A和B，但她不知道配方是什么。而最终共享的s相当于两种配方混合后的味道——Alice往B里加柠檬汁，Bob往A里加糖浆，得到的是同一种味道。但Eve没有配方，只能干瞪眼。
@@ -233,6 +253,10 @@
         </table>
 
         <p>理解了公钥密码的基本思想，下一章我们将深入第一个也是最经典的公钥加密方案——RSA算法。RSA的出现让公钥密码从理论变成了工程现实，它将展示如何利用大整数分解的困难性来构造一个完整的加密系统。更重要的是，RSA的故事充满了人性的光辉——三个MIT教授在一个"不可能"的问题上取得的突破，以及他们对学术公开的坚持。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>Diffie–Hellman 密钥交换与公钥密码思想见 W. Diffie, M. Hellman, <em>“New Directions in Cryptography,”</em> IEEE Transactions on Information Theory 22(6), 1976（<a href="https://doi.org/10.1109/TIT.1976.1055638">DOI 10.1109/TIT.1976.1055638</a>）；Merkle 的早期贡献见 R. Merkle, <em>“Secure Communications over Insecure Channels,”</em> Communications of the ACM 21(4), 1978。文中 GCHQ（Ellis 1969、Cocks 1973、Williamson 1974）的工作于 1997 年解密公开。RSA-2048 与 AES-128 的速度比属工程量级比较（教学示意），实际值随实现与硬件而变。
+        </div>
 
         <div class="footer-nav">
             <a href="07.html">← 上一章</a>
