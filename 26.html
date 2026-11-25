@@ -11,6 +11,11 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
     </style>
 </head>
 <body>
@@ -87,6 +92,22 @@
 
         <p><strong>Shor算法（1994年）</strong>是当前公钥密码的终结者。1994年，AT&T贝尔实验室的Peter Shor提出了这个震惊数学界的算法：在量子计算机上，大整数分解和离散对数问题可以在多项式时间内求解。这意味着RSA、DSA、ECC、Diffie-Hellman——整个公钥密码家族——在足够大的量子计算机面前都不再安全。Shor算法直接攻击了这些算法的安全根基：传统计算机上需要O(exp(n^(1/3)))时间分解的大整数，Shor算法只需要O(n^3)时间。</p>
 
+        <div class="math-equation" role="group" aria-label="Shor 与经典分解的时间复杂度">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="复杂度对比公式，可横向滚动">
+            <math display="block" aria-label="经典分解时间近似为 exp 括号 n 的三分之一次方 括号，Shor 算法为 大 O 括号 n 立方 括号">
+              <mrow>
+                <msub><mi>T</mi><mtext>经典</mtext></msub><mo>≈</mo>
+                <mo>exp</mo><mo>(</mo><msup><mi>n</mi><mfrac><mn>1</mn><mn>3</mn></mfrac></msup><mo>)</mo>
+                <mo>,</mo><mspace width="0.8em"/>
+                <msub><mi>T</mi><mtext>Shor</mtext></msub><mo>=</mo>
+                <mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>为便于比较，这里把经典分解的指数写成简化的 <math class="math-inline" aria-label="exp 括号 n 的三分之一次方 括号"><mrow><mo>exp</mo><mo>(</mo><msup><mi>n</mi><mfrac><mn>1</mn><mn>3</mn></mfrac></msup><mo>)</mo></mrow></math>（已作简化）；通用数域筛法的启发式复杂度常用 L 记号 <math class="math-inline" aria-label="L 下标 n 方括号 三分之一 逗号 c"><mrow><msub><mi>L</mi><mi>n</mi></msub><mo>[</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>,</mo><mi>c</mi><mo>]</mo></mrow></math> 表示（<math class="math-inline" aria-label="c"><mi>c</mi></math> 为与算法相关的常数）。Shor 的多项式时间与所需量子比特数仍取决于具体实现。</p>
+
         <p><strong>Grover算法（1996年）</strong>的影响相对温和。Grover搜索算法可以在无序数据库中实现平方根级的加速。对密码学而言，这意味着：一个提供128位安全性的对称密码（如AES-128），在Grover算法面前只剩下64位的安全性。应对策略很简单——把密钥长度翻倍。AES-256对Grover算法仍有128位的有效安全性。同理，SHA-256的碰撞搜索也可以从256位降到128位。所以对称密码和哈希函数的"量子修复"相对直接。</p>
 
         <table>
@@ -138,6 +159,24 @@
             <li><strong>LWE（Learning With Errors，带误差学习）</strong>——给定一个矩阵A和b = A·s + e（其中s是秘密，e是小误差），恢复s。这个问题的求解难度理论上不亚于某些格上的最坏情况困难问题。LWE是构造公钥加密、密钥交换和签名的基础。</li>
             <li><strong>SIS（Short Integer Solution，短整数解）</strong>——给定一个矩阵A，找到一个短向量x使得A·x = 0。SIS是构造哈希函数、数字签名和身份认证的基础。</li>
         </ul>
+
+        <div class="math-equation" role="group" aria-label="LWE 与 SIS 的关系式">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="LWE 与 SIS 定义式，可横向滚动">
+            <math display="block" aria-label="LWE：b 等于 A 乘 s 加 e，模 q；SIS：A 乘 x 等于 0，模 q，且 x 为短向量">
+              <mrow>
+                <mtext>LWE:</mtext><mspace width="0.4em"/>
+                <mi>b</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>s</mi><mo>+</mo><mi>e</mi>
+                <mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>q</mi><mo>)</mo>
+                <mspace width="1.2em"/>
+                <mtext>SIS:</mtext><mspace width="0.4em"/>
+                <mi>A</mi><mo>·</mo><mi>x</mi><mo>=</mo><mn>0</mn>
+                <mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>q</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="s"><mi>s</mi></math> 是秘密向量，<math class="math-inline" aria-label="e"><mi>e</mi></math> 是小误差向量，<math class="math-inline" aria-label="x"><mi>x</mi></math> 必须是短向量——正是“误差”和“短”这两个约束让问题变得困难。</p>
 
         <p>2022年，NIST选定的后量子密码标准中，绝大多数胜出方案都基于格密码：</p>
 
@@ -271,6 +310,10 @@ openssl list -groups | grep -i kyber</code></pre>
 
         <div class="highlight">
             <strong>📌 关键总结：</strong>后量子密码不是未来时，而是现在进行时。作为密码学工程师，你需要从现在开始关注PQC标准化进展，理解各方案的优缺点，并在可能的场景中尽早开始试验性部署。格密码（特别是Kyber/Dilithium）是目前最成熟的选择，Classic McEliece在极高安全场景中有不可替代的地位，而SPHINCS+则提供了最保守的安全假设。下一章，我们将转向另一条对抗量子威胁的路径——量子密钥分发，看看量子物理本身如何被用来保护通信安全。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>Shor 算法见 P. Shor, <em>“Algorithms for Quantum Computation: Discrete Logarithms and Factoring,”</em> FOCS 1994（<a href="https://doi.org/10.1109/SFCS.1994.365700">DOI 10.1109/SFCS.1994.365700</a>）；Grover 算法见 L. Grover, <em>“A Fast Quantum Mechanical Algorithm for Database Search,”</em> STOC 1996。LWE 问题见 O. Regev, <em>“On Lattices, Learning with Errors, Random Linear Codes, and Cryptography,”</em> STOC 2005；SIS 见 M. Ajtai, <em>“Generating Hard Instances of Lattice Problems,”</em> STOC 1996。标准化方案见 NIST FIPS 203（ML-KEM）、FIPS 204（ML-DSA）、FIPS 205（SLH-DSA）。表中公钥/签名/密文尺寸为对应标准中某组推荐参数的公开数值，不同安全等级会不同。
         </div>
 
         <div class="footer-nav">
