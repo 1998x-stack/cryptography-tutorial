@@ -109,7 +109,23 @@
 加密：c = m^e mod n   （将明文m加密为密文c）
 解密：m = c^d mod n   （将密文c解密为明文m）</code></pre>
 
-        <p>这个系统能工作的原因在于欧拉定理：对于任何与n互质的整数m，有m^φ(n) ≡ 1 (mod n)。由于e×d ≡ 1 (mod φ(n))，所以(m^e)^d ≡ m^(e×d) ≡ m^(k×φ(n)+1) ≡ m (mod n)。</p>
+        <p>这个系统能工作的原因在于欧拉定理：对于任何与 <math class="math-inline" aria-label="n"><mi>n</mi></math> 互质的整数 <math class="math-inline" aria-label="m"><mi>m</mi></math>，有 <math class="math-inline" aria-label="m 的 φ(n) 次方同余于 1，模 n"><mrow><msup><mi>m</mi><mrow><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow></msup><mo>≡</mo><mn>1</mn><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>n</mi><mo>)</mo></mrow></math>。由于 <math class="math-inline" aria-label="e 乘 d 同余于 1，模 φ(n)"><mrow><mi>e</mi><mo>·</mo><mi>d</mi><mo>≡</mo><mn>1</mn><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo><mo>)</mo></mrow></math>，于是两次模幂恰好互相抵消：</p>
+
+        <div class="math-equation" role="group" aria-label="RSA 解密抵消加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="公式：解密为何能还原明文，可横向滚动">
+            <math display="block" aria-label="m 的 e 乘 d 次方 同余于 m 的 k 乘 φ(n) 加 1 次方 同余于 m，模 n">
+              <mrow>
+                <msup><mi>m</mi><mrow><mi>e</mi><mo>·</mo><mi>d</mi></mrow></msup>
+                <mo>≡</mo>
+                <msup><mi>m</mi><mrow><mi>k</mi><mo>·</mo><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo><mo>+</mo><mn>1</mn></mrow></msup>
+                <mo>≡</mo>
+                <mi>m</mi>
+                <mspace width="0.4em"/>
+                <mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>n</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>换句话说，解密操作恰好抵消了加密操作。这就像一个数学奇迹：你锁上箱子（加密），递给别人，别人用另一把钥匙打开（解密）。整个过程不需要事先见面交换钥匙。</p>
 
@@ -243,6 +259,16 @@ q = 32769132993266709549961988190834461413177642967992942539798288533</code></pr
         </div>
 
         <p>RSA为公钥密码学奠定了基础，但随着密钥长度的不断增长，它的性能瓶颈越来越明显。这就引出了下一章的主题：椭圆曲线密码学（ECC）。ECC能用更短的密钥（256位ECC ≈ 3072位RSA）提供相同的安全强度，同时计算速度更快。让我们一起看看，椭圆曲线这根"数学魔法棒"是如何改变密码学的游戏规则的。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>RSA 原始方案见 R. Rivest, A. Shamir, L. Adleman,
+            <em>“A Method for Obtaining Digital Signatures and Public-Key Cryptosystems,”</em>
+            Communications of the ACM 21(2), 1978（<a href="https://doi.org/10.1145/359340.359342">DOI 10.1145/359340.359342</a>）；OAEP 填充见 M. Bellare, P. Rogaway,
+            <em>“Optimal Asymmetric Encryption,”</em> EUROCRYPT 1994；PKCS#1 v1.5 填充攻击见
+            D. Bleichenbacher, <em>“Chosen Ciphertext Attacks Against Protocols Based on the RSA
+            Encryption Standard PKCS #1,”</em> CRYPTO 1998。NIST 对密钥长度的等效强度建议见
+            SP 800-57 Part 1。文中 512 位破解与 RSA-129 分解为公开展示的历史事件，具体耗时见对应记录。
+        </div>
 
         <div class="footer-nav">
             <a href="08.html">← 上一章</a>
