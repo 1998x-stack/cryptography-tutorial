@@ -100,13 +100,29 @@
 
         <p>这两个定理是公钥密码学的擎天柱。先看费马小定理：</p>
 
-        <p><strong>费马小定理：</strong>如果 p 是质数，且 gcd(a, p) = 1，则 a^(p-1) ≡ 1 (mod p)。</p>
+        <p><strong>费马小定理：</strong>如果 <math class="math-inline" aria-label="p"><mi>p</mi></math> 是质数，且 <math class="math-inline" aria-label="gcd(a,p) 等于 1"><mrow><mo>gcd</mo><mo>(</mo><mi>a</mi><mo>,</mo><mi>p</mi><mo>)</mo><mo>=</mo><mn>1</mn></mrow></math>，则</p>
+
+        <div class="math-equation" role="group" aria-label="费马小定理">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="费马小定理公式，可横向滚动">
+            <math display="block" aria-label="a 的 p 减 1 次方 同余于 1，模 p">
+              <mrow><msup><mi>a</mi><mrow><mi>p</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>≡</mo><mn>1</mn><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>p</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
 
         <p>这个定理看似简单，但它是RSA正确性证明的基石。更一般的形式是<strong>欧拉定理</strong>：</p>
 
-        <p><strong>欧拉定理：</strong>如果 gcd(a, n) = 1，则 a^&phi;(n) ≡ 1 (mod n)，其中 &phi;(n) 是<strong>欧拉函数</strong>，表示小于n且与n互质的正整数的个数。</p>
+        <p><strong>欧拉定理：</strong>如果 <math class="math-inline" aria-label="gcd(a,n) 等于 1"><mrow><mo>gcd</mo><mo>(</mo><mi>a</mi><mo>,</mo><mi>n</mi><mo>)</mo><mo>=</mo><mn>1</mn></mrow></math>，则</p>
 
-        <p>对于质数 p，&phi;(p) = p - 1。对于两个不同质数的乘积 n = p &times; q，&phi;(n) = (p-1)(q-1)。这个性质就是RSA的核心：</p>
+        <div class="math-equation" role="group" aria-label="欧拉定理">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="欧拉定理公式，可横向滚动">
+            <math display="block" aria-label="a 的 φ(n) 次方 同余于 1，模 n">
+              <mrow><msup><mi>a</mi><mrow><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow></msup><mo>≡</mo><mn>1</mn><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>n</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="φ(n) 是欧拉函数"><mrow><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow></math> 是<strong>欧拉函数</strong>，表示小于 n 且与 n 互质的正整数的个数。对于质数 p，<math class="math-inline" aria-label="φ(p) 等于 p 减 1"><mrow><mi>φ</mi><mo>(</mo><mi>p</mi><mo>)</mo><mo>=</mo><mi>p</mi><mo>−</mo><mn>1</mn></mrow></math>。对于两个不同质数的乘积 <math class="math-inline" aria-label="n 等于 p 乘 q"><mrow><mi>n</mi><mo>=</mo><mi>p</mi><mo>·</mo><mi>q</mi></mrow></math>，<math class="math-inline" aria-label="φ(n) 等于 (p-1)(q-1)"><mrow><mi>φ</mi><mo>(</mo><mi>n</mi><mo>)</mo><mo>=</mo><mo>(</mo><mi>p</mi><mo>−</mo><mn>1</mn><mo>)</mo><mo>(</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow></math>，这正好对应欧拉函数的乘法性。这个性质就是RSA的核心：</p>
 
         <pre><code>RSA 密钥生成:
 1. 选择两个大质数 p 和 q
@@ -239,6 +255,10 @@
         </div>
 
         <p>这一章我们打下了公钥密码学的数论地基。下一章，我们将从这个地基上建造工程的大厦——讨论如何安全地实现密码系统。你会发现，数学上的安全性只是第一步，在真实世界中还有无数工程陷阱等着你。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>本章定理的标准陈述与证明见数论教材，如 K. Rosen, <em>Elementary Number Theory and Its Applications</em>；Miller-Rabin 测试见 M. Rabin, <em>“Probabilistic Algorithm for Testing Primality,”</em> Journal of Number Theory 12(1), 1980（<a href="https://doi.org/10.1016/0022-314X(80)90084-0">DOI 10.1016/0022-314X(80)90084-0</a>）。CRT 故障攻击（正文中的 Bellcore 攻击）见 D. Boneh, R. DeMillo, R. Lipton, <em>“On the Importance of Checking Cryptographic Protocols for Faults,”</em> EUROCRYPT 1997。文中的“约 4 倍”CRT 解密加速为工程经验值（教学示意），实际倍数随实现与模长而变。
+        </div>
 
         <div class="footer-nav">
             <a href="16.html">← 上一章</a>
