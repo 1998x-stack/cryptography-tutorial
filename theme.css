@@ -178,6 +178,33 @@ th {
 
 .paper-figure figcaption b { color: #6d28d9; }
 
+/* === MathML === */
+.math-inline {
+    font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", serif;
+    font-size: 1.05em;
+}
+.math-equation { max-width: 100%; min-width: 0; margin: 16px 0; }
+.math-scroll {
+    max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden;
+    padding: 6px 2px;
+}
+.math-scroll:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+.math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+.eq-ref { color: #6d28d9; font-weight: 600; margin-right: 8px; }
+
+/* === Source / evidence note === */
+.source-note {
+    margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8;
+    background: #f8fafc; border-radius: 12px; font-size: 0.9rem;
+    line-height: 1.7; color: #475569;
+}
+.source-note a { color: #5b21b6; }
+
+@media print {
+    .math-scroll { overflow: visible; }
+    .math-scroll math[display="block"] { font-size: 1rem; }
+}
+
 :focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; border-radius: 4px; }
 
 @media (prefers-reduced-motion: reduce) {
