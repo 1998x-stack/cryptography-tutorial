@@ -90,6 +90,20 @@
 曲线上的点 (x, y) 加上一个特殊的"无穷远点"构成一个群。
 在这个群上，我们可以定义"点加法"运算。</code></pre>
 
+        <div class="math-equation" role="group" aria-label="有限域上的椭圆曲线方程">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="椭圆曲线方程，可横向滚动">
+            <math display="block" aria-label="y 平方 等于 x 立方 加 a 乘 x 加 b，模 p">
+              <mrow>
+                <msup><mi>y</mi><mn>2</mn></msup><mo>=</mo>
+                <msup><mi>x</mi><mn>3</mn></msup><mo>+</mo><mi>a</mi><mi>x</mi><mo>+</mo><mi>b</mi>
+                <mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>p</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="p"><mi>p</mi></math> 是一个大素数，<math class="math-inline" aria-label="a"><mi>a</mi></math>、<math class="math-inline" aria-label="b"><mi>b</mi></math> 是系数，满足 <math class="math-inline" aria-label="4a 立方 加 27b 平方 不等于 0"><mrow><mn>4</mn><msup><mi>a</mi><mn>3</mn></msup><mo>+</mo><mn>27</mn><msup><mi>b</mi><mn>2</mn></msup><mo>≠</mo><mn>0</mn></mrow></math>（保证曲线非奇异）。</p>
+
         <p>点加法的几何意义非常直观：在曲线上取两个不同的点P和Q，画一条直线穿过它们，直线与曲线交于第三个点R'，然后取R'关于x轴的对称点R，这就是P+Q的结果。如果P和Q是同一个点，那就画切线——这叫"点加倍"。</p>
 
         <p>椭圆曲线密码学的安全性依赖于<strong>椭圆曲线离散对数问题（ECDLP）</strong>：给定曲线上两个点G和Q = k×G（即G自加k次），求k。对于精心选择的曲线参数，这个问题没有比完全穷举更有效的解法。</p>
@@ -149,6 +163,19 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
 2. 计算 u2 = r × s⁻¹ mod n
 3. 计算点 P = u1 × G + u2 × Q
 4. 如果 P 的x坐标等于 r，接受签名</code></pre>
+
+        <div class="math-equation" role="group" aria-label="ECDSA 签名方程">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="ECDSA 签名公式，可横向滚动">
+            <math display="block" aria-label="s 等于 k 的负一次方 乘 括号 H(m) 加 d 乘 r 括号，模 n">
+              <mrow>
+                <mi>s</mi><mo>=</mo>
+                <msup><mi>k</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup>
+                <mo>(</mo><mi>H</mi><mo>(</mo><mi>m</mi><mo>)</mo><mo>+</mo><mi>d</mi><mo>·</mo><mi>r</mi><mo>)</mo>
+                <mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.3em"/><mi>n</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>看到那个"随机选择k"了吗？这是ECDSA安全中最致命的一环——如果k值重复或可预测，私钥将直接暴露。</p>
 
@@ -214,6 +241,10 @@ Bob计算共享密钥：S = dB × QA = dB × (dA × G)
         <p>2013年斯诺登曝光的文档显示，NSA确实在推动使用含有潜在后门的密码标准（如Dual_EC_DRBG随机数生成器事件）。虽然这与NIST曲线没有直接关系，但给NIST曲线的信任度带来了进一步的负面影响。如今，Curve25519/Ed25519已经成为许多现代系统（包括SSH、TLS 1.3、Signal、WhatsApp）的首选曲线。</p>
 
         <p>理解完ECC的核心原理，下一章我们将进入数字签名的世界。签名是公钥密码学中与加密同等重要的应用——它解决了"谁发的消息"和"消息被改了吗"这两个根本问题。更重要的是，ECDSA的故事（尤其是索尼的悲剧）告诉我们：签名算法的实现细节比算法本身更容易出问题。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>椭圆曲线密码学的开创性工作见 V. Miller, <em>“Use of Elliptic Curves in Cryptography,”</em> CRYPTO 1985（<a href="https://doi.org/10.1007/3-540-39799-X_31">DOI 10.1007/3-540-39799-X_31</a>）与 N. Koblitz, <em>“Elliptic Curve Cryptosystems,”</em> Mathematics of Computation 48(177), 1987。ECDSA 见 NIST FIPS 186-4；Curve25519 见 D. J. Bernstein, <em>“Curve25519: New Diffie-Hellman Speed Records,”</em> PKC 2006；对 NIST 曲线参数的可验证性讨论见 D. Bernstein, T. Lange 等人工作；Dual_EC_DRBG 事件对应 NIST SP 800-90A 中的随机数生成器标准。
+        </div>
 
         <div class="footer-nav">
             <a href="09.html">← 上一章</a>
