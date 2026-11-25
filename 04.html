@@ -98,9 +98,21 @@
 
         <p>香农用熵来量化这种"不确定性"。对于一个随机变量 X 有 n 种可能的取值，每个取值的概率为 pᵢ，熵的定义是：</p>
 
-        <pre><code>H(X) = - Σ pᵢ · log₂(pᵢ)     (单位：比特)
+        <div class="math-equation" role="group" aria-label="香农熵的定义">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="熵的定义公式，可横向滚动">
+            <math display="block" aria-label="H(X) 等于 负的 对 i 求和 p_i 乘 以 2 为底的 p_i 的对数">
+              <mrow>
+                <mi>H</mi><mo>(</mo><mi>X</mi><mo>)</mo><mo>=</mo><mo>−</mo>
+                <munder><mo>Σ</mo><mi>i</mi></munder>
+                <msub><mi>p</mi><mi>i</mi></msub>
+                <msub><mo>log</mo><mn>2</mn></msub>
+                <mo>(</mo><msub><mi>p</mi><mi>i</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
-例子：一个公平的硬币
+        <pre><code>例子：一个公平的硬币
 H(硬币) = -(0.5 × log₂(0.5) + 0.5 × log₂(0.5))
         = -(0.5 × (-1) + 0.5 × (-1))
         = 1 比特
@@ -176,7 +188,19 @@ H(硬币) = -(1 × log₂(1) + 0 × log₂(0))
 
         <p>所谓完美保密，是指密文与明文之间在统计上完全独立——也就是说，攻击者截获了密文之后，他对明文的猜测不比对密文前多任何信息。用数学语言表达：</p>
 
-        <pre><code>P(明文 = m | 密文 = c) = P(明文 = m)  对所有 m, c 都成立</code></pre>
+        <div class="math-equation" role="group" aria-label="完美保密的定义">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="完美保密条件公式，可横向滚动">
+            <math display="block" aria-label="对任意明文 m 与密文 c，明文等于 m 的条件概率 等于 明文的先验概率">
+              <mrow>
+                <mi>P</mi><mo>(</mo><mtext>明文</mtext><mo>=</mo><mi>m</mi><mo>∣</mo><mtext>密文</mtext><mo>=</mo><mi>c</mi><mo>)</mo>
+                <mo>=</mo>
+                <mi>P</mi><mo>(</mo><mtext>明文</mtext><mo>=</mo><mi>m</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>对所有可能的明文 <math class="math-inline" aria-label="m"><mi>m</mi></math> 与密文 <math class="math-inline" aria-label="c"><mi>c</mi></math> 都成立。也就是说，看到密文并不会改变攻击者对明文的任何信念。</p>
 
         <p>换句话说，拿到密文不会给攻击者带来任何额外的信息。</p>
 
@@ -257,6 +281,10 @@ H(硬币) = -(1 × log₂(1) + 0 × log₂(0))
 
         <div class="highlight">
             <strong>🔗 过渡：</strong>理解了信息论的框架后，我们就可以用科学的眼光来审视现代密码学中的第一个实用支柱——对称密码。下一章，我们将进入对称密码的世界，学习分组密码、流密码的基本结构，以及为什么 ECB 模式如此危险。我们会看到香农的混淆和扩散思想是如何在具体算法设计中得到体现的。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>熵与信息论见 C. E. Shannon, <em>“A Mathematical Theory of Communication,”</em> Bell System Technical Journal 27, 1948（<a href="https://doi.org/10.1002/j.1538-7305.1948.tb01338.x">DOI 10.1002/j.1538-7305.1948.tb01338.x</a>）；完美保密、冗余度与混淆/扩散见 C. E. Shannon, <em>“Communication Theory of Secrecy Systems,”</em> Bell System Technical Journal 28, 1949（<a href="https://doi.org/10.1002/j.1538-7305.1949.tb00928.x">DOI 10.1002/j.1538-7305.1949.tb00928.x</a>）。表中英语/中文的“实际熵”是文献中的估计范围，不同统计模型会给出不同数值，属教学示意。
         </div>
 
         <div class="footer-nav">
