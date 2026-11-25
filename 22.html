@@ -77,15 +77,22 @@
 
         <p>用数学语言表达：</p>
 
-        <pre><code>// ε-差分隐私的形式化定义
-//
-// 一个随机化算法 M 是 ε-差分隐私的，当且仅当：
-// 对于任意两个相邻数据集 D 和 D'（仅相差一条记录），
-// 以及任意可能的输出集合 S ⊆ Range(M)：
-//
-// Pr[M(D) ∈ S] ≤ eᵋ · Pr[M(D') ∈ S]
-//
-// 参数 ε 称为"隐私预算"（Privacy Budget）：
+        <p>一个随机化算法 <math class="math-inline" aria-label="M"><mi>M</mi></math> 是 ε-差分隐私的，当且仅当：对于任意两个相邻数据集 <math class="math-inline" aria-label="D"><mi>D</mi></math>、<math class="math-inline" aria-label="D 撇"><msup><mi>D</mi><mo>′</mo></msup></math>（仅相差一条记录），以及任意可能的输出集合 <math class="math-inline" aria-label="S"><mi>S</mi></math>，有</p>
+
+        <div class="math-equation" role="group" aria-label="ε-差分隐私的形式化定义">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="差分隐私定义公式，可横向滚动">
+            <math display="block" aria-label="M(D) 落在 S 中的概率 不超过 e 的 ε 次方 乘 M(D 撇) 落在 S 中的概率">
+              <mrow>
+                <mo>Pr</mo><mo>[</mo><mi>M</mi><mo>(</mo><mi>D</mi><mo>)</mo><mo>∈</mo><mi>S</mi><mo>]</mo>
+                <mo>≤</mo>
+                <msup><mi>e</mi><mi>ε</mi></msup><mo>·</mo>
+                <mo>Pr</mo><mo>[</mo><mi>M</mi><mo>(</mo><msup><mi>D</mi><mo>′</mo></msup><mo>)</mo><mo>∈</mo><mi>S</mi><mo>]</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <pre><code>// 参数 ε 称为"隐私预算"（Privacy Budget）：
 // - ε = 0: 完美隐私（输出完全不依赖任何个体数据）
 // - ε 较小（如 0.1 或 1.0）: 强隐私保证
 // - ε 较大（如 10 或更大）: 弱隐私保证
@@ -103,17 +110,38 @@
 
         <p><strong>Laplace 机制（适用于数值型输出）</strong>：向真实计算结果中添加服从 Laplace 分布的随机噪声。噪声的尺度（scale）由 <strong>敏感度 Δf</strong> 和隐私预算 ε 共同决定。</p>
 
-        <pre><code>// Laplace 机制
-//
-// 敏感度 Δf: 单条记录的变化对函数输出结果的最大影响
-// 例如，计数查询 Δf = 1（增加/减少一条记录最多改变计数 1）
-//     求和查询 Δf = max|value|（取决于单条记录的最大可能值）
-//
-// Laplace 分布的 PDF: p(x) = (ε/2Δf) · exp(-|x| · ε/Δf)
-//
-// 算法 M(D) = f(D) + Lap(Δf/ε)
-//
-// 在 Python 风格中:
+        <p>其中敏感度 <math class="math-inline" aria-label="Δf"><mrow><mi>Δ</mi><mi>f</mi></mrow></math> 衡量单条记录变化对函数输出的最大影响：计数查询为 <math class="math-inline" aria-label="Δf 等于 1"><mrow><mi>Δ</mi><mi>f</mi><mo>=</mo><mn>1</mn></mrow></math>，求和查询为 <math class="math-inline" aria-label="Δf 等于 value 绝对值的最大值"><mrow><mi>Δ</mi><mi>f</mi><mo>=</mo><mo>max</mo><mo>|</mo><mtext>value</mtext><mo>|</mo></mrow></math>。Laplace 噪声的尺度为 <math class="math-inline" aria-label="Δf 除以 ε"><mfrac><mrow><mi>Δ</mi><mi>f</mi></mrow><mi>ε</mi></mfrac></math>：</p>
+
+        <div class="math-equation" role="group" aria-label="Laplace 分布的概率密度">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Laplace 分布概率密度公式，可横向滚动">
+            <math display="block" aria-label="p(x) 等于 ε 除以 2Δf 再乘 exp 括号 负 x 的绝对值 乘 ε 除以 Δf 括号">
+              <mrow>
+                <mi>p</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo>
+                <mfrac><mi>ε</mi><mrow><mn>2</mn><mi>Δ</mi><mi>f</mi></mrow></mfrac>
+                <mo>·</mo><mo>exp</mo>
+                <mo>(</mo><mo>−</mo><mo>|</mo><mi>x</mi><mo>|</mo><mo>·</mo>
+                <mfrac><mi>ε</mi><mrow><mi>Δ</mi><mi>f</mi></mrow></mfrac>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <div class="math-equation" role="group" aria-label="Laplace 机制算法">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Laplace 机制公式，可横向滚动">
+            <math display="block" aria-label="M(D) 等于 f(D) 加上 尺度为 Δf 除以 ε 的 Laplace 噪声">
+              <mrow>
+                <mi>M</mi><mo>(</mo><mi>D</mi><mo>)</mo><mo>=</mo>
+                <mi>f</mi><mo>(</mo><mi>D</mi><mo>)</mo><mo>+</mo>
+                <mi>Lap</mi><mo>(</mo>
+                <mfrac><mrow><mi>Δ</mi><mi>f</mi></mrow><mi>ε</mi></mfrac>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <pre><code>// 在 Python 风格中:
 //    noise = numpy.random.laplace(0, sensitivity/epsilon)
 //    noisy_result = true_result + noise</code></pre>
 
@@ -267,6 +295,10 @@
         </div>
 
         <p>差分隐私与前面三章讲的零知识证明、同态加密、安全多方计算一起，构成了密码学前沿隐私保护的四大技术支柱。虽然它们的出发点和适用场景各不相同，但最终目标是一致的：让数据发挥价值的同时保护隐私。从下一章开始，我们将从理论转向实践——学习如何用 OpenSSL 命令行工具实际执行各种密码学操作，把前 22 章的理论知识转化为可以动手使用的技能。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>差分隐私的定义与组合性见 C. Dwork, <em>“Differential Privacy,”</em> ICALP 2006（<a href="https://doi.org/10.1007/11787006_1">DOI 10.1007/11787006_1</a>），以及 C. Dwork, A. Roth, <em>“The Algorithmic Foundations of Differential Privacy,”</em> 2014；Laplace / 指数机制与敏感度见该专著。Netflix Prize 数据集的去匿名化见 A. Narayanan, V. Shmatikov, <em>“Robust De-anonymization of Large Sparse Datasets,”</em> IEEE S&amp;P 2008。文中 Apple、美国普查局等机构的 ε 取值属公开报道的概述，具体以各机构发布为准。
+        </div>
 
         <div class="footer-nav">
             <a href="21.html">← 上一章</a>
