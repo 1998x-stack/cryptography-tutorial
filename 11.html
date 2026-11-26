@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -193,13 +199,20 @@
 
         <p>最常见的MAC构造是<strong>HMAC</strong>（Hash-based MAC）：</p>
 
-        <pre><code>HMAC(K, m) = H( (K' ⊕ opad) || H( (K' ⊕ ipad) || m ) )
+        <div class="math-equation" role="group" aria-label="HMAC 定义">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="HMAC 定义公式，可横向滚动">
+            <math display="block" aria-label="HMAC(K, m) 等于 H 作用于 括号 K 撇 异或 opad 括号 拼接 H 作用于 括号 K 撇 异或 ipad 括号 拼接 m">
+              <mrow>
+                <mo>HMAC</mo><mo>(</mo><mi>K</mi><mo>,</mo><mi>m</mi><mo>)</mo><mo>=</mo>
+                <mi>H</mi><mo>(</mo><mo>(</mo><msup><mi>K</mi><mo>&#x2032;</mo></msup><mo>&#x2295;</mo><mtext>opad</mtext><mo>)</mo>
+                <mo>&#x2016;</mo>
+                <mi>H</mi><mo>(</mo><mo>(</mo><msup><mi>K</mi><mo>&#x2032;</mo></msup><mo>&#x2295;</mo><mtext>ipad</mtext><mo>)</mo><mo>&#x2016;</mo><mi>m</mi><mo>)</mo><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
-其中：
-K' 是经过长度调整的密钥
-opad 是外部填充码（0x5c重复）
-ipad 是内部填充码（0x36重复）
-|| 表示拼接</code></pre>
+        <p>其中：<math class="math-inline" aria-label="K 撇"><msup><mi>K</mi><mo>&#x2032;</mo></msup></math> 是经过长度调整的密钥；<code>opad</code> 是外部填充码（<code>0x5c</code> 重复）；<code>ipad</code> 是内部填充码（<code>0x36</code> 重复）；<math class="math-inline" aria-label="双竖线"><mo>&#x2016;</mo></math> 表示拼接。</p>
 
         <p>HMAC的设计很巧妙：即使底层的哈希函数（如MD5）被发现有碰撞攻击，HMAC的安全性仍然保持，因为密钥使得攻击者无法预计算碰撞对。当然，实际应用中还是推荐使用SHA-256等强哈希函数来构建HMAC。</p>
 
@@ -217,19 +230,43 @@ ipad 是内部填充码（0x36重复）
 
         <p>2010年12月29日，黑客团队fail0verflow在混沌通信大会上宣布他们获得了索尼的ECDSA私钥。他们的发现过程是这样的：</p>
 
-        <pre><code>在ECDSA中，签名 (r, s) 的计算方式为：
-s = k⁻¹ × (H(m) + d × r) mod n
+        <p>在 ECDSA 中，签名 <math class="math-inline" aria-label="(r, s)"><mrow><mo>(</mo><mi>r</mi><mo>,</mo><mi>s</mi><mo>)</mo></mrow></math> 的计算方式为（<math class="math-inline" aria-label="k"><mi>k</mi></math> 为一次性随机数，<math class="math-inline" aria-label="n"><mi>n</mi></math> 为曲线阶，<math class="math-inline" aria-label="d"><mi>d</mi></math> 为私钥）：</p>
 
-如果同一个 k 被用来签署两个不同的消息 m₁ 和 m₂：
-s₁ = k⁻¹ × (H(m₁) + d × r) mod n
-s₂ = k⁻¹ × (H(m₂) + d × r) mod n
+        <div class="math-equation" role="group" aria-label="ECDSA 签名计算">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="ECDSA 签名计算公式，可横向滚动">
+            <math display="block" aria-label="s 等于 k 的负一次方 乘以 括号 H(m) 加 d 乘 r 括号，再模 n">
+              <mrow><mi>s</mi><mo>=</mo><msup><mi>k</mi><mrow><mo>&#x2212;</mo><mn>1</mn></mrow></msup><mo>(</mo><mi>H</mi><mo>(</mo><mi>m</mi><mo>)</mo><mo>+</mo><mi>d</mi><mi>r</mi><mo>)</mo><mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>n</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
 
-两式相减：
-s₁ - s₂ = k⁻¹ × (H(m₁) - H(m₂)) mod n
-k = (H(m₁) - H(m₂)) / (s₁ - s₂) mod n
+        <p>如果同一个 <math class="math-inline" aria-label="k"><mi>k</mi></math> 被用来签署两个不同的消息 <math class="math-inline" aria-label="m 下标 1"><msub><mi>m</mi><mn>1</mn></msub></math> 和 <math class="math-inline" aria-label="m 下标 2"><msub><mi>m</mi><mn>2</mn></msub></math>，两式相减即可消去私钥：</p>
 
-一旦 k 被恢复，私钥 d 就能从任一签名中计算：
-d = (s × k - H(m)) / r mod n</code></pre>
+        <div class="math-equation" role="group" aria-label="同随机数复用时的两式相减">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="两式相减公式，可横向滚动">
+            <math display="block" aria-label="s1 减 s2 等于 k 的负一次方 乘 括号 H(m1) 减 H(m2) 括号 模 n">
+              <mrow><msub><mi>s</mi><mn>1</mn></msub><mo>&#x2212;</mo><msub><mi>s</mi><mn>2</mn></msub><mo>=</mo><msup><mi>k</mi><mrow><mo>&#x2212;</mo><mn>1</mn></mrow></msup><mo>(</mo><mi>H</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>)</mo><mo>&#x2212;</mo><mi>H</mi><mo>(</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo><mo>)</mo><mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>n</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <div class="math-equation" role="group" aria-label="恢复随机数 k">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="恢复随机数 k 的公式，可横向滚动">
+            <math display="block" aria-label="k 等于 括号 H(m1) 减 H(m2) 括号 除以 括号 s1 减 s2 括号，再模 n">
+              <mrow><mi>k</mi><mo>=</mo><mfrac><mrow><mi>H</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>)</mo><mo>&#x2212;</mo><mi>H</mi><mo>(</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo></mrow><mrow><msub><mi>s</mi><mn>1</mn></msub><mo>&#x2212;</mo><msub><mi>s</mi><mn>2</mn></msub></mrow></mfrac><mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>n</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>一旦 <math class="math-inline" aria-label="k"><mi>k</mi></math> 被恢复，私钥 <math class="math-inline" aria-label="d"><mi>d</mi></math> 就能从任一签名中计算出来：</p>
+
+        <div class="math-equation" role="group" aria-label="恢复私钥 d">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="恢复私钥 d 的公式，可横向滚动">
+            <math display="block" aria-label="d 等于 括号 s 乘 k 减 H(m) 括号 除以 r，再模 n">
+              <mrow><mi>d</mi><mo>=</mo><mfrac><mrow><mi>s</mi><mi>k</mi><mo>&#x2212;</mo><mi>H</mi><mo>(</mo><mi>m</mi><mo>)</mo></mrow><mi>r</mi></mfrac><mspace width="0.4em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>n</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
 
         <p>索尼的ECDSA实现中，k被硬编码为固定值4。这意味着每个PS3游戏的签名都使用了相同的k值。黑客只需要两个不同的游戏（或两个不同的签名），用上面的公式就能轻松恢复出索尼的私钥。</p>
 
@@ -240,6 +277,10 @@ d = (s × k - H(m)) / r mod n</code></pre>
         <p>这次事件给整个行业的启示是深远的。如今，许多系统已经转向EdDSA，它通过确定性方式消除k值随机性问题。同时，形式化验证工具（如ProVerif、Tamarin）开始被用来<strong>形式化验证</strong>密码协议实现的正确性——从数学上保证实现没有漏洞。</p>
 
         <p>掌握了数字签名的原理，下一章我们将进入一个更宏观的视角：PKI（公钥基础设施）与证书体系。数字签名解决了"这个签名是否有效"的问题，但PKI解决了更根本的问题——"这个公钥到底属于谁？"如果没有PKI，你手里的公钥可能是钓鱼网站发来的。让我们一起看看，全球信任网络是如何通过CA证书链建立起来的。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>公钥签名概念见 W. Diffie, M. Hellman, <em>“New Directions in Cryptography,”</em> IEEE Trans. IT, 1976；RSA 签名为 R. Rivest, A. Shamir, L. Adleman, 1978。DSA/ECDSA 规范见 NIST FIPS 186-5（<a href="https://doi.org/10.6028/NIST.FIPS.186-5">DOI 10.6028/NIST.FIPS.186-5</a>）；RSA-PSS 见 M. Bellare, P. Rogaway, <em>“The Exact Security of Digital Signatures,”</em> EUROCRYPT 1996 与 RFC 8017。Ed25519/EdDSA 见 D. Bernstein, N. Duif, T. Lange, P. Schwabe, B.-Y. Yang, <em>“High-Speed High-Security Signatures,”</em> CHES 2011（<a href="https://doi.org/10.1007/978-3-642-23951-9_9">DOI 10.1007/978-3-642-23951-9_9</a>）与 RFC 8032。HMAC 见 RFC 2104 与 M. Bellare, R. Canetti, H. Krawczyk, CRYPTO 1996。PS3 的 ECDSA 随机数复用事件见 fail0verflow 在 27C3（2010 年 12 月）的公开报告。
+        </div>
 
         <div class="footer-nav">
             <a href="10.html">← 上一章</a>
