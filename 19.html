@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -94,7 +100,7 @@
             <li>如果 Peggy 不知道咒语，她只能从她最初进去的那条路出来。那么 Victor 碰巧选对她路径的概率只有 50%。</li>
         </ol>
 
-        <p>重复这个流程 <strong>n</strong> 次后，如果 Peggy 每次都成功从指定路径出来，Victor 可以确信她以 <strong>1 - (1/2)ⁿ</strong> 的概率知道咒语。经过 20 轮，欺骗成功的概率低于百万分之一。这就是交互式零知识证明的核心模式——通过多次挑战-响应来积累信任。</p>
+        <p>重复这个流程 <math class="math-inline" aria-label="n"><mi>n</mi></math> 次后，如果 Peggy 每次都成功从指定路径出来，Victor 可以确信她以 <math class="math-inline" aria-label="1 减 二分之一的 n 次方"><mrow><mn>1</mn><mo>&#x2212;</mo><msup><mrow><mo>(</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>)</mo></mrow><mi>n</mi></msup></mrow></math> 的概率知道咒语。经过 20 轮，欺骗成功的概率低于百万分之一。这就是交互式零知识证明的核心模式——通过多次挑战-响应来积累信任。</p>
 
         <table>
             <tr>
@@ -135,15 +141,33 @@
 
         <p>Schnorr 协议基于离散对数问题。假设 Peggy 有一个私钥 <var>x</var>，对应的公钥是 <var>gˣ</var>（模大素数 p）。Peggy 想向 Victor 证明她知道 <var>x</var>，但不泄露 <var>x</var> 的值。协议分三步：</p>
 
-        <pre><code>// Schnorr 身份识别协议
+        <p>协议使用公共参数：大素数 <math class="math-inline" aria-label="p"><mi>p</mi></math>（及其阶为 <math class="math-inline" aria-label="p 减 1"><mrow><mi>p</mi><mo>&#x2212;</mo><mn>1</mn></mrow></math> 的乘法群）、生成元 <math class="math-inline" aria-label="g"><mi>g</mi></math>。Peggy 的密钥对为私钥 <math class="math-inline" aria-label="x"><mi>x</mi></math> 与公钥 <math class="math-inline" aria-label="y 等于 g 的 x 次方 模 p"><mrow><mi>y</mi><mo>=</mo><msup><mi>g</mi><mi>x</mi></msup><mspace width="0.2em"/><mo>mod</mo><mspace width="0.2em"/><mi>p</mi></mrow></math>。协议分三步：</p>
 
-// 公共参数: 大素数 p, 生成元 g
-// Peggy 的密钥对: 私钥 x, 公钥 y = gˣ mod p
+        <p><strong>① 承诺（Commit）：</strong>Peggy 选取随机数 <math class="math-inline" aria-label="r"><mi>r</mi></math>，计算并发送 <math class="math-inline" aria-label="t"><mi>t</mi></math>：</p>
 
-// 第一步 (承诺): Peggy 选择随机数 r, 计算 t = gʳ mod p, 发送 t
-// 第二步 (挑战): Victor 选择随机挑战数 c, 发送给 Peggy
-// 第三步 (响应): Peggy 计算 s = r - c·x mod (p-1), 发送 s
-// 验证: Victor 检查 gˢ · yᶜ ≡ t (mod p)</code></pre>
+        <div class="math-equation" role="group" aria-label="Schnorr 承诺步骤">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Schnorr 承诺公式，可横向滚动">
+            <math display="block" aria-label="t 等于 g 的 r 次方 模 p">
+              <mrow><mi>t</mi><mo>=</mo><msup><mi>g</mi><mi>r</mi></msup><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>p</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p><strong>② 挑战（Challenge）：</strong>Victor 选取随机挑战数 <math class="math-inline" aria-label="c"><mi>c</mi></math> 发给 Peggy。</p>
+
+        <p><strong>③ 响应（Response）：</strong>Peggy 计算并发送 <math class="math-inline" aria-label="s"><mi>s</mi></math>：</p>
+
+        <div class="math-equation" role="group" aria-label="Schnorr 响应与验证">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Schnorr 响应与验证公式，可横向滚动">
+            <math display="block" aria-label="s 等于 r 加 c 乘 x，模 p 减 1；验证式 g 的 s 次方 等于 t 乘 y 的 c 次方 模 p">
+              <mrow>
+                <mi>s</mi><mo>=</mo><mi>r</mi><mo>+</mo><mi>c</mi><mi>x</mi><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mrow><mi>p</mi><mo>&#x2212;</mo><mn>1</mn></mrow><mo>)</mo>
+                <mo>,</mo><mspace width="1em"/>
+                <msup><mi>g</mi><mi>s</mi></msup><mo>&#x2261;</mo><mi>t</mi><mo>&#x22C5;</mo><msup><mi>y</mi><mi>c</mi></msup><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>p</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>这个协议为什么能工作？因为如果 Peggy 知道 <var>x</var>，她总能计算出正确的 <var>s</var>，使验证等式成立。如果 Peggy 不知道 <var>x</var>，她最多只能提前猜对挑战 <var>c</var> 来构造有效的 <var>t</var> 和 <var>s</var>——但猜中的概率微乎其微。</p>
 
@@ -231,6 +255,10 @@
         </div>
 
         <p>零知识证明让我们能够做一件此前被认为不可能的事情：在不透露秘密的前提下证明你掌握秘密。这项技术正在重塑数字货币、身份认证和计算验证的格局，但它也需要与其他密码学原语协同工作。下一章，我们将学习另一种"看起来像魔法"的密码学技术——<strong>同态加密</strong>，它允许在加密数据上直接进行计算，而无需先解密。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>零知识交互式证明系统见 S. Goldwasser, S. Micali, C. Rackoff, <em>“The Knowledge Complexity of Interactive Proof Systems,”</em> STOC 1985（<a href="https://doi.org/10.1145/22145.22178">DOI 10.1145/22145.22178</a>）。Schnorr 身份识别与签名见 C. P. Schnorr, <em>“Efficient Signature Generation by Smart Cards,”</em> Journal of Cryptology, 1991（<a href="https://doi.org/10.1007/BF00196725">DOI 10.1007/BF00196725</a>）；Fiat–Shamir 转换见 A. Fiat, A. Shamir, CRYPTO 1986。zk-SNARK 见 N. Bitansky 等与 B. Parno 等，<em>“Quadratic Span Programs and Succinct NIZKs,”</em> EUROCRYPT 2013（<a href="https://doi.org/10.1007/978-3-642-38348-9_37">DOI 10.1007/978-3-642-38348-9_37</a>）；zk-STARK 见 E. Ben-Sasson 等，2018。文中的“量子安全”“快 1000 倍”等宣传语系对公开报道的转述，不代表技术事实。
+        </div>
 
         <div class="footer-nav">
             <a href="18.html">← 上一章</a>
