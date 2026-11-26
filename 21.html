@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -118,16 +124,42 @@
 
         <p><strong>Shamir 秘密共享</strong>：1979 年 Adi Shamir（RSA 中的 S）提出了一种基于多项式插值的秘密共享方案。它的核心思想是：给定一个 t-1 次多项式，你需要至少 t 个点才能唯一确定它。如果你想将秘密 s 分给 n 个人，要求其中任意 t 个人可以恢复秘密（少于 t 人无法恢复）：</p>
 
-        <pre><code>// Shamir (t, n)-门限秘密共享
-//
-// 1. 选取一个大素数 p，秘密 s ∈ Zₚ
-// 2. 随机构造一个 t-1 次多项式 f(x):
-//    f(x) = s + a₁·x + a₂·x² + ... + aₜ₋₁·xᵗ⁻¹ (mod p)
-//    其中 a₁, a₂, ..., aₜ₋₁ 是随机数
-// 3. 为每个参与方 i 计算份额:
-//    share_i = f(i) (mod p)
-// 4. 恢复秘密时，任意 t 个份额通过拉格朗日插值:
-//    s = Σ(share_i · Π(j≠i) (0-xⱼ)/(xᵢ-xⱼ)) (mod p)</code></pre>
+        <p>Shamir 方案基于多项式插值：选取大素数 <math class="math-inline" aria-label="p"><mi>p</mi></math> 与秘密 <math class="math-inline" aria-label="s 属于 Z 下标 p"><mrow><mi>s</mi><mo>&#x2208;</mo><msub><mi>Z</mi><mi>p</mi></msub></mrow></math>，随机构造一个 <math class="math-inline" aria-label="t 减 1"><mrow><mi>t</mi><mo>&#x2212;</mo><mn>1</mn></mrow></math> 次多项式，其中 <math class="math-inline" aria-label="a 下标 1 到 a 下标 t 减 1"><msub><mi>a</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>a</mi><mrow><mi>t</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msub></math> 为随机数：</p>
+
+        <div class="math-equation" role="group" aria-label="Shamir 多项式">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Shamir 秘密共享多项式，可横向滚动">
+            <math display="block" aria-label="f(x) 等于 s 加 a1 x 加 a2 x 平方 一直加到 a 下标 t 减 1 乘 x 的 t 减 1 次方，模 p">
+              <mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mi>s</mi><mo>+</mo><msub><mi>a</mi><mn>1</mn></msub><mi>x</mi><mo>+</mo><msub><mi>a</mi><mn>2</mn></msub><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mo>&#x22EF;</mo><mo>+</mo><msub><mi>a</mi><mrow><mi>t</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msub><msup><mi>x</mi><mrow><mi>t</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msup><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>p</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>为每个参与方 <math class="math-inline" aria-label="i"><mi>i</mi></math> 计算份额：</p>
+
+        <div class="math-equation" role="group" aria-label="Shamir 份额计算">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Shamir 份额计算公式，可横向滚动">
+            <math display="block" aria-label="第 i 个份额 share 下标 i 等于 f 作用于 i，模 p">
+              <mrow><msub><mi>share</mi><mi>i</mi></msub><mo>=</mo><mi>f</mi><mo>(</mo><mi>i</mi><mo>)</mo><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>p</mi><mo>)</mo></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>恢复秘密时，任意 <math class="math-inline" aria-label="t"><mi>t</mi></math> 个份额通过拉格朗日插值即可还原（<math class="math-inline" aria-label="S"><mi>S</mi></math> 为参与恢复的份额索引集合）：</p>
+
+        <div class="math-equation" role="group" aria-label="拉格朗日插值恢复秘密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="拉格朗日插值恢复秘密公式，可横向滚动">
+            <math display="block" aria-label="秘密 s 等于 对所有 i 属于 S 求和 share 下标 i 乘以 对所有 j 属于 S 且 j 不等于 i 连乘 括号 0 减 x 下标 j 括号 除以 括号 x 下标 i 减 x 下标 j 括号，模 p">
+              <mrow>
+                <mi>s</mi><mo>=</mo>
+                <munder><mo>&#x2211;</mo><mrow><mi>i</mi><mo>&#x2208;</mo><mi>S</mi></mrow></munder>
+                <msub><mi>share</mi><mi>i</mi></msub>
+                <munder><mo>&#x220F;</mo><mrow><mi>j</mi><mo>&#x2208;</mo><mi>S</mi><mo>,</mo><mi>j</mi><mo>&#x2260;</mo><mi>i</mi></mrow></munder>
+                <mfrac><mrow><mn>0</mn><mo>&#x2212;</mo><msub><mi>x</mi><mi>j</mi></msub></mrow><mrow><msub><mi>x</mi><mi>i</mi></msub><mo>&#x2212;</mo><msub><mi>x</mi><mi>j</mi></msub></mrow></mfrac>
+                <mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>p</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p><strong>加法秘密共享</strong>：一种更简单的共享方式。对于秘密 s，将其拆分为 s₁ + s₂ + ... + sₙ = s。每个参与方持有一个份额。所有份额相加即可恢复原值。加法共享特别适合与 MPC 协议配合——如果每个参与方持有自己数据的加法份额，大家可以在共享域上执行加法计算，而泄漏任何一方的原始数据。</p>
 
@@ -210,6 +242,10 @@
         </div>
 
         <p>安全多方计算从一个学术趣味问题——姚氏百万富翁问题——发展成了如今价值数十亿美元的隐私计算产业的核心技术。从 1000 人参与的丹麦甜菜拍卖，到跨国医疗机构的联合数据分析，MPC 证明了隐私不一定是效率的对立面。然而，我们也要认识到，MPC 的通信开销在参与方数量增多时快速增长，协议的正确实现也需要深厚的密码学功底。下一章，我们将从"联合计算"过渡到"数据发布"场景，来看一种完全不同但同样强大的隐私保护技术——<strong>差分隐私</strong>。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>安全双方计算与乱码电路见 A. Yao, <em>“Protocols for Secure Computations,”</em> FOCS 1982 与 <em>“How to Generate and Exchange Secrets,”</em> FOCS 1986。Shamir 门限秘密共享见 A. Shamir, <em>“How to Share a Secret,”</em> Communications of the ACM, 1979（<a href="https://doi.org/10.1145/359168.359176">DOI 10.1145/359168.359176</a>）；Blakley 超平面方案见 G. Blakley, 1979。SPDZ 协议见 I. Damgård, V. Pastro, N. Smart, S. Zakarias, <em>“Multiparty Computation from Somewhat Homomorphic Encryption,”</em> CRYPTO 2012（<a href="https://doi.org/10.1007/978-3-642-32009-5_38">DOI 10.1007/978-3-642-32009-5_38</a>）；乘法三元组（Beaver Triples）见 D. Beaver, 1991。
+        </div>
 
         <div class="footer-nav">
             <a href="20.html">← 上一章</a>
