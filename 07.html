@@ -124,11 +124,22 @@
 
         <p>把这个概率论事实应用到哈希函数上：如果哈希函数的输出是 n 位，那么为了以 50% 的概率找到一次碰撞，只需要计算大约 √(2ⁿ) = 2ⁿᐟ² 个不同的输入。</p>
 
-        <pre><code>生日攻击的计算量：
+        <p>形式化地，设哈希输出为 <math class="math-inline" aria-label="n"><mi>n</mi></math> 位，则以约 50% 概率找到一次碰撞所需的计算量约为：</p>
 
-128 位哈希 → 需要 2⁶⁴ 次计算才能找到碰撞
-160 位哈希 → 需要 2⁸⁰ 次计算
-256 位哈希 → 需要 2¹²⁸ 次计算</code></pre>
+        <div class="math-equation" role="group" aria-label="生日攻击的碰撞复杂度">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="生日攻击碰撞复杂度公式，可横向滚动">
+            <math display="block" aria-label="找到一次碰撞所需计算量 T 约等于 2 的 n 次方的平方根，即 2 的 n 除以 2 次方">
+              <mrow>
+                <mi>T</mi><mo>&#x2248;</mo>
+                <msqrt><msup><mn>2</mn><mi>n</mi></msup></msqrt>
+                <mo>=</mo>
+                <msup><mn>2</mn><mrow><mi>n</mi><mo>/</mo><mn>2</mn></mrow></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>代入常见的输出长度：<math class="math-inline" aria-label="128 位"><msup><mn>2</mn><mn>64</mn></msup></math>、<math class="math-inline" aria-label="160 位"><msup><mn>2</mn><mn>80</mn></msup></math>、<math class="math-inline" aria-label="256 位"><msup><mn>2</mn><mn>128</mn></msup></math> 次计算即可找到碰撞。</p>
 
         <p>这个结论对密码学产生了深远的影响：</p>
 
@@ -225,7 +236,7 @@
 
         <p>2007 年，NIST 发起了一场类似 AES 竞赛的<strong>SHA-3 竞赛</strong>，旨在选出一个与 SHA-2 结构完全不同的哈希函数作为后备方案（以防 SHA-2 在未来被攻破）。2012 年，<strong>Keccak</strong>（发音：Ketch-ack）赢得了 SHA-3 竞赛。</p>
 
-        <p>SHA-3 的设计者与 AES 相同——比利时密码学家 Joan Daemen 和 Vincent Rijmen（加上 Gilles Van Assche 和 Guido Bertoni）。但 Keccak 采用了一种与 SHA-2 完全不同的结构：<strong>海绵构造（Sponge Construction）</strong>。</p>
+        <p>SHA-3 与 AES 的设计团队有重叠：Keccak 由 Guido Bertoni、Joan Daemen、Michaël Peeters 和 Gilles Van Assche 设计（Daemen 与 Vincent Rijmen 是 AES/Rijndael 的设计者）。Keccak 采用了一种与 SHA-2 完全不同的结构：<strong>海绵构造（Sponge Construction）</strong>。</p>
 
         <pre><code>Merkle-Damgård 结构（SHA-2 家族）:
 M₁ → M₂ → ... → Mₙ → 固定输出
@@ -309,15 +320,21 @@ M₁ → M₂ → ... → Mₙ → f → f → ... → 输出
         <p>下面是一个简单的密码哈希示例（请注意：实际应用中不要直接用 SHA-256 存密码，这里仅作为哈希计算的演示）：</p>
 
         <pre><code>$ echo -n "Hello, Cryptography!" | sha256sum
-7e6b8c9c6b8a1f2e3d4c5b6a7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6
+29aff889935f5a275ec562ef46c138e917a270aab79b4d5577ee8ea5af308f73
 
 $ echo -n "Hello, Cryptography?" | sha256sum
-（注意：仅仅将感叹号改为问号，哈希值就完全变了——这是雪崩效应）</code></pre>
+1084ad7edc449759443809509c3e4a87f64c4ea206d5900e997859877e26814e
+
+（仅将感叹号改为问号，摘要的每一位几乎都发生了翻转——这就是雪崩效应）</code></pre>
 
         <p>哈希函数的<strong>雪崩效应</strong>让它非常适合验证小改动：哪怕输入只改变了一个比特，输出的每一位都有大约 50% 的概率发生翻转。</p>
 
         <div class="highlight">
             <strong>🔗 过渡：</strong>从这一章开始，我们已经建立起了密码学基础知识的完整框架：古典密码 → 信息论 → 对称密码（DES/AES）→ 哈希函数。这些都是"对称"的世界——通信双方共享同一个密钥。但密码学史上最伟大的革命即将到来：1976 年，Diffie 和 Hellman 提出了公钥密码的概念，解决了困扰人类数千年的"密钥分发"问题。下一章，我们将进入公钥密码的世界，看看如何在不安全信道上安全地交换密钥。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>Merkle–Damgård 迭代结构见 R. Merkle, <em>“A Certified Digital Signature,”</em> CRYPTO 1989 与 I. Damgård, <em>“A Design Principle for Hash Functions,”</em> CRYPTO 1989。SHA-1/SHA-2 规范见 NIST FIPS 180-4（<a href="https://doi.org/10.6028/NIST.FIPS.180-4">DOI 10.6028/NIST.FIPS.180-4</a>）；SHA-3/Keccak 见 NIST FIPS 202 与 G. Bertoni 等，<em>“Keccak,”</em> 2013。MD5 碰撞见 X. Wang, D. Feng, X. Lai, H. Yu, 2004（<a href="https://eprint.iacr.org/2004/199">eprint 2004/199</a>）；SHA-1 实际碰撞（SHAttered）见 M. Stevens, E. Bursztein, P. Karpman, A. Albertini, Y. Markov, <em>“The First Collision for Full SHA-1,”</em> CRYPTO 2017（<a href="https://eprint.iacr.org/2017/190">eprint 2017/190</a>）。SM3 见 GB/T 32905-2016（GM/T 0004-2012）；HMAC 见 RFC 2104。文中的命令行摘要均为实算结果，供校验示例。
         </div>
 
         <div class="footer-nav">
