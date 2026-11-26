@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -156,12 +162,19 @@
 系数 b = 28E9FA9E 9D9F5E34 4D5A9E4B CF6509A7 F39789F5 15AB8F92 DDBCBD41 4D940E93
 
 基点 G = (x, y)  —— 一个固定值
-阶 n（基点的阶）—— 略小于 2^256
+阶 n（基点的阶）—— 略小于 2^256</code></pre>
 
-私钥：随机选择 d ∈ [1, n-2]
-公钥：Q = d × G</code></pre>
+        <p>SM2 的密钥生成：私钥 <math class="math-inline" aria-label="d"><mi>d</mi></math> 在区间 <math class="math-inline" aria-label="1 到 n 减 2"><mrow><mo>[</mo><mn>1</mn><mo>,</mo><mi>n</mi><mo>&#x2212;</mo><mn>2</mn><mo>]</mo></mrow></math> 内随机选取，公钥 <math class="math-inline" aria-label="Q"><mi>Q</mi></math> 由椭圆曲线标量乘法得到：</p>
 
-        <p>SM2与ECDSA/E略显不同：SM2的签名算法使用了两条哈希函数调用，并在签名中加入了用户身份标识，提供了更完善的安全绑定。SM2的加密算法则使用了KDF（密钥派生函数）来派生对称密钥，类似于ECIES的混合加密方案。</p>
+        <div class="math-equation" role="group" aria-label="SM2 公钥生成">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="SM2 公钥生成公式，可横向滚动">
+            <math display="block" aria-label="Q 等于 d 乘 G，即基点 G 的 d 倍">
+              <mrow><mi>Q</mi><mo>=</mo><mi>d</mi><mo>&#x22C5;</mo><mi>G</mi></mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>SM2与ECDSA/ECDH略显不同：SM2的签名算法使用了两条哈希函数调用，并在签名中加入了用户身份标识，提供了更完善的安全绑定。SM2的加密算法则使用了KDF（密钥派生函数）来派生对称密钥，类似于ECIES的混合加密方案。</p>
 
         <div class="tip">
             <strong>💡 SM2 vs ECDSA：</strong>虽然SM2和ECDSA都基于椭圆曲线离散对数问题，但SM2的签名算法不同于ECDSA。SM2的签名值(r, s)中，r不是简单地取点的x坐标，而是经过了一个哈希计算。这使得SM2在安全性证明方面具有一些优势。另外，SM2的密钥长度是256位，安全性等同于3072位RSA，与ECDSA P-256相当。
@@ -202,12 +215,27 @@
 
 每轮变换：
 1. 将128位分为4个32位字 (X0, X1, X2, X3)
-2. 计算 F(X0, X1, X2, X3, rk_i) = X0 ⊕ T(X1 ⊕ X2 ⊕ X3 ⊕ rk_i)
-3. 其中 T 是一个置换，包含：
+2. 计算轮函数 F（公式见下），其中 T 是一个置换
+3. T 包含：
    - 非线性变换 τ：4个并行的S盒（每个8×8位）
    - 线性变换 L：32位循环移位和异或
 
 密钥扩展：使用与加密相同的32轮结构，但常数不同</code></pre>
+
+        <p>其轮函数可写作（<math class="math-inline" aria-label="rk 下标 i"><msub><mi>rk</mi><mi>i</mi></msub></math> 为第 <math class="math-inline" aria-label="i"><mi>i</mi></math> 轮轮密钥，<math class="math-inline" aria-label="T"><mi>T</mi></math> 为含 S 盒非线性变换 <math class="math-inline" aria-label="τ"><mi>&#x3C4;</mi></math> 与线性变换 <math class="math-inline" aria-label="L"><mi>L</mi></math> 的置换）：</p>
+
+        <div class="math-equation" role="group" aria-label="SM4 轮函数">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="SM4 轮函数公式，可横向滚动">
+            <math display="block" aria-label="F 作用于 X0 到 X3 与轮密钥 rk 下标 i，等于 X0 异或 T 作用于 括号 X1 异或 X2 异或 X3 异或 rk 下标 i 括号">
+              <mrow>
+                <mi>F</mi><mo>(</mo><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>3</mn></msub><mo>,</mo><msub><mi>rk</mi><mi>i</mi></msub><mo>)</mo>
+                <mo>=</mo>
+                <msub><mi>X</mi><mn>0</mn></msub><mo>&#x2295;</mo>
+                <mi>T</mi><mo>(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>&#x2295;</mo><msub><mi>X</mi><mn>2</mn></msub><mo>&#x2295;</mo><msub><mi>X</mi><mn>3</mn></msub><mo>&#x2295;</mo><msub><mi>rk</mi><mi>i</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>与AES相比，SM4有32轮（AES-128是10轮），因此在软件实现上稍微慢一些。但SM4的S盒设计提供了良好的非线性特性，且整个算法的结构更加对称规整。</p>
 
@@ -294,6 +322,10 @@
         <p>如今，SM4已经被完全解禁，不仅在国内广泛部署（中国金融IC卡、社会保障卡、电子政务系统等），还有了国际标准化进展——SM4已被ISO/IEC采纳为国际标准。</p>
 
         <p>理解了国密算法体系，下一章我们将把这些密码学知识应用到真实世界的协议中。从TLS 1.3的握手优化到Signal协议的双棘轮机制，从IPSec的IKE密钥交换到那个著名的Heartbleed漏洞——你会发现，密码学协议的工程实现比算法本身要复杂得多，但也精彩得多。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>SM2 椭圆曲线公钥密码算法见 GB/T 32918-2016（GM/T 0003-2012），曲线参数 sm2p256v1、密钥生成 <em>Q = d·G</em>、签名与加密流程以该标准为准。SM3 哈希见 GB/T 32905-2016（GM/T 0004-2012）；SM4 分组密码见 GB/T 32907-2016（GM/T 0002），轮函数、S 盒与密钥扩展参数均以标准为准。SM9 标识密码见 GB/T 38635-2020（GM/T 0044-2016），其所属的基于身份密码（IBC）概念见 A. Shamir, <em>“Identity-Based Cryptosystems and Signature Schemes,”</em> CRYPTO 1984（<a href="https://doi.org/10.1007/3-540-39568-7_5">DOI 10.1007/3-540-39568-7_5</a>）。文中对“SM2 安全性等同于 3072 位 RSA”的表述属常见工程口径的概述，具体安全级别以标准与密码评测结果为准。
+        </div>
 
         <div class="footer-nav">
             <a href="12.html">← 上一章</a>
