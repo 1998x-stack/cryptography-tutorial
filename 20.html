@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -87,9 +93,21 @@
 
         <p>你可能没有意识到，我们在第 9 章学过的 RSA 算法实际上就具备部分同态性。回忆 RSA 的加密过程：<var>E(m) = mᵉ mod N</var>。现在观察两个密文相乘会发生什么：</p>
 
-        <pre><code>E(m₁) · E(m₂) = (m₁ᵉ · m₂ᵉ) mod N
-               = (m₁ · m₂)ᵉ mod N
-               = E(m₁ · m₂)</code></pre>
+        <div class="math-equation" role="group" aria-label="RSA 的乘法同态性">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="RSA 乘法同态公式，可横向滚动">
+            <math display="block" aria-label="E 作用于 m1 乘 E 作用于 m2，等于 m1 的 e 次方 乘 m2 的 e 次方，再模 N；等于 括号 m1 乘 m2 括号 的 e 次方 模 N；等于 E 作用于 m1 乘 m2">
+              <mrow>
+                <mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>)</mo><mo>&#x22C5;</mo><mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo>
+                <mo>=</mo>
+                <mo>(</mo><msup><msub><mi>m</mi><mn>1</mn></msub><mi>e</mi></msup><mo>&#x22C5;</mo><msup><msub><mi>m</mi><mn>2</mn></msub><mi>e</mi></msup><mo>)</mo><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>N</mi><mo>)</mo>
+                <mo>=</mo>
+                <msup><mrow><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>&#x22C5;</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo></mrow><mi>e</mi></msup><mspace width="0.3em"/><mo>(</mo><mo>mod</mo><mspace width="0.2em"/><mi>N</mi><mo>)</mo>
+                <mo>=</mo>
+                <mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>&#x22C5;</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>也就是说，对两个 RSA 密文做乘法，等价于对对应明文做乘法后再加密。RSA 是<strong>乘法同态</strong>的。但 RSA 对加法不是同态的——你不能通过操作密文来得到两个明文的加和。</p>
 
@@ -97,12 +115,21 @@
 
         <p>1999 年，Pascal Paillier 提出了一种对加法同态的公钥密码方案。Paillier 加密的密文相乘对应的是明文的加法：</p>
 
-        <pre><code>// Paillier 加密: E(m) = gᵐ · rⁿ mod n²
-// 其中 n = p·q, g 是生成元, r 是随机数
-//
-// 同态性质:
-// E(m₁) · E(m₂) = E(m₁ + m₂ mod n)
-// E(m)ᵏ = E(k · m)</code></pre>
+        <p>Paillier 加密为 <math class="math-inline" aria-label="E 作用于 m 等于 g 的 m 次方 乘 r 的 n 次方 模 n 平方"><mrow><mi>E</mi><mo>(</mo><mi>m</mi><mo>)</mo><mo>=</mo><msup><mi>g</mi><mi>m</mi></msup><mo>&#x22C5;</mo><msup><mi>r</mi><mi>n</mi></msup><mspace width="0.2em"/><mo>mod</mo><mspace width="0.2em"/><msup><mi>n</mi><mn>2</mn></msup></mrow></math>，其中 <math class="math-inline" aria-label="n 等于 p 乘 q"><mrow><mi>n</mi><mo>=</mo><mi>p</mi><mi>q</mi></mrow></math>、<math class="math-inline" aria-label="g"><mi>g</mi></math> 是生成元、<math class="math-inline" aria-label="r"><mi>r</mi></math> 是随机数。它满足两条同态性质：</p>
+
+        <div class="math-equation" role="group" aria-label="Paillier 的加法同态性">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Paillier 加法同态公式，可横向滚动">
+            <math display="block" aria-label="E 作用于 m1 乘 E 作用于 m2 等于 E 作用于 括号 m1 加 m2 模 n 括号；E 作用于 m 的 k 次方 等于 E 作用于 k 乘 m">
+              <mrow>
+                <mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>)</mo><mo>&#x22C5;</mo><mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>2</mn></msub><mo>)</mo>
+                <mo>=</mo>
+                <mi>E</mi><mo>(</mo><msub><mi>m</mi><mn>1</mn></msub><mo>+</mo><msub><mi>m</mi><mn>2</mn></msub><mspace width="0.2em"/><mo>mod</mo><mspace width="0.2em"/><mi>n</mi><mo>)</mo>
+                <mo>,</mo><mspace width="1em"/>
+                <msup><mrow><mi>E</mi><mo>(</mo><mi>m</mi><mo>)</mo></mrow><mi>k</mi></msup><mo>=</mo><mi>E</mi><mo>(</mo><mi>k</mi><mi>m</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>这一性质在电子投票系统中非常有用：投票者每人加密自己的投票（0 或 1），计票员只需将所有密文相乘，就能得到总票数的密文，再解密即可。整个过程不暴露任何单个选民的投票倾向。</p>
 
@@ -251,6 +278,10 @@
         </div>
 
         <p>同态加密让我们做到了信息安全领域最违反直觉的事情之一：在不看数据的情况下处理数据。从 Gentry 2009 年的理论突破到今天初步可用的工程库（Microsoft SEAL、IBM HElib、Intel HEXL），这条路走了十五年。尽管性能瓶颈仍然存在，但随着硬件加速和算法优化的不断进步，FHE 正在慢慢走向实用化。下一章，我们将学习另一种"多方协作"的隐私计算范式——<strong>安全多方计算</strong>，它解决的是另一个根本问题：多个互不信任的参与方如何共同计算一个函数，且各自不泄露自己的输入。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>RSA 的乘法同态性见 R. Rivest, A. Shamir, L. Adleman, <em>“A Method for Obtaining Digital Signatures and Public-Key Cryptosystems,”</em> 1978；ElGamal 同态见 T. ElGamal, 1985；Paillier 加法同态见 P. Paillier, <em>“Public-Key Cryptosystems Based on Composite Degree Residuosity Classes,”</em> EUROCRYPT 1999（<a href="https://doi.org/10.1007/3-540-48910-X_16">DOI 10.1007/3-540-48910-X_16</a>）；Goldwasser–Micali 异或同态见 S. Goldwasser, S. Micali, STOC 1982。全同态加密与 Bootstrapping 见 C. Gentry, <em>“Fully Homomorphic Encryption Using Ideal Lattices,”</em> STOC 2009（<a href="https://doi.org/10.1145/1536414.1536440">DOI 10.1145/1536414.1536440</a>）。BGV 见 Z. Brakerski, C. Gentry, V. Vaikuntanathan, 2012；BFV 见 J. Fan, F. Vercauteren, 2012；CKKS 见 J. H. Cheon, A. Kim, M. Kim, Y. Song, <em>“Homomorphic Encryption for Arithmetic of Approximate Numbers,”</em> ASIACRYPT 2017（<a href="https://doi.org/10.1007/978-3-319-70694-8_15">DOI 10.1007/978-3-319-70694-8_15</a>）；TFHE 见 I. Chillotti 等，2016。
+        </div>
 
         <div class="footer-nav">
             <a href="19.html">← 上一章</a>
