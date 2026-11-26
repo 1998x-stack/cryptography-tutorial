@@ -132,19 +132,43 @@
 
         <p>Feistel 网络的美妙之处在于它的简洁性和对称性：无论加密还是解密，都可以使用完全相同的硬件结构，只是密钥的使用顺序不同。下面是 Feistel 网络的一轮操作：</p>
 
-        <pre><code>一轮 Feistel 加密：
+        <p>一轮 Feistel 加密：把输入块分成左右两半 <math class="math-inline" aria-label="L 下标 0"><msub><mi>L</mi><mn>0</mn></msub></math> 和 <math class="math-inline" aria-label="R 下标 0"><msub><mi>R</mi><mn>0</mn></msub></math>，其中 <math class="math-inline" aria-label="F"><mi>F</mi></math> 是"轮函数"，<math class="math-inline" aria-label="K 下标 i"><msub><mi>K</mi><mi>i</mi></msub></math> 是第 <math class="math-inline" aria-label="i"><mi>i</mi></math> 轮子密钥：</p>
 
-1. 将输入块分成左右两半: L₀ 和 R₀
-2. 计算: L₁ = R₀
-3. 计算: R₁ = L₀ ⊕ F(R₀, K₁)
-4. (L₁, R₁) 作为下一轮的输入
+        <div class="math-equation" role="group" aria-label="Feistel 单轮加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Feistel 单轮加密公式，可横向滚动">
+            <math display="block" aria-label="L 下标 i 加 1 等于 R 下标 i；R 下标 i 加 1 等于 L 下标 i 异或 F 作用于 R 下标 i 与轮子密钥 K 下标 i">
+              <mrow>
+                <msub><mi>L</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub>
+                <mo>=</mo>
+                <msub><mi>R</mi><mi>i</mi></msub>
+                <mo>,</mo><mspace width="1.2em"/>
+                <msub><mi>R</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub>
+                <mo>=</mo>
+                <msub><mi>L</mi><mi>i</mi></msub>
+                <mo>&#x2295;</mo>
+                <mi>F</mi><mo>(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>,</mo><msub><mi>K</mi><mi>i</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
-其中 F 是"轮函数"，K₁ 是第1轮子密钥
+        <p>解密时只需反向操作，把子密钥按相反顺序使用：</p>
 
-解密时只需反向操作，使用反向子密钥顺序：
-
-1. R₀ = L₁
-2. L₀ = R₁ ⊕ F(L₁, K₁)</code></pre>
+        <div class="math-equation" role="group" aria-label="Feistel 单轮解密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Feistel 单轮解密公式，可横向滚动">
+            <math display="block" aria-label="R 下标 i 等于 L 下标 i 加 1；L 下标 i 等于 R 下标 i 加 1 异或 F 作用于 L 下标 i 加 1 与轮子密钥 K 下标 i">
+              <mrow>
+                <msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><msub><mi>L</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub>
+                <mo>,</mo><mspace width="1.2em"/>
+                <msub><mi>L</mi><mi>i</mi></msub>
+                <mo>=</mo>
+                <msub><mi>R</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub>
+                <mo>&#x2295;</mo>
+                <mi>F</mi><mo>(</mo><msub><mi>L</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>K</mi><mi>i</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>这里有一个关键点：轮函数 F 不需要是可逆的。因为无论 F 是什么函数，上面的解密步骤都能正确还原——只需用 XOR 把 F 的结果去除即可。这意味着设计者可以大胆地使用任意复杂的非线性函数作为 F，而不必担心如何求逆。这是 Feistel 网络最聪明的设计决策。</p>
 
@@ -194,27 +218,46 @@
 
         <p><strong>ECB（电子密码本模式）</strong>——最简单也最危险。每个明文块被独立加密，相同的明文块会产生相同的密文块。</p>
 
-        <pre><code>ECB 模式:
-C₁ = Eₖ(P₁)
-C₂ = Eₖ(P₂)
-C₃ = Eₖ(P₃)
-...</code></pre>
+        <div class="math-equation" role="group" aria-label="ECB 模式加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="ECB 模式加密公式，可横向滚动">
+            <math display="block" aria-label="C 下标 j 等于 E 下标 k 作用于 P 下标 j">
+              <mrow>
+                <msub><mi>C</mi><mi>j</mi></msub><mo>=</mo>
+                <msub><mi>E</mi><mi>k</mi></msub><mo>(</mo><msub><mi>P</mi><mi>j</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p><strong>CBC（密码块链接模式）</strong>——引入了一个初始向量（IV），每个明文块在加密前先与前一个密文块进行 XOR。相同的明文块在不同位置会产生不同的密文块。</p>
 
-        <pre><code>CBC 模式:
-C₁ = Eₖ(P₁ ⊕ IV)
-C₂ = Eₖ(P₂ ⊕ C₁)
-C₃ = Eₖ(P₃ ⊕ C₂)
-...</code></pre>
+        <div class="math-equation" role="group" aria-label="CBC 模式加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="CBC 模式加密公式，可横向滚动">
+            <math display="block" aria-label="C 下标 j 等于 E 下标 k 作用于 P 下标 j 异或 C 下标 j 减 1，其中 C 下标 0 为初始向量 IV">
+              <mrow>
+                <msub><mi>C</mi><mi>j</mi></msub><mo>=</mo>
+                <msub><mi>E</mi><mi>k</mi></msub>
+                <mo>(</mo><msub><mi>P</mi><mi>j</mi></msub><mo>&#x2295;</mo><msub><mi>C</mi><mrow><mi>j</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msub><mo>)</mo>
+                <mo>,</mo><mspace width="0.8em"/>
+                <msub><mi>C</mi><mn>0</mn></msub><mo>=</mo><mtext>IV</mtext>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p><strong>CTR（计数器模式）</strong>——将分组密码当作流密码使用。用一个递增的计数器配合密钥加密产生密钥流，再与明文进行 XOR。</p>
 
-        <pre><code>CTR 模式:
-C₁ = P₁ ⊕ Eₖ(CTR)
-C₂ = P₂ ⊕ Eₖ(CTR+1)
-C₃ = P₃ ⊕ Eₖ(CTR+2)
-...</code></pre>
+        <div class="math-equation" role="group" aria-label="CTR 模式加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="CTR 模式加密公式，可横向滚动">
+            <math display="block" aria-label="C 下标 j 等于 P 下标 j 异或 E 下标 k 作用于计数器 CTR 加 j">
+              <mrow>
+                <msub><mi>C</mi><mi>j</mi></msub><mo>=</mo>
+                <msub><mi>P</mi><mi>j</mi></msub><mo>&#x2295;</mo>
+                <msub><mi>E</mi><mi>k</mi></msub><mo>(</mo><mtext>CTR</mtext><mo>+</mo><mi>j</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p><strong>GCM（Galois/Counter 模式）</strong>——在 CTR 模式的基础上增加了认证标签（Authentication Tag），同时提供加密和完整性认证。这是目前最推荐的工作模式之一。</p>
 
@@ -288,6 +331,10 @@ C₃ = P₃ ⊕ Eₖ(CTR+2)
 
         <div class="highlight">
             <strong>🔗 过渡：</strong>理解了对称密码的基本结构和工作模式后，下一章我们来学习两个最重要的对称密码算法——DES 和 AES。DES 的历史是密码学走进政府标准和公开化进程的缩影，而 AES 则是全球密码学界通力合作的巅峰之作。你会看到 Feistel 网络和 SPN 结构在具体算法中是如何实现的。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>Feistel 结构与其"轮函数无需可逆"的设计见 H. Feistel, <em>“Cryptography and Computer Privacy,”</em> Scientific American, 1973；DES 的 16 轮实现见 NIST FIPS 46-3。SPN 结构与 Rijndael（AES）的设计原理见 J. Daemen, V. Rijmen, <em>“The Design of Rijndael,”</em> Springer, 2002（<a href="https://doi.org/10.1007/978-3-662-04722-4">DOI 10.1007/978-3-662-04722-4</a>）。ECB/CBC/CTR/GCM 工作模式的规范与定义见 NIST SP 800-38A（<a href="https://doi.org/10.6028/NIST.SP.800-38A">DOI 10.6028/NIST.SP.800-38A</a>）与 SP 800-38D。PKCS#7 填充与 Padding Oracle 攻击的公开分析见 S. Vaudenay, <em>“Security Flaws Induced by CBC Padding,”</em> EUROCRYPT 2002（<a href="https://doi.org/10.1007/3-540-46067-1_33">DOI 10.1007/3-540-46067-1_33</a>）。
         </div>
 
         <div class="footer-nav">
