@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -95,6 +101,22 @@
     ▼ Base58Check 编码（版本字节 + HASH160 + 校验和）
 比特币地址（如 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa）</code></pre>
 
+        <p>把这条链路写成公式，就是从私钥 <math class="math-inline" aria-label="小写 k"><mi>k</mi></math> 出发：先做椭圆曲线标量乘法得到公钥 <math class="math-inline" aria-label="大写 K"><mi>K</mi></math>，再做一次 HASH160（先 SHA-256 再 RIPEMD-160），最后加版本字节与 4 字节校验和做 Base58Check 编码：</p>
+
+        <div class="math-equation" role="group" aria-label="比特币地址推导">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="比特币地址推导公式，可横向滚动">
+            <math display="block" aria-label="公钥 K 等于 k 乘以生成点 G；HASH160 等于 RIPEMD160 作用于 SHA256 作用于 K；地址等于 Base58Check 作用于版本字节与 HASH160 的拼接">
+              <mrow>
+                <mi>K</mi><mo>=</mo><mi>k</mi><mi>G</mi>
+                <mo>,</mo><mspace width="1.2em"/>
+                <mi>HASH160</mi><mo>(</mo><mi>K</mi><mo>)</mo><mo>=</mo><mi>RIPEMD160</mi><mo>(</mo><mi>SHA256</mi><mo>(</mo><mi>K</mi><mo>)</mo><mo>)</mo>
+                <mo>,</mo><mspace width="1.2em"/>
+                <mi>Addr</mi><mo>=</mo><mi>Base58Check</mi><mo>(</mo><mn>0x00</mn><mo>&#x2016;</mo><mi>HASH160</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <p>每个步骤的选择都有其密码学考量：</p>
 
         <ul>
@@ -113,6 +135,20 @@
 
         <p>Merkle 树（又称哈希树）是区块链中一个被低估的密码学结构。它让一个节点可以在不下载完整区块数据的情况下，验证某笔交易是否包含在某个区块中——这正是"轻客户端"（SPV 节点）能够工作的基础。</p>
 
+        <p>把“父节点 = 子节点哈希的再次哈希”写成公式：若某节点的两个子节点哈希为 <math class="math-inline" aria-label="h 下标 L"><msub><mi>h</mi><mi>L</mi></msub></math> 与 <math class="math-inline" aria-label="h 下标 R"><msub><mi>h</mi><mi>R</mi></msub></math>（比特币对叶子做一次 SHA-256，对内部节点做双重 SHA-256），则：</p>
+
+        <div class="math-equation" role="group" aria-label="Merkle 父节点哈希">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="Merkle 节点哈希公式，可横向滚动">
+            <math display="block" aria-label="父节点哈希 h 下标 parent 等于 SHA256 二次作用于 h 下标 L 与 h 下标 R 的拼接">
+              <mrow>
+                <msub><mi>h</mi><mi>parent</mi></msub><mo>=</mo>
+                <msup><mi>SHA256</mi><mn>2</mn></msup><mo>(</mo>
+                <msub><mi>h</mi><mi>L</mi></msub><mo>&#x2016;</mo><msub><mi>h</mi><mi>R</mi></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <table>
             <tr>
                 <th>特性</th>
@@ -128,7 +164,7 @@
             </tr>
             <tr>
                 <td>证明大小</td>
-                <td>对于 N 笔交易的区块，证明某笔交易存在只需要 log₂(N) 个哈希</td>
+                <td>对于 N 笔交易的区块，证明某笔交易存在只需要 <math class="math-inline" aria-label="以 2 为底 N 的对数"><msub><mi>log</mi><mn>2</mn></msub><mi>N</mi></math> 个哈希</td>
             </tr>
             <tr>
                 <td>轻客户端</td>
@@ -139,7 +175,7 @@
         <p>例如，一个包含 1024 笔交易的区块，完整的区块数据约 1MB。但如果你只想证明其中某笔交易确实被包含在内，只需要 80 字节的区块头 + 10 个哈希（共 400 字节）的 Merkle 证明——减少了 2500 倍的数据传输量。</p>
 
         <div class="highlight">
-            <strong>🔑 Merkle 树的密码学特性：</strong>Merkle 树的安全性建立在 SHA-256 的抗碰撞性之上。要伪造一个不存在于区块中的交易，攻击者需要构造出一个碰撞——即找到一组不同的交易数据产生相同的 Merkle 根。由于 SHA-256 是抗碰撞的，这在实际计算上是不可能的。Merkle 树的核心贡献在于：它把一个 O(N) 的验证问题降低到了 O(log N)。
+            <strong>🔑 Merkle 树的密码学特性：</strong>Merkle 树的安全性建立在 SHA-256 的抗碰撞性之上。要伪造一个不存在于区块中的交易，攻击者需要构造出一个碰撞——即找到一组不同的交易数据产生相同的 Merkle 根。由于 SHA-256 是抗碰撞的，这在实际计算上是不可能的。Merkle 树的核心贡献在于：它把一个 <math class="math-inline" aria-label="O 作用于 N"><mi>O</mi><mo>(</mo><mi>N</mi><mo>)</mo></math> 的验证问题降低到了 <math class="math-inline" aria-label="O 作用于 log N"><mi>O</mi><mo>(</mo><mi>log</mi><mi>N</mi><mo>)</mo></math>。
         </div>
 
         <h2>25.3 以太坊：账户模型与 ECDSA 签名</h2>
@@ -174,7 +210,7 @@
             </tr>
         </table>
 
-        <p>以太坊的 ECDSA 签名包含三个值：<code>(v, r, s)</code>。关键的不同在于 <strong>v</strong> 值——它允许从签名本身恢复出签名者的公钥（进而算出地址）。这意味着以太坊交易不需要像比特币那样显式地提供 <code>from</code> 地址，网络可以从签名中直接推导出发送者是谁。这正是"以太坊地址就是公钥哈希"的直接体现。</p>
+        <p>以太坊的 ECDSA 签名包含三个值 <math class="math-inline" aria-label="左括号 v 逗号 r 逗号 s 右括号"><mo>(</mo><mi>v</mi><mo>,</mo><mi>r</mi><mo>,</mo><mi>s</mi><mo>)</mo></math>。关键的不同在于 <strong>v</strong> 值——它允许从签名本身恢复出签名者的公钥（进而算出地址）。这意味着以太坊交易不需要像比特币那样显式地提供 <code>from</code> 地址，网络可以从签名中直接推导出发送者是谁。这正是"以太坊地址就是公钥哈希"的直接体现。</p>
 
         <pre><code># 以太坊交易签名流程（概念示意）
 # 1. 交易数据 RLP 编码 → 得到待签名的消息
@@ -191,7 +227,7 @@
 
         <ul>
             <li><strong>重入攻击（Re-entrancy）</strong>——攻击合约在接收以太币时递归调用提现函数，在余额更新之前反复提取余额。这不是加密问题，而是"先转账后更新"的顺序问题。</li>
-            <li><strong>签名重放攻击（Signature Replay）</strong>——同一笔签名在不同链上重复使用（比如以太坊主网和测试网），或者在同一个合约的不同函数上重放。解决方案是在签名消息中加入 nonce、链 ID 和合约地址。</li>
+            <li><strong>签名重放攻击（Signature Replay）</strong>——同一笔签名在不同链上重复使用（比如以太坊主网和测试网），或者在同一个合约的不同函数上重放。解决方案是在签名消息中加入 <math class="math-inline" aria-label="nonce"><mi>nonce</mi></math>、链 ID 和合约地址。</li>
             <li><strong>前端运行（Front-running）</strong>——攻击者观察到交易池中的待处理交易，抢先提交一笔具有更高 gas 价格的相同交易。这在 DEX（去中心化交易所）中尤其常见，本质是区块链的透明性与交易排序之间的根本矛盾。</li>
         </ul>
 
@@ -240,6 +276,10 @@
         </div>
 
         <p>至此，第五部分"工具与实践"的三章全部完成。从 OpenSSL 命令行到 Python 编程再到区块链应用，你已经掌握了将密码学理论付诸实践的完整工具箱。在下一章中，我们将踏上前沿之旅——后量子密码学。当量子计算机真的到来时，RSA 和 ECC 将在一夜之间变得脆弱，而新的"后量子"算法正在为此做准备。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>比特币白皮书见 S. Nakamoto, <em>“Bitcoin: A Peer-to-Peer Electronic Cash System,”</em> 2008（<a href="https://bitcoin.org/bitcoin.pdf">bitcoin.org/bitcoin.pdf</a>），其中 §SPV 描述了轻客户端与 Merkle 证明。HASH160 与 Base58Check 地址推导见 Bitcoin Developer Documentation, <em>“Addresses”</em> 与 <em>“P2PKH”</em>；secp256k1 参数见 SEC 2: <em>“Recommended Elliptic Curve Domain Parameters,”</em> 2010。Merkle 树见 R. C. Merkle, <em>“A Certified Digital Signature,”</em> CRYPTO 1989（<a href="https://doi.org/10.1007/0-387-34805-0_21">DOI 10.1007/0-387-34805-0_21</a>）。以太坊签名与地址恢复见 Ethereum Yellow Paper（G. Wood, 2014）；The DAO 事件见 2016 年 6 月公开披露。
+        </div>
 
         <div class="footer-nav">
             <a href="24.html">← 上一章</a>
