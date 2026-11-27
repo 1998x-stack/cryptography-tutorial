@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -126,9 +132,34 @@
 
         <p><strong>步骤2：随机测量。</strong>Bob为每个接收到的光子随机选择测量基（+或×）。如果Bob选择的基与Alice发送时使用的基一致，他能以100%的概率测得正确比特值。如果基不一致，他的测量结果是完全随机的——有50%的概率得到正确值，50%概率得到错误值。</p>
 
-        <p><strong>步骤3：公开对基（Sifting）。</strong>Alice和Bob通过公开信道（可以是未加密的）公布各自使用的基序列，但不公布具体比特值。他们只保留那些基一致的比特位置，丢弃基不一致的位置。这一步结束后，Alice和Bob应该拥有一串理论上完全一致的比特串——前提是没有窃听者。</p>
+        <p><strong>步骤3：公开对基（Sifting）。</strong>Alice和Bob通过公开信道（可以是未加密的）公布各自使用的基序列，但不公布具体比特值。他们只保留那些基一致的比特位置，丢弃基不一致的位置。由于双方各自随机选基，基一致的概率为 <math class="math-inline" aria-label="1 除以 2"><mfrac><mn>1</mn><mn>2</mn></mfrac></math>，所以发送 <math class="math-inline" aria-label="n"><mi>n</mi></math> 个光子后，留下的候选密钥长度约为：</p>
 
-        <p><strong>步骤4：窃听检测。</strong>Alice和Bob从一致的比特中随机选取一部分公开对比。如果这些对比比特全部一致，则信道安全；如果错误率超过某个阈值（通常为11%），说明存在窃听——此时丢弃所有密钥，从头开始。</p>
+        <div class="math-equation" role="group" aria-label="对基后的密钥长度">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="对基后密钥长度公式，可横向滚动">
+            <math display="block" aria-label="筛选后比特数 n 下标 sift 约等于 n 除以 2">
+              <mrow>
+                <msub><mi>n</mi><mi>sift</mi></msub><mo>&#x2248;</mo><mfrac><mi>n</mi><mn>2</mn></mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>这一步结束后，Alice和Bob应该拥有一串理论上完全一致的比特串——前提是没有窃听者。</p>
+
+        <p><strong>步骤4：窃听检测。</strong>Alice和Bob从一致的比特中随机选取一部分公开对比，用错误率 <math class="math-inline" aria-label="QBER"><mi>QBER</mi></math>（量子比特误码率）衡量信道是否被窃听：</p>
+
+        <div class="math-equation" role="group" aria-label="量子比特误码率">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="QBER 定义公式，可横向滚动">
+            <math display="block" aria-label="QBER 等于抽样中错误的比特数除以抽样总比特数">
+              <mrow>
+                <mi>QBER</mi><mo>=</mo>
+                <mfrac><msub><mi>N</mi><mi>err</mi></msub><msub><mi>N</mi><mi>sample</mi></msub></mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>如果这些对比比特全部一致（<math class="math-inline" aria-label="QBER 等于 0"><mi>QBER</mi><mo>=</mo><mn>0</mn></math>），则估计信道安全；如果错误率超过阈值——在 BB84 的 Shor–Preskill 安全证明下，单向纠错的容错上限约为 <math class="math-inline" aria-label="11 百分号"><mn>11</mn><mo>%</mo></math>——则说明可能存在窃听，此时丢弃所有密钥，从头开始。</p>
 
         <p><strong>步骤5：纠错与隐私放大。</strong>即使在无窃听的场景中，量子信道本身也会引入噪声（探测器暗计数、光子损耗等），导致Alice和Bob的比特串存在少量差异。通过纠错码（如Cascade协议）修正这些错误后，再通过<strong>隐私放大（Privacy Amplification）</strong>——使用通用哈希函数压缩密钥——来消除窃听者可能获取的任何部分信息。</p>
 
@@ -174,7 +205,7 @@ print(f"误码率: {error_rate:.2%}")
 
         <p>量子纠缠是量子力学中最"诡异"的现象之一：两个纠缠的光子即使被分开到宇宙的两端，它们的状态也是关联的——测量其中一个光子会瞬间确定另一个光子的状态。Einstein称之为"幽灵般的超距作用"（spooky action at a distance）。</p>
 
-        <p>E91协议的工作流程：一个纠缠光子源（在Alice和Bob之间）制备纠缠光子对，将其中一个光子发送给Alice、另一个给Bob。Alice和Bob各自独立随机选择测量基进行测量。由于纠缠的关联性，当他们的测量基一致时，结果完全相关。E91还可以通过检验贝尔不等式（Bell's inequality）的违反程度来检测窃听——任何窃听行为都会破坏纠缠态，导致贝尔不等式不再被违反。这个检测机制比BB84的随机抽样对比在原理上更优雅，因为它的安全性直接基于量子力学最根本的特征。</p>
+        <p>E91协议的工作流程：一个纠缠光子源（在Alice和Bob之间）制备纠缠光子对，将其中一个光子发送给Alice、另一个给Bob。Alice和Bob各自独立随机选择测量基进行测量。由于纠缠的关联性，当他们的测量基一致时，结果完全相关。E91还可以通过检验贝尔不等式（Bell's inequality）的违反程度来检测窃听——任何窃听行为都会破坏纠缠态，导致贝尔不等式不再被违反。具体来说，CHSH 不等式用四个关联测量定义一个量 <math class="math-inline" aria-label="S"><mi>S</mi></math>：经典局域隐变量理论要求 <math class="math-inline" aria-label="S 的绝对值小于等于 2"><mo>|</mo><mi>S</mi><mo>|</mo><mo>&#x2264;</mo><mn>2</mn></math>，而量子力学允许它最高达到 <math class="math-inline" aria-label="2 倍根号 2"><mn>2</mn><msqrt><mn>2</mn></msqrt></math>（Tsirelson 界）。实测值超出 2 就证明存在量子关联，也就能对窃听设下上界。这个检测机制比BB84的随机抽样对比在原理上更优雅，因为它的安全性直接基于量子力学最根本的特征。</p>
 
         <p>然而，E91在实际应用中面临更大的技术挑战：产生稳定可控的纠缠光子对、在光纤中传输纠缠态不丢失纠缠特性、同时保证两个探测器的同步。因此，目前商用QKD系统中BB84及其实践改良方案（如诱骗态协议Decoy-State Protocol）的使用远多于E91。</p>
 
@@ -182,7 +213,22 @@ print(f"误码率: {error_rate:.2%}")
 
         <p>点对点的QKD只是第一步。要构建真正实用的量子通信网络，需要解决两个关键问题：<strong>距离限制</strong>和<strong>多跳路由</strong>。</p>
 
-        <p><strong>距离限制。</strong>在光纤中传输的光子会因吸收和散射而衰减。对于标准的电信光纤（1550nm窗口），每公里的衰减约0.2dB。这也意味着经过100公里传输后，信号强度降至原来的1%。目前最先进的QKD系统使用诱骗态协议和超低噪声探测器，可以在约400-500公里的光纤链路上实现安全密钥分发。超过这个距离，信号就被噪声完全淹没。</p>
+        <p><strong>距离限制。</strong>在光纤中传输的光子会因吸收和散射而衰减。对于标准的电信光纤（1550nm窗口），每公里的衰减约0.2dB。用功率衰减公式表示，传输距离 <math class="math-inline" aria-label="L"><mi>L</mi></math> 公里后的功率为：</p>
+
+        <div class="math-equation" role="group" aria-label="光纤功率衰减">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="光纤衰减公式，可横向滚动">
+            <math display="block" aria-label="功率 P 作用于 L 等于初始功率 P 下标 0 乘以 10 的负 alpha L 除以 10 次方">
+              <mrow>
+                <mi>P</mi><mo>(</mo><mi>L</mi><mo>)</mo><mo>=</mo>
+                <msub><mi>P</mi><mn>0</mn></msub><mo>&#x22C5;</mo>
+                <msup><mn>10</mn><mrow><mo>&#x2212;</mo><mi>&#x03B1;</mi><mi>L</mi><mo>/</mo><mn>10</mn></mrow></msup>
+                <mo>,</mo><mspace width="1em"/><mi>&#x03B1;</mi><mo>&#x2248;</mo><mn>0.2</mn><mspace width="0.3em"/><mi>dB</mi><mo>/</mo><mi>km</mi>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>代入 <math class="math-inline" aria-label="L 等于 100 公里"><mi>L</mi><mo>=</mo><mn>100</mn></math> 可得 <math class="math-inline" aria-label="P 除以 P 下标 0 等于 10 的负 2 次方等于 1 百分号"><mfrac><mi>P</mi><msub><mi>P</mi><mn>0</mn></msub></mfrac><mo>=</mo><msup><mn>10</mn><mrow><mo>&#x2212;</mo><mn>2</mn></mrow></msup><mo>=</mo><mn>1</mn><mo>%</mo></math>——经过100公里传输后，信号强度降至原来的1%。目前最先进的QKD系统使用诱骗态协议和超低噪声探测器，可以在约400-500公里的光纤链路上实现安全密钥分发。超过这个距离，信号就被噪声完全淹没。</p>
 
         <p><strong>量子中继器与可信中继节点。</strong>理论上，量子中继器（Quantum Repeater）可以在不破坏量子态的情况下延长通信距离。它通过纠缠交换（Entanglement Swapping）和纠缠纯化（Entanglement Purification）来实现信号的"放大"。但实用的量子中继器仍处于实验室研究阶段。现实方案是使用<strong>可信中继节点（Trusted Relay）</strong>：Alice将密钥传到中间节点A，A传到B，B传到C，最终传到Bob。每个中间节点都知晓密钥——这就是"可信"的含义。如果任何一个节点被攻破，整条链路都失去安全性。</p>
 
@@ -255,6 +301,10 @@ print(f"误码率: {error_rate:.2%}")
 
         <div class="highlight">
             <strong>📌 关键总结：</strong>量子密钥分发是密码学中独一无二的技术——它用物理定律而非数学假设来保证安全。BB84协议仍然是QKD的基石，量子力学中的不可克隆定理保障了窃听必然留下痕迹。QKD不是后量子密码的替代品，而是互补品：PQC解决大规模、低成本的升级需求，QKD解决最高安全等级的通信需求。中国的北京-上海QKD骨干网和墨子号卫星展示了这项技术从实验室走向大规模工程部署的可能性。下一章，也就是本课程的最后一章，我们将把前27章学到的所有知识融会贯通——亲手构建一个端到端的加密消息系统。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>BB84 协议见 C. H. Bennett, G. Brassard, <em>“Quantum Cryptography: Public Key Distribution and Coin Tossing,”</em> IEEE ICSSP 1984（<a href="https://doi.org/10.1016/j.tcs.2014.05.025">DOI 10.1016/j.tcs.2014.05.025</a>）；其对基概率与窃听检测逻辑见原文。E91 协议见 A. K. Ekert, <em>“Quantum Cryptography Based on Bell's Theorem,”</em> Phys. Rev. Lett. 67, 661, 1991（<a href="https://doi.org/10.1103/PhysRevLett.67.661">DOI 10.1103/PhysRevLett.67.661</a>）。CHSH 不等式见 J. F. Clauser, M. A. Horne, A. Shimony, R. A. Holt, 1969（<a href="https://doi.org/10.1103/PhysRevLett.23.880">DOI 10.1103/PhysRevLett.23.880</a>）；量子力学上限 <math class="math-inline" aria-label="2 倍根号 2"><mn>2</mn><msqrt><mn>2</mn></msqrt></math> 见 B. S. Tsirelson, 1980。11% 容错上限见 P. W. Shor, J. Preskill, <em>“Simple Proof of Security of the BB84 Quantum Key Distribution Protocol,”</em> Phys. Rev. Lett. 85, 441, 2000（<a href="https://doi.org/10.1103/PhysRevLett.85.441">DOI 10.1103/PhysRevLett.85.441</a>）。引骗态协议见 W.-Y. Hwang, 2003 与 H.-K. Lo 等，2005。墨子号与卫星 QKD 见 S.-K. Liao 等，<em>Nature</em> 549, 43–47, 2017（<a href="https://doi.org/10.1038/nature23655">DOI 10.1038/nature23655</a>）。
         </div>
 
         <div class="footer-nav">
