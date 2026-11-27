@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -124,6 +130,20 @@ print(plaintext.decode())  # "这是绝密消息"</code></pre>
 
         <p>Fernet 的最大优势是"防呆设计"：你不需要选择加密模式、不需要自己拼接 IV、不需要操心 padding、不需要分开计算 HMAC——所有这些容易出错的事情，Fernet 都帮你自动处理好了。加密后的 token 包含了 IV、密文和 HMAC 签名，解密时会自动验证完整性。</p>
 
+        <p>以 CBC 这类分组模式为例，它要求明文长度是块大小 <math class="math-inline" aria-label="B"><mi>B</mi></math>（AES 为 <math class="math-inline" aria-label="16 字节"><mn>16</mn><mspace width="0.3em"/><mi>字节</mi></math>）的整数倍。PKCS#7 填充把明文补到下一个块边界，填充字节数取决于当前长度：</p>
+
+        <div class="math-equation" role="group" aria-label="PKCS#7 填充长度">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="PKCS#7 填充长度公式，可横向滚动">
+            <math display="block" aria-label="填充长度 pad 等于 B 减去明文长度除以 B 的余数">
+              <mrow>
+                <mi>pad</mi><mo>=</mo><mi>B</mi><mo>&#x2212;</mo><mo>(</mo><mo>|</mo><mi>m</mi><mo>|</mo><mspace width="0.3em"/><mo form="prefix">mod</mo><mspace width="0.3em"/><mi>B</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>当明文正好是 <math class="math-inline" aria-label="B"><mi>B</mi></math> 的整数倍时，余数为 0，公式给出 <math class="math-inline" aria-label="pad 等于 B"><mi>pad</mi><mo>=</mo><mi>B</mi></math>，也就是额外填充一整个块——这样才能在解密时无歧义地去掉填充。</p>
+
         <p>对于更复杂的场景，cryptography 提供了 <code>hazmat</code>（hazardous materials，危险材料）层——这个名字本身就是警告：这些 API 需要你具备密码学知识才能安全使用：</p>
 
         <pre><code>from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -224,7 +244,27 @@ except ValueError:
 
         <h2>24.5 hashlib 与 HMAC</h2>
 
-        <p>Python 标准库中的 <code>hashlib</code> 提供了哈希和 HMAC 功能。虽然它的 API 简单，但正确使用仍然需要一些注意：</p>
+        <p>Python 标准库中的 <code>hashlib</code> 提供了哈希和 HMAC 功能。HMAC 不是“哈希一下密钥再哈希数据”，而是用两个固定填充常量 <math class="math-inline" aria-label="opad 与 ipad"><mi>opad</mi><mo>,</mo><mi>ipad</mi></math> 把密钥夹在内外两层哈希之间：</p>
+
+        <div class="math-equation" role="group" aria-label="HMAC 定义">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="HMAC 定义公式，可横向滚动">
+            <math display="block" aria-label="HMAC 作用于密钥 K 与消息 m 等于 H 作用于左括号 K 与 opad 异或，拼接 H 作用于 K 与 ipad 异或，拼接 m">
+              <mrow>
+                <mi>HMAC</mi><mo>(</mo><mi>K</mi><mo>,</mo><mi>m</mi><mo>)</mo>
+                <mo>=</mo>
+                <mi>H</mi><mo>(</mo>
+                <mo>(</mo><msup><mi>K</mi><mo>&#x2032;</mo></msup><mo>&#x2295;</mo><mi>opad</mi><mo>)</mo>
+                <mo>&#x2016;</mo>
+                <mi>H</mi><mo>(</mo>
+                <mo>(</mo><msup><mi>K</mi><mo>&#x2032;</mo></msup><mo>&#x2295;</mo><mi>ipad</mi><mo>)</mo>
+                <mo>&#x2016;</mo><mi>m</mi><mo>)</mo>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>虽然它的 API 简单，但正确使用仍然需要一些注意：</p>
 
         <pre><code>import hashlib
 import hmac
@@ -316,6 +356,10 @@ cipher = Fernet(key)
         </div>
 
         <p>用 Python 操作密码学 API 的能力是你工具箱中的又一件利器。在下一章中，我们将把目光投向密码学在区块链中的应用——比特币地址是如何从公钥生成的、以太坊交易的签名机制、以及零知识证明如何帮助区块链扩容。你会发现，前 23 章学到的一切，在区块链的世界中被以一种精妙的方式组合在了一起。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>PBKDF2 见 RFC 2898（<a href="https://www.rfc-editor.org/rfc/rfc2898">rfc-editor.org/rfc/rfc2898</a>）；HMAC 定义与内外填充常量见 H. Krawczyk, M. Bellare, R. Canetti, <em>“HMAC: Keyed-Hashing for Message Authentication,”</em> RFC 2104, 1997（<a href="https://www.rfc-editor.org/rfc/rfc2104">rfc-editor.org/rfc/rfc2104</a>）。PKCS#7 填充见 RFC 5652（CMS）§6.3 与 PKCS#7 v1.5。AES-GCM 与认证标签、nonce 唯一性要求见 M. Dworkin, <em>“Recommendation for Block Cipher Modes of Operation: GCM and GMAC,”</em> NIST SP 800-38D, 2007（<a href="https://doi.org/10.6028/NIST.SP.800-38D">DOI 10.6028/NIST.SP.800-38D</a>）。Python <code>cryptography</code> 与 PyCryptodome 的 API 与安全使用说明见各自官方文档。
+        </div>
 
         <div class="footer-nav">
             <a href="23.html">← 上一章</a>
