@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -84,11 +90,21 @@
 
         <p>凯撒密码是历史上记载最早的密码之一。古罗马的凯撒大帝在给前线将领写信时，会把每个字母向后移动三个位置。例如 A 变成 D，B 变成 E，以此类推。接收方只要把每个字母向前移动三个位置就能还原出明文。</p>
 
-        <p>用数学语言来描述：将字母 A-Z 映射为数字 0-25，假设明文为 p，密文为 c，则有：</p>
+        <p>用数学语言来描述：将字母 A–Z 映射为数字 0–25，设明文为 <math class="math-inline" aria-label="p"><mi>p</mi></math>、密文为 <math class="math-inline" aria-label="c"><mi>c</mi></math>、密钥位移量为 <math class="math-inline" aria-label="k"><mi>k</mi></math>，则加减都是模 26 运算：</p>
 
-        <pre><code>加密：c = (p + k) mod 26
-解密：p = (c - k) mod 26
-其中 k = 3 就是凯撒使用的密钥</code></pre>
+        <div class="math-equation" role="group" aria-label="凯撒密码加密解密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="凯撒密码加解密公式，可横向滚动">
+            <math display="block" aria-label="加密 c 等于 p 加 k 对 26 取模；解密 p 等于 c 减 k 对 26 取模">
+              <mrow>
+                <mi>c</mi><mo>=</mo><mo>(</mo><mi>p</mi><mo>+</mo><mi>k</mi><mo>)</mo><mspace width="0.3em"/><mo form="prefix">mod</mo><mspace width="0.3em"/><mn>26</mn>
+                <mo>,</mo><mspace width="1.2em"/>
+                <mi>p</mi><mo>=</mo><mo>(</mo><mi>c</mi><mo>&#x2212;</mo><mi>k</mi><mo>)</mo><mspace width="0.3em"/><mo form="prefix">mod</mo><mspace width="0.3em"/><mn>26</mn>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="k 等于 3"><mi>k</mi><mo>=</mo><mn>3</mn></math> 就是凯撒使用的密钥。</p>
 
         <p>我们来看一个具体的例子。假设明文是 "CRYPTOGRAPHY"：</p>
 
@@ -126,7 +142,15 @@
 
         <p>单表替换密码的密钥空间有多大？数学上，就是 26 个字母的全排列数：</p>
 
-        <pre><code>26! = 26 × 25 × 24 × ... × 2 × 1 ≈ 4 × 10²⁶</code></pre>
+        <div class="math-equation" role="group" aria-label="单表替换密钥空间">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="全排列数公式，可横向滚动">
+            <math display="block" aria-label="26 的阶乘约等于 4 乘以 10 的 26 次方">
+              <mrow>
+                <mn>26</mn><mo>!</mo><mo>=</mo><mn>26</mn><mo>&#x00D7;</mo><mn>25</mn><mo>&#x00D7;</mo><mn>24</mn><mo>&#x00D7;</mo><mo>&#x22EF;</mo><mo>&#x00D7;</mo><mn>2</mn><mo>&#x00D7;</mo><mn>1</mn><mo>&#x2248;</mo><mn>4</mn><mo>&#x00D7;</mo><msup><mn>10</mn><mn>26</mn></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p>这个数字大约是 400 亿亿，远远大于凯撒密码的 26 种可能。受到这个庞大数字的迷惑，这种密码在长达一千多年的时间里被认为是不可能破解的。但事实真的如此吗？</p>
 
@@ -199,6 +223,22 @@
             <li>对明文的每个字母，用对应位置的密钥字母作为位移量，进行凯撒式位移</li>
         </ul>
 
+        <p>用公式表达：设第 <math class="math-inline" aria-label="i"><mi>i</mi></math> 个明文字母为 <math class="math-inline" aria-label="p 下标 i"><msub><mi>p</mi><mi>i</mi></msub></math>，密钥字母（循环使用）为 <math class="math-inline" aria-label="k 下标 i"><msub><mi>k</mi><mi>i</mi></msub></math>，则密文为：</p>
+
+        <div class="math-equation" role="group" aria-label="维吉尼亚密码">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="维吉尼亚加密公式，可横向滚动">
+            <math display="block" aria-label="c 下标 i 等于 p 下标 i 加 k 下标 i 对 26 取模">
+              <mrow>
+                <msub><mi>c</mi><mi>i</mi></msub><mo>=</mo>
+                <mo>(</mo><msub><mi>p</mi><mi>i</mi></msub><mo>+</mo><msub><mi>k</mi><mi>i</mi></msub><mo>)</mo>
+                <mspace width="0.3em"/><mo form="prefix">mod</mo><mspace width="0.3em"/><mn>26</mn>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="L"><mi>L</mi></math> 是关键词长度（这里是 3）——密钥按 <math class="math-inline" aria-label="i 对 L 取模"><mi>i</mi><mspace width="0.3em"/><mo form="prefix">mod</mo><mspace width="0.3em"/><mi>L</mi></math> 循环使用。</p>
+
         <p>举个例子，明文 "HELLO WORLD"，密钥 "KEY"：</p>
 
         <pre><code>密钥: K  E  Y  K  E  Y  K  E  Y  K  E
@@ -219,7 +259,21 @@
         <p>破解思路分为两步：</p>
 
         <ul>
-            <li><strong>第一步：确定密钥长度。</strong>在密文中寻找重复出现的字母组合（比如 "ABC" 出现了多次），测量它们之间的距离。这些距离通常是密钥长度的整数倍。通过分析多个重复模式，可以推断出密钥长度。</li>
+            <li><strong>第一步：确定密钥长度。</strong>在密文中寻找重复出现的字母组合（比如 "ABC" 出现了多次），测量它们之间的距离。这些距离通常是密钥长度的整数倍。通过分析多个重复模式，可以推断出密钥长度。另一个有力工具是<strong>重合指数（Index of Coincidence, IC）</strong>：统计一段文本中各字母出现次数 <math class="math-inline" aria-label="n 下标 i"><msub><mi>n</mi><mi>i</mi></msub></math>，长度为 <math class="math-inline" aria-label="N"><mi>N</mi></math>，则
+        <div class="math-equation" role="group" aria-label="重合指数">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="重合指数公式，可横向滚动">
+            <math display="block" aria-label="IC 等于各字母 n 下标 i 乘 n 下标 i 减 1 之和除以 N 乘 N 减 1">
+              <mrow>
+                <mi>IC</mi><mo>=</mo>
+                <mfrac>
+                  <mrow><mo>&#x2211;</mo><msub><mi>n</mi><mi>i</mi></msub><mo>(</mo><msub><mi>n</mi><mi>i</mi></msub><mo>&#x2212;</mo><mn>1</mn><mo>)</mo></mrow>
+                  <mrow><mi>N</mi><mo>(</mo><mi>N</mi><mo>&#x2212;</mo><mn>1</mn><mo>)</mo></mrow>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+        英语文本的 IC 约为 <math class="math-inline" aria-label="0.065"><mn>0.065</mn></math>，而随机文本约为 <math class="math-inline" aria-label="0.038"><mn>0.038</mn></math>；把密文按猜测的密钥长度分组后逐组算 IC，哪一组接近英语值就说明密钥长度猜对了。</li>
             <li><strong>第二步：分别破解单表。</strong>一旦确定了密钥长度 L，你实际上有 L 个独立的凯撒密码——每个位置对应密钥中的一个字母。对每组分别做频率分析即可。</li>
         </ul>
 
@@ -277,6 +331,10 @@
 
         <div class="tip">
             <strong>🔗 过渡：</strong>古典密码告诉我们，仅仅靠替换和置换不足以构建安全的密码系统。随着机械时代的到来，人们有了更复杂的工具来组合这些操作——下一章，我们将走进两次世界大战的密码战场，看看 Enigma 密码机是如何将替换和置换推向极致，以及图灵和波兰数学家们是如何以超凡的智慧将其破解的。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>凯撒密码与维吉尼亚多表替换的数学表述为古典密码标准内容，可见 D. Kahn, <em>“The Codebreakers,”</em> 1967，以及 S. Singh, <em>“The Code Book,”</em> 1999。频率分析最早见 9 世纪 Al-Kindi 的密码分析手稿。Kasiski 检验法见 F. W. Kasiski, <em>“Die Geheimschriften und die Dechiffrir-Kunst,”</em> 1863。重合指数（Index of Coincidence）见 W. F. Friedman, <em>“The Index of Coincidence and Its Applications in Cryptanalysis,”</em> 1922（美国陆军公开报告）；英语与随机文本的约值 <math class="math-inline" aria-label="0.065"><mn>0.065</mn></math> 与 <math class="math-inline" aria-label="0.038"><mn>0.038</mn></math> 为该文中的经典估计。现代分组密码中“替换 + 置换”的思想与香农的混淆/扩散原则见下一章。
         </div>
 
         <div class="footer-nav">
