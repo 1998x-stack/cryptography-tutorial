@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -133,9 +139,25 @@
 
         <p>核心思想其实很朴素：<strong>观察明文对的差异如何通过轮函数传播到密文对的差异。</strong>假设我们加密两个明文 P 和 P'，它们只有少数几个比特不同。经过S盒和轮函数后，这两个加密过程产生的中间状态的差异会遵循某种非均匀的概率分布——这种"偏差"就是攻击者可以利用的杠杆。</p>
 
-        <p>具体来说，差分攻击寻找的是：给定特定的输入差异 <code>&Delta;P = P &oplus; P'</code>，经过多个加密轮次后，输出差异 <code>&Delta;C</code> 并非均匀分布，而是某个特定值出现的概率显著高于其他值。这个"高概率差分特征"就可以用来恢复密钥。</p>
+        <p>具体来说，差分攻击寻找的是：给定特定的输入差异 <math class="math-inline" aria-label="Delta P 等于 P 异或 P 撇"><mi>&#x0394;P</mi><mo>=</mo><mi>P</mi><mo>&#x2295;</mo><msup><mi>P</mi><mo>&#x2032;</mo></msup></math>，经过多个加密轮次后，输出差异 <math class="math-inline" aria-label="Delta C"><mi>&#x0394;C</mi></math> 并非均匀分布，而是某个特定值出现的概率显著高于其他值。这个"高概率差分特征"就可以用来恢复密钥。</p>
 
-        <p>Biham 和 Shamir 用差分攻击证明了：<strong>16轮的DES（即标准DES）理论上可以用2^47次选择明文攻击攻破</strong>，而当时所有人的认知是：DES唯一的攻击方式就是暴力穷举2^55次。这个发现本身并没有实际破解DES（因为2^47仍然很大），但它揭示了DES的设计并非最优——DES的S盒似乎恰好被设计成能抵抗差分攻击（后来发现，IBM在设计DES时就已知差分攻击，但被要求保密）。</p>
+        <p>把“某个输入差分以多大概率传播到某个输出差分”写成条件概率，差分攻击的杠杆就是它偏离均匀分布的幅度：</p>
+
+        <div class="math-equation" role="group" aria-label="差分特征概率">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="差分特征概率公式，可横向滚动">
+            <math display="block" aria-label="在输入差分 Delta P 下，输出差分等于 Delta C 的概率">
+              <mrow>
+                <mi>Pr</mi><mo>[</mo>
+                <msup><mi>&#x0394;C</mi><mo>&#x2032;</mo></msup><mo>=</mo><mi>&#x0394;C</mi>
+                <mo>&#x2223;</mo><msup><mi>P</mi><mo>&#x2032;</mo></msup><mo>&#x2295;</mo><mi>P</mi><mo>=</mo><mi>&#x0394;P</mi>
+                <mo>]</mo><mo>&#x226B;</mo>
+                <mfrac><mn>1</mn><msup><mn>2</mn><mi>n</mi></msup></mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>Biham 和 Shamir 用差分攻击证明了：<strong>16轮的DES（即标准DES）理论上可以用 <math class="math-inline" aria-label="2 的 47 次方"><msup><mn>2</mn><mn>47</mn></msup></math> 次选择明文攻击攻破</strong>，而当时所有人的认知是：DES唯一的攻击方式就是暴力穷举 <math class="math-inline" aria-label="2 的 55 次方"><msup><mn>2</mn><mn>55</mn></msup></math> 次。这个发现本身并没有实际破解DES（因为2^47仍然很大），但它揭示了DES的设计并非最优——DES的S盒似乎恰好被设计成能抵抗差分攻击（后来发现，IBM在设计DES时就已知差分攻击，但被要求保密）。</p>
 
         <div class="tip">
             <strong>💡 你知道吗？</strong>差分密码分析的思想，其实在1970年代IBM设计DES时就已经被NSA知晓。NSA修改了DES的S盒，使之对差分分析有更强的抵抗力。但Biham和Shamir在1990年"重新发现"这项技术时，并不知道NSA已经秘密知道它二十多年了。这就是密码学史上著名的"DES的S盒秘密"——直到1994年，IBM的原设计文档才被解密，证实了这一点。
@@ -147,13 +169,24 @@
 
         <p>线性分析的核心是：<strong>寻找明文、密文和密钥之间的线性逼近关系。</strong>具体来说，攻击者试图找到一个线性表达式：</p>
 
-        <pre><code>P[i1] &oplus; P[i2] &oplus; ... &oplus; P[ia]
-&oplus; C[j1] &oplus; C[j2] &oplus; ... &oplus; C[jb]
-= K[k1] &oplus; K[k2] &oplus; ... &oplus; K[kc]</code></pre>
+        <div class="math-equation" role="group" aria-label="线性逼近关系">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="线性逼近公式，可横向滚动">
+            <math display="block" aria-label="明文若干位异或、密文若干位异或，等于密钥若干位异或，以概率 p 成立">
+              <mrow>
+                <munder><mo>&#x2295;</mo><mi>i</mi></munder><mi>P</mi><mo>[</mo><mi>i</mi><mo>]</mo>
+                <mo>&#x2295;</mo>
+                <munder><mo>&#x2295;</mo><mi>j</mi></munder><mi>C</mi><mo>[</mo><mi>j</mi><mo>]</mo>
+                <mo>=</mo>
+                <munder><mo>&#x2295;</mo><mi>k</mi></munder><mi>K</mi><mo>[</mo><mi>k</mi><mo>]</mo>
+                <mo>,</mo><mspace width="1em"/><mi>p</mi><mo>&#x2260;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
-        <p>其中 P[i] 表示明文的第 i 位，C[j]是密文的第j位，K[k]是密钥的第k位。这个表达式以概率 p &ne; 1/2 成立。当 p 偏离 1/2 越远，攻击需要的明文-密文对就越少。</p>
+        <p>其中 <math class="math-inline" aria-label="P 下标 i"><mi>P</mi><mo>[</mo><mi>i</mi><mo>]</mo></math> 表示明文的第 <math class="math-inline" aria-label="i"><mi>i</mi></math> 位，<math class="math-inline" aria-label="C 下标 j"><mi>C</mi><mo>[</mo><mi>j</mi><mo>]</mo></math>是密文的第 <math class="math-inline" aria-label="j"><mi>j</mi></math> 位，<math class="math-inline" aria-label="K 下标 k"><mi>K</mi><mo>[</mo><mi>k</mi><mo>]</mo></math>是密钥的第 <math class="math-inline" aria-label="k"><mi>k</mi></math> 位。这个表达式以概率 <math class="math-inline" aria-label="p 不等于 1 除以 2"><mi>p</mi><mo>&#x2260;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></math> 成立。当 <math class="math-inline" aria-label="p"><mi>p</mi></math> 偏离 <math class="math-inline" aria-label="1 除以 2"><mfrac><mn>1</mn><mn>2</mn></mfrac></math> 越远（线性偏差 <math class="math-inline" aria-label="p 减 1 除以 2"><mi>p</mi><mo>&#x2212;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></math> 越大），攻击需要的明文-密文对就越少。</p>
 
-        <p>Matsui 使用线性分析攻击 DES，只需要 <strong>2^43 个已知明文</strong>——比 Biham 和 Shamir 的差分分析（需要2^47个选择明文）更高效。更重要的是，它只需要"已知明文"而无需"选择明文"，这意味着攻击者的能力假设更弱、更现实。</p>
+        <p>Matsui 使用线性分析攻击 DES，只需要 <strong><math class="math-inline" aria-label="2 的 43 次方"><msup><mn>2</mn><mn>43</mn></msup></math> 个已知明文</strong>——比 Biham 和 Shamir 的差分分析（需要 <math class="math-inline" aria-label="2 的 47 次方"><msup><mn>2</mn><mn>47</mn></msup></math> 个选择明文）更高效。更重要的是，它只需要"已知明文"而无需"选择明文"，这意味着攻击者的能力假设更弱、更现实。</p>
 
         <p>线性分析的深刻启示是：<strong>S盒的非线性是最关键的。</strong>如果S盒的线性逼近偏差太大，整个密码就会被轻松攻破。AES在设计时就把抵抗线性和差分分析作为首要目标，它的S盒（基于GF(2^8)的乘法逆元）在这两方面都极为优秀。</p>
 
@@ -221,11 +254,11 @@ bool constant_time_compare_bad(const char *a, const char *b, size_t n) {
             <li><strong>DSA / ElGamal</strong>——基于有限域离散对数，也被摧毁</li>
         </ul>
 
-        <p><strong>Grover算法</strong>（1996年，Lov Grover）对对称密码的影响温和得多：它将密钥搜索的复杂度从 O(2^n) 降至 O(2^(n/2))。所以：</p>
+        <p><strong>Grover算法</strong>（1996年，Lov Grover）对对称密码的影响温和得多：它将密钥搜索的复杂度从 <math class="math-inline" aria-label="O 作用于 2 的 n 次方"><mi>O</mi><mo>(</mo><msup><mn>2</mn><mi>n</mi></msup><mo>)</mo></math> 降至 <math class="math-inline" aria-label="O 作用于 2 的 n 除以 2 次方"><mi>O</mi><mo>(</mo><msup><mn>2</mn><mrow><mi>n</mi><mo>/</mo><mn>2</mn></mrow></msup><mo>)</mo></math>。所以：</p>
         <ul>
             <li><strong>AES-128</strong>的128位密钥安全性降为64位——不够安全</li>
             <li><strong>AES-256</strong>的安全性降为128位——仍然安全</li>
-            <li><strong>SHA-256</strong>的碰撞搜索由2^128降为2^64——不够安全，需用SHA-384或SHA-512</li>
+            <li><strong>SHA-256</strong>的碰撞搜索由 <math class="math-inline" aria-label="2 的 128 次方"><msup><mn>2</mn><mn>128</mn></msup></math> 降为 <math class="math-inline" aria-label="2 的 64 次方"><msup><mn>2</mn><mn>64</mn></msup></math>——不够安全，需用SHA-384或SHA-512</li>
         </ul>
 
         <table>
@@ -293,6 +326,10 @@ bool constant_time_compare_bad(const char *a, const char *b, size_t n) {
         <p>这个故事的教训是深刻的：<strong>密码学的安全性不仅取决于数学基础，还取决于硬件的实现</strong>。一个在数学上完美安全的算法，跑在不安全的硬件上，就像把保险柜放在纸糊的房间里。Spectre/Meltdown 的发现催生了大量的<strong>恒定时间代码</strong>（constant-time code）和无分支（branch-free）编程实践——我们将在第18章详细讨论。</p>
 
         <p>下一章我们进入密码学工程中另一个被严重低估的领域——密钥管理与随机数。你可能觉得密钥管理听起来很无聊，但它是密码学中最容易出致命错误的地方。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>差异密码分析见 E. Biham, A. Shamir, <em>“Differential Cryptanalysis of DES-like Cryptosystems,”</em> CRYPTO 1990（<a href="https://doi.org/10.1007/3-540-38424-3_1">DOI 10.1007/3-540-38424-3_1</a>），其对 16 轮 DES 的 <math class="math-inline" aria-label="2 的 47 次方"><msup><mn>2</mn><mn>47</mn></msup></math> 选择明文结果见该文。线性密码分析见 M. Matsui, <em>“Linear Cryptanalysis Method for DES Cipher,”</em> EUROCRYPT 1993（<a href="https://doi.org/10.1007/3-540-48285-7_33">DOI 10.1007/3-540-48285-7_33</a>），<math class="math-inline" aria-label="2 的 43 次方"><msup><mn>2</mn><mn>43</mn></msup></math> 已知明文结果见该文。Shor 算法见 P. W. Shor, <em>“Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer,”</em> SIAM J. Comput., 1997（<a href="https://doi.org/10.1137/S0097539795293172">DOI 10.1137/S0097539795293172</a>）；Grover 算法见 L. K. Grover, STOC 1996（<a href="https://doi.org/10.1145/237814.237866">DOI 10.1145/237814.237866</a>）。Spectre/Meltdown 见 J. Horn 等，Google Project Zero 与多团队联合披露，2018。
+        </div>
 
         <div class="footer-nav">
             <a href="14.html">← 上一章</a>
