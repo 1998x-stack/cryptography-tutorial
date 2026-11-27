@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -130,6 +136,20 @@
 
         <p>DES 使用经典的 Feistel 网络。每一轮的轮函数 F 由以下步骤组成：</p>
 
+        <p>把轮函数的四步操作写成公式，就是从 32 位的 <math class="math-inline" aria-label="R"><mi>R</mi></math> 到 32 位输出的复合：先用扩展置换 <math class="math-inline" aria-label="E"><mi>E</mi></math> 扩到 48 位，与该轮子密钥异或，再经过 S-box 替换 <math class="math-inline" aria-label="S"><mi>S</mi></math> 压回 32 位，最后用 P 置换 <math class="math-inline" aria-label="P"><mi>P</mi></math> 打乱比特：</p>
+
+        <div class="math-equation" role="group" aria-label="DES 轮函数 F">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="DES 轮函数公式，可横向滚动">
+            <math display="block" aria-label="F 作用于 R 与子密钥 K 等于 P 作用于 S 作用于 E 作用于 R 异或 K">
+              <mrow>
+                <mi>F</mi><mo>(</mo><mi>R</mi><mo>,</mo><mi>K</mi><mo>)</mo>
+                <mo>=</mo>
+                <mi>P</mi><mo>(</mo><mi>S</mi><mo>(</mo><mi>E</mi><mo>(</mo><mi>R</mi><mo>)</mo><mo>&#x2295;</mo><mi>K</mi><mo>)</mo><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <ul>
             <li><strong>扩展置换（Expansion）</strong>——将 32 位的右半部分扩展到 48 位（按一定规则复制部分位）</li>
             <li><strong>与子密钥 XOR</strong>——将扩展后的 48 位与该轮 48 位子密钥进行 XOR</li>
@@ -161,7 +181,20 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
         <p>随着 1990 年代计算能力的飞速提升，DES 的 56 位密钥逐渐变得脆弱。1998 年，电子前哨基金会（EFF）花费不到 25 万美元建造了一台名为 <strong>Deep Crack</strong> 的专用机器，在 56 小时内破解了一个 DES 密钥。到 1999 年，Deep Crack 与互联网上的分布式计算网络合作，将破解时间缩短到了 22 小时 15 分钟。</p>
 
-        <p>密码学界面临一个现实问题：需要替代 DES，但新的标准（AES）还没有准备好。于是，一个过渡方案诞生了——<strong>Triple-DES（3DES）</strong>，也就是用三个不同的 DES 密钥（或两个密钥）对数据做三次 DES 加密。</p>
+        <p>密码学界面临一个现实问题：需要替代 DES，但新的标准（AES）还没有准备好。于是，一个过渡方案诞生了——<strong>Triple-DES（3DES）</strong>，也就是用三个不同的 DES 密钥（或两个密钥）对数据做三次 DES 加密。其加密过程是“加密—解密—加密”（EDE），中间一步是解密操作：</p>
+
+        <div class="math-equation" role="group" aria-label="3DES 加密">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="3DES 加密公式，可横向滚动">
+            <math display="block" aria-label="密文 C 等于 E 下标 K3 作用于 D 下标 K2 作用于 E 下标 K1 作用于明文 P">
+              <mrow>
+                <mi>C</mi><mo>=</mo>
+                <msub><mi>E</mi><msub><mi>K</mi><mn>3</mn></msub></msub><mo>(</mo>
+                <msub><mi>D</mi><msub><mi>K</mi><mn>2</mn></msub></msub><mo>(</mo>
+                <msub><mi>E</mi><msub><mi>K</mi><mn>1</mn></msub></msub><mo>(</mo><mi>P</mi><mo>)</mo><mo>)</mo><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <pre><code>3DES 加密（三个不同的密钥 K₁, K₂, K₃）:
 密文 = Eₖ₃(Dₖ₂(Eₖ₁(明文)))
@@ -246,7 +279,41 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
         <p><strong>2. ShiftRows（行移位）</strong>——将状态矩阵的每一行向左循环移位不同的偏移量：第一行不移位，第二行移 1 字节，第三行移 2 字节，第四行移 3 字节。这一步实现了字节层面的扩散。</p>
 
-        <p><strong>3. MixColumns（列混合）</strong>——将状态矩阵的每一列视为一个四维向量，在有限域 GF(2⁸) 上的一个固定矩阵相乘。这一步将每一列的 4 个字节混合在一起，实现跨字节的扩散。</p>
+        <p><strong>3. MixColumns（列混合）</strong>——将状态矩阵的每一列视为四维向量，在有限域 <math class="math-inline" aria-label="GF 2 的 8 次方"><mi>GF</mi><mo>(</mo><msup><mn>2</mn><mn>8</mn></msup><mo>)</mo></math> 上与一个固定矩阵相乘。这一步将每一列的 4 个字节混合在一起，实现跨字节的扩散：</p>
+
+        <div class="math-equation" role="group" aria-label="AES MixColumns">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="AES 列混合公式，可横向滚动">
+            <math display="block" aria-label="输出四维列向量等于固定的 2 3 1 1 矩阵乘以输入状态列向量">
+              <mrow>
+                <mo>(</mo>
+                <mtable>
+                  <mtr><mtd><msub><mi>s</mi><mn>0</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>s</mi><mn>1</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>s</mi><mn>2</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>s</mi><mn>3</mn></msub></mtd></mtr>
+                </mtable><mo>)</mo>
+                <mo>&#x2190;</mo>
+                <mo>(</mo>
+                <mtable>
+                  <mtr><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr>
+                  <mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>1</mn></mtd></mtr>
+                  <mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr>
+                  <mtr><mtd><mn>3</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr>
+                </mtable><mo>)</mo>
+                <mo>&#x22C5;</mo>
+                <mo>(</mo>
+                <mtable>
+                  <mtr><mtd><msub><mi>a</mi><mn>0</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>a</mi><mn>1</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>a</mi><mn>2</mn></msub></mtd></mtr>
+                  <mtr><mtd><msub><mi>a</mi><mn>3</mn></msub></mtd></mtr>
+                </mtable><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>矩阵中每个系数（如 <math class="math-inline" aria-label="2"><mn>2</mn></math>、<math class="math-inline" aria-label="3"><mn>3</mn></math>）都表示 <math class="math-inline" aria-label="GF 2 的 8 次方"><mi>GF</mi><mo>(</mo><msup><mn>2</mn><mn>8</mn></msup><mo>)</mo></math> 中的元素，乘法按该域的模不可约多项式 <math class="math-inline" aria-label="x 的 8 次方 加 x 的 4 次方 加 x 的 3 次方 加 x 加 1"><msup><mi>x</mi><mn>8</mn></msup><mo>+</mo><msup><mi>x</mi><mn>4</mn></msup><mo>+</mo><msup><mi>x</mi><mn>3</mn></msup><mo>+</mo><mi>x</mi><mo>+</mo><mn>1</mn></math> 进行。</p>
 
         <p><strong>4. AddRoundKey（加轮密钥）</strong>——将状态矩阵与当前轮的轮密钥进行 XOR。</p>
 
@@ -313,7 +380,7 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
         </table>
 
         <div class="highlight">
-            <strong>🔑 重要的后量子考量：</strong>Grover 量子搜索算法可以将任何对称密码的暴力破解复杂度降低到平方根级别。具体来说，攻击 AES-128 需要 2⁶⁴ 次 Grover 迭代，而攻击 AES-256 需要 2¹²⁸ 次。目前主流观点认为，2⁶⁴ 次 Grover 迭代在可预见的未来仍然是不现实的——但如果你在加密需要保密 30 年以上的数据（比如政府机密、长期商业机密），AES-256 是更安全的选择。作为参考，NIST 在 2016 年的指南中明确建议：对于最高安全级别的应用，应使用 AES-256。
+            <strong>🔑 重要的后量子考量：</strong>Grover 量子搜索算法可以将任何对称密码的暴力破解复杂度降低到平方根级别，即把密钥搜索的复杂度从 <math class="math-inline" aria-label="O 作用于 2 的 n 次方"><mi>O</mi><mo>(</mo><msup><mn>2</mn><mi>n</mi></msup><mo>)</mo></math> 降到 <math class="math-inline" aria-label="O 作用于 2 的 n 除以 2 次方"><mi>O</mi><mo>(</mo><msup><mn>2</mn><mrow><mi>n</mi><mo>/</mo><mn>2</mn></mrow></msup><mo>)</mo></math>。具体来说，攻击 AES-128 需要 <math class="math-inline" aria-label="2 的 64 次方"><msup><mn>2</mn><mn>64</mn></msup></math> 次 Grover 迭代，而攻击 AES-256 需要 <math class="math-inline" aria-label="2 的 128 次方"><msup><mn>2</mn><mn>128</mn></msup></math> 次。目前主流观点认为，2⁶⁴ 次 Grover 迭代在可预见的未来仍然是不现实的——但如果你在加密需要保密 30 年以上的数据（比如政府机密、长期商业机密），AES-256 是更安全的选择。作为参考，NIST 在 2016 年的指南中明确建议：对于最高安全级别的应用，应使用 AES-256。
         </div>
 
         <h2>6.7 2011 年"DES 已死"的最终证明</h2>
@@ -324,6 +391,10 @@ F(Rᵢ, Kᵢ)  (32 位输出)</code></pre>
 
         <div class="tip">
             <strong>💡 对工程实践的建议：</strong>当你在进行系统设计时，永远不要把安全性压在"当前的计算水平"上。一个 2026 年被认为是安全的算法，在 2050 年可能只需要几秒钟就能破解。设计原则是：<strong>在安全与性能的权衡中，只要性能在可接受范围内，永远选择更长的密钥</strong>。遵循 NIST 等权威机构的推荐，而不是自己猜测"够不够安全"。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>DES 规范见 NIST FIPS PUB 46-3, <em>“Data Encryption Standard (DES),”</em> 1999（<a href="https://csrc.nist.gov/publications/detail/fips/46/3/final">csrc.nist.gov</a>），其 Feistel 结构与轮函数 F、S-box、P-box 见该标准；AES 规范见 NIST FIPS PUB 197, <em>“Advanced Encryption Standard (AES),”</em> 2001（<a href="https://csrc.nist.gov/publications/detail/fips/197/final">csrc.nist.gov</a>），列混合矩阵与不可约多项式见其 §5.1.3。三重 DES 的 EDE 模式见 NIST SP 800-67 Rev.2, 2017。差分密码分析见 E. Biham, A. Shamir, <em>“Differential Cryptanalysis of DES-like Cryptosystems,”</em> CRYPTO 1990（<a href="https://doi.org/10.1007/3-540-38424-3_1">DOI 10.1007/3-540-38424-3_1</a>）；线性密码分析见 M. Matsui, <em>“Linear Cryptanalysis Method for DES Cipher,”</em> EUROCRYPT 1993（<a href="https://doi.org/10.1007/3-540-48285-7_33">DOI 10.1007/3-540-48285-7_33</a>）。Deep Crack 与 3DES 弃用时间线见 NIST SP 800-131A Rev.2, 2019。Grover 算法见 L. K. Grover, <em>“A Fast Quantum Mechanical Algorithm for Database Search,”</em> STOC 1996（<a href="https://doi.org/10.1145/237814.237866">DOI 10.1145/237814.237866</a>）。
         </div>
 
         <p>今天，DES 和 3DES 已经被大多数标准和框架正式弃用。NIST 在 2023 年正式将 3DES 标记为"已弃用"，意味着所有新系统都不应再使用 3DES。AES 现在是对称密码的事实标准，被 TLS、IPsec、Wi-Fi 加密（WPA2/WPA3）、全盘加密（BitLocker、FileVault）、Signal 和 WhatsApp 聊天加密等几乎所有重要的安全协议所采用。</p>
