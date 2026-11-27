@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -117,6 +123,36 @@
 
         <p>另一个关键字段是<strong>基础约束（Basic Constraints）</strong>——它标记了这个证书是否是一个CA证书（可以签发其他证书）。根CA证书的这个字段设置为CA:TRUE，而普通网站证书则是CA:FALSE。</p>
 
+        <p>证书真正起作用的地方在于最后那个“CA签名”字段。把证书里除签名外的全部内容记作 <math class="math-inline" aria-label="TBS"><mrow><mtext>TBS</mtext></mrow></math>（to-be-signed），CA 用它的私钥对 <math class="math-inline" aria-label="TBS 的哈希值"><mrow><mi>H</mi><mo>(</mo><mtext>TBS</mtext><mo>)</mo></mrow></math> 签名。以 RSA 为例：</p>
+
+        <div class="math-equation" role="group" aria-label="证书签名生成">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="证书签名生成公式，可横向滚动">
+            <math display="block" aria-label="签名 sigma 等于 TBS 的哈希值 的 d 次方，再模 n">
+              <mrow>
+                <mi>σ</mi><mo>=</mo>
+                <msup><mrow><mo>(</mo><mi>H</mi><mo>(</mo><mtext>TBS</mtext><mo>)</mo><mo>)</mo></mrow><mi>d</mi></msup>
+                <mo>mod</mo><mspace width="0.3em"/><mi>n</mi>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>任何人都可以用 CA 公布的公钥 <math class="math-inline" aria-label="(n, e)"><mrow><mo>(</mo><mi>n</mi><mo>,</mo><mi>e</mi><mo>)</mo></mrow></math> 验证：把签名做 <math class="math-inline" aria-label="e"><mi>e</mi></math> 次方后应当还原出原哈希。</p>
+
+        <div class="math-equation" role="group" aria-label="证书签名验证">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="证书签名验证公式，可横向滚动">
+            <math display="block" aria-label="验证：签名 sigma 的 e 次方 模 n 等于 TBS 的哈希值">
+              <mrow>
+                <msup><mi>σ</mi><mi>e</mi></msup>
+                <mo>mod</mo><mspace width="0.3em"/><mi>n</mi>
+                <mo>=</mo><mi>H</mi><mo>(</mo><mtext>TBS</mtext><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>证书链验证就是把这一等式自上而下反复执行一遍：用上级 CA 的公钥验证下级证书的签名，直到抵达内置在系统中的根 CA。只要中间任何一级的验证失败，整条链就被判定为不可信。若改用 ECDSA 或 EdDSA 签发，验证式换成对应的椭圆曲线等式，但“用签发者公钥验证被签对象”这个逻辑不变。</p>
+
         <h2>12.2 CA层次结构</h2>
 
         <p>PKI使用一个树状的信任层级：</p>
@@ -182,7 +218,7 @@ Finished          ————→   （加密的握手完成消息）
 
 现在开始加密通信</code></pre>
 
-        <p>这个过程中最关键的步骤是第2步到第3步：服务器发送证书链，客户端验证证书的签名、有效期、域名等。如果任何一步验证失败，浏览器会显示一个醒目的安全警告——比如"您的连接不是私密连接"或"NET::ERR_CERT_AUTHORITY_INVALID"。</p>
+        <p>这个过程中最关键的步骤是第2步到第3步:服务器发送证书链,客户端验证证书的签名、有效期、域名等。如果任何一步验证失败,浏览器会显示一个醒目的安全警告--比如“您的连接不是私密连接”或 <code>NET::ERR_CERT_AUTHORITY_INVALID</code>。</p>
 
         <h2>12.4 证书撤销机制</h2>
 
@@ -242,6 +278,10 @@ Finished          ————→   （加密的握手完成消息）
         </div>
 
         <p>下一章我们将把目光转向中国，看看中国国家密码管理局制定的<strong>国密算法体系</strong>。SM2（公钥加密/签名）、SM3（哈希）、SM4（对称密码）、SM9（基于身份的密码）构成了一个完整的、自主可控的密码标准体系。这些算法在设计上对标国际标准，但在很多方面有独特的优化和考量。更重要的是，国密算法在中国的政府、金融、电力等领域有强制使用要求。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>X.509 v3 证书结构与证书链验证规则见 RFC 5280（<a href="https://doi.org/10.17487/RFC5280">DOI 10.17487/RFC5280</a>）；OCSP 与 OCSP Stapling 见 RFC 6960（<a href="https://doi.org/10.17487/RFC6960">DOI 10.17487/RFC6960</a>）；ACME 自动化签发协议见 RFC 8555（<a href="https://doi.org/10.17487/RFC8555">DOI 10.17487/RFC8555</a>）；证书透明度（Certificate Transparency）日志机制见 RFC 6962（<a href="https://doi.org/10.17487/RFC6962">DOI 10.17487/RFC6962</a>）。Let's Encrypt 与 DigiNotar 事件为公开信安史案例；证书签发量等运营数字会随时间变动。
+        </div>
 
         <div class="footer-nav">
             <a href="11.html">← 上一章</a>
