@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -191,6 +197,25 @@ class KeyManager:
 
         <p>公钥密码（RSA）的缺点是慢、有明文长度限制；对称密码（AES）的缺点是密钥分发困难。混合加密结合二者优势：使用AES-256-GCM加密消息体，再使用RSA加密AES密钥。GCM模式同时提供认证加密（Authenticated Encryption），防止密文被篡改。</p>
 
+        <p>把这一过程写成式子，加密输出是一个二元组：一份用接收方公钥封装的短密钥，一份用该密钥对正文做的认证加密：</p>
+
+        <div class="math-equation" role="group" aria-label="混合加密的密文结构">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="混合加密的密文结构公式，可横向滚动">
+            <math display="block" aria-label="密文 C 等于 用公钥 pk 加密会话密钥 K 的结果，与用 K 对明文 m 做认证加密的结果，组成一个二元组">
+              <mrow>
+                <mi>C</mi><mo>=</mo>
+                <mo>(</mo>
+                <msub><mtext>Enc</mtext><mrow><mi>p</mi><mi>k</mi></mrow></msub><mo>(</mo><mi>K</mi><mo>)</mo>
+                <mo>,</mo>
+                <msub><mtext>AEAD</mtext><mi>K</mi></msub><mo>(</mo><mi>m</mi><mo>)</mo>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>这里第一步只需要公钥，因此可以离线完成；第二步的 AES-GCM 又快又能同时校验完整性。接收方先用私钥解出 <math class="math-inline" aria-label="K"><mi>K</mi></math>，再用它解开正文——这正是图 28 中 KEM/DEM 的分工。
+
         <pre><code># hybrid_crypto.py — 混合加密模块
 import os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -317,6 +342,22 @@ def negotiate_session_key(alice_static_priv, alice_ephemeral_priv,
     # - 只要alice的长期密钥未泄露：DH2提供身份认证
     # - 临时密钥对确保前向安全：DH3保证即使长期密钥泄露也不影响
     pass</code></pre>
+
+        <p>把代码里的三条 DH 组合写成式子，会话密钥是对三份共享密钥的拼接做 HKDF 派生得到的：</p>
+
+        <div class="math-equation" role="group" aria-label="X3DH 会话密钥派生">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="X3DH 会话密钥派生公式，可横向滚动">
+            <math display="block" aria-label="会话密钥 SK 等于 HKDF 作用于 DH1、DH2、DH3 三份共享密钥的拼接，其中 DH1 由发送方长期密钥与接收方临时密钥算出，DH2 由发送方临时密钥与接收方长期密钥算出，DH3 由双方临时密钥算出">
+              <mrow>
+                <mtext>SK</mtext><mo>=</mo><mtext>HKDF</mtext><mo>(</mo>
+                <msub><mtext>DH</mtext><mn>1</mn></msub><mo>∥</mo>
+                <msub><mtext>DH</mtext><mn>2</mn></msub><mo>∥</mo>
+                <msub><mtext>DH</mtext><mn>3</mn></msub>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <div class="highlight">
             <strong>⚠️ 免责声明：</strong>上面的伪代码省略了极为重要的细节。在实际的Signal Protocol中，X3DH协议有严谨的消息格式、密钥派生函数（HKDF）、前置密钥（Pre-Key）管理等大量工程细节。如果你在生产环境中需要端到端加密，不要自己实现Signal Protocol——直接使用libsignal或成熟的端到端加密库。自己实现一个密码协议就像自己造飞机引擎：即使你知道每个零件是什么，组装起来飞上天也是另一回事。
@@ -462,6 +503,10 @@ def negotiate_session_key(alice_static_priv, alice_ephemeral_priv,
 
         <div class="highlight">
             <strong>🏁 结束语：</strong>感谢你完成本课程的学习。密码学是一门关于信任的科学——它不创造信任，而是用数学把信任的要求降到最低。你现在拥有的工具和知识，足以让你在构建安全系统时做出明智的决策。记住：最好的密码学工程是做减法——不是"我能加多少安全功能"，而是"我在不加额外复杂性的前提下，能把安全性推到什么程度"。保持好奇，保持怀疑，永远不要停止问"为什么"。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>X3DH 密钥协商见 M. Marlinspike & T. Perrin, <em>“The X3DH Key Agreement Protocol,”</em> Signal, 2016（<a href="https://signal.org/docs/specifications/x3dh/">signal.org · X3DH</a>）；Double Ratchet 见 <em>“The Double Ratchet Algorithm,”</em> Signal, 2016（<a href="https://signal.org/docs/specifications/doubleratchet/">signal.org · Double Ratchet</a>）。RSA-OAEP 与 RSA-PSS 见 RFC 8017（<a href="https://doi.org/10.17487/RFC8017">DOI 10.17487/RFC8017</a>）；Argon2（含 Argon2id）见 RFC 9106（<a href="https://doi.org/10.17487/RFC9106">DOI 10.17487/RFC9106</a>）；AES-GCM 见 NIST SP 800-38D（<a href="https://doi.org/10.6028/NIST.SP.800-38D">DOI 10.6028/NIST.SP.800-38D</a>）；后量子方案 ML-KEM / ML-DSA 见 FIPS 203（<a href="https://doi.org/10.6028/NIST.FIPS.203">DOI 10.6028/NIST.FIPS.203</a>）与 FIPS 204（<a href="https://doi.org/10.6028/NIST.FIPS.204">DOI 10.6028/NIST.FIPS.204</a>）。本章代码为教学简化示例，已注明未覆盖真实库的完整 API。
         </div>
 
         <div class="footer-nav">
