@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -142,11 +148,50 @@ int constant_time_memcmp(const void *a, const void *b, size_t n) {
 
         <p>注意这里的技巧：不管在哪里发现差异，循环<strong>始终跑完所有n个字节</strong>。差异通过异或累积在 <code>result</code> 中，最后才判断结果。编译器不能"优化"这个循环提前退出——因为它看不到 result 被用于条件判断之外的任何影响。</p>
 
+        <p>用集合运算的语言写出来，恒定时间相等判定的核心就是“先聚合、后比较”——把逐字节的差异全部累加进一个累加器，再一次性判断它是否为零：</p>
+
+        <div class="math-equation" role="group" aria-label="恒定时间相等判定">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="恒定时间相等判定公式，可横向滚动">
+            <math display="block" aria-label="恒定时间相等判定：对所有 i 从 0 到 n 减 1，把 a_i 异或 b_i 的结果按位或起来，等于 0 当且仅当 两个序列完全相等">
+              <mrow>
+                <munderover><mo>⋁</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></munderover>
+                <mo>(</mo><msub><mi>a</mi><mi>i</mi></msub><mo>⊕</mo><msub><mi>b</mi><mi>i</mi></msub><mo>)</mo>
+                <mo>=</mo><mn>0</mn>
+                <mspace width="0.4em"/><mo>⟺</mo><mspace width="0.4em"/>
+                <mi>a</mi><mo>=</mo><mi>b</mi>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>这里 <math class="math-inline" aria-label="a_i 异或 b_i"><mrow><msub><mi>a</mi><mi>i</mi></msub><mo>⊕</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math> 在某一位为 0 当且仅当两个字节在该位相同。按位或把“是否存在任意一位不同”压缩成一个值：只要有任何一位不同，最终结果就非零。关键是这个循环的<strong>迭代次数 <math class="math-inline" aria-label="n"><mi>n</mi></math> 与数据无关</strong>，因此耗时与秘密无关。
+
         <div class="warning">
             <strong>⚠️ 编译器的"好心"可能是个威胁：</strong>C/C++编译器可能会把你的"看起来是恒定时间"的代码优化成非常数时间的版本。例如，如果你写 <code>result |= table[key[i]]</code>，编译器可能会用SIMD指令一次性加载所有表项来"优化"——但这样就变成了一个非恒定时间的访问。唯一可靠的方法是：<strong>在每次编译后检查反汇编</strong>，或者使用像 <code>libsodium</code> 这样已经经过审计的实现。
         </div>
 
         <p>恒定时间编程还有一个更微妙的维度：<strong>CPU指令本身的时序差异</strong>。整数乘法在不同Intel微架构上耗时可能不同；除法指令的耗时取决于操作数的具体值；浮点运算的时序更是难以预测。这就是为什么密码学实现几乎只用整数运算，并且避免使用除法（用蒙哥马利模约减等替代）。</p>
+
+        <p>时序攻击的可行性可以用统计量精确描述：设两种密钥比特下同一操作的平均耗时分别为 <math class="math-inline" aria-label="mu_1"><msub><mi>μ</mi><mn>1</mn></msub></math> 和 <math class="math-inline" aria-label="mu_0"><msub><mi>μ</mi><mn>0</mn></msub></math>，测量噪声的标准差为 <math class="math-inline" aria-label="sigma"><mi>σ</mi></math>，攻者要把两条分布区分开所需的样本数近似为：</p>
+
+        <div class="math-equation" role="group" aria-label="区分时间分布所需样本数">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="样本数估计公式，可横向滚动">
+            <math display="block" aria-label="样本数 N 约等于 括号 ( z 下标 1 减 alpha/2 加 z 下标 1 减 beta ) 乘 sigma 除以 Delta 的平方">
+              <mrow>
+                <mi>N</mi><mo>≈</mo>
+                <msup>
+                  <mrow><mo>(</mo><mfrac>
+                    <mrow><mo>(</mo><msub><mi>z</mi><mrow><mn>1</mn><mo>−</mo><mi>α</mi><mo>/</mo><mn>2</mn></mrow></msub><mo>+</mo><msub><mi>z</mi><mrow><mn>1</mn><mo>−</mo><mi>β</mi></mrow></msub><mo>)</mo><mi>σ</mi></mrow>
+                    <mi>Δ</mi>
+                  </mfrac><mo>)</mo></mrow>
+                  <mn>2</mn>
+                </msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="Delta 等于 |mu_1 减 mu_0|"><mrow><mi>Δ</mi><mo>=</mo><mo>|</mo><msub><mi>μ</mi><mn>1</mn></msub><mo>−</mo><msub><mi>μ</mi><mn>0</mn></msub><mo>|</mo></mrow></math> 是真实信号，<math class="math-inline" aria-label="sigma"><mi>σ</mi></math> 是噪声。样本量随信噪比 <math class="math-inline" aria-label="Delta 除以 sigma"><mfrac><mi>Δ</mi><mi>σ</mi></mfrac></math> 的平方反比增长——这意味着哪怕每次只泄露几微秒的时间差，只要能反复测量、样本量足够大，信号就能从噪声中浮现。这正是时序侧信道“真实且致命”的统计学原因。<em>（此式为区分两条正态分布所需样本量的标准估计，用于教学示意；实际攻击还会受网络抖动等因素影响。）</em></p>
 
         <h2>18.2 内存安全与秘密清理</h2>
 
@@ -310,6 +355,10 @@ key_data    = KDF(master_key, "data-encryption", session_id);</code></pre>
         <p>但更根本的教训是：<strong>加密本身是不够的。</strong>如果解密后的数据进入了一个不安全的上下文，整个系统仍然是不安全的。这就是为什么现代密码学协议都倾向于提供<strong>认证加密</strong>（Authenticated Encryption）——不仅能保密，还能确保密文未被篡改，并且对上下文具有明确的边界定义。</p>
 
         <p>到这里，本课程的第三部分——密码学安全工程——就结束了。我们用了四章的篇幅，从密码分析、密钥管理、数论基础到安全实现，全方位地讨论了密码学"实战"中需要知道的知识。从下一章开始，我们将进入更加前沿的领域：零知识证明、同态加密、安全多方计算……准备好迎接真正的"黑科技"了吗？</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>时序攻击与“实现对时间敏感”的源头见 P. Kocher, <em>“Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS, and Other Systems,”</em> CRYPTO 1996；远程时序攻击的实用化见 D. Brumley & D. Boneh, <em>“Remote Timing Attacks are Practical,”</em> USENIX Security 2003（Computer Networks 48(5), 2005）；CBC 填充 Oracle 见 S. Vaudenay, <em>“Security Flaws Induced by CBC Padding,”</em> EUROCRYPT 2002，以及近年的 POODLE（2014）与 Lucky13（2013）分析；EFAIL 见 D. Poddebniak 等, <em>“Efail: Breaking S/MIME and OpenPGP Email Encryption using Exfiltration Channels,”</em> USENIX Security 2018。恒定时间比较的实现惯例可参看 libsodium 的 <code>sodium_memcmp</code>。文中样本量公式为区分两条正态分布的标准统计估计，标注为教学示意。
+        </div>
 
         <div class="footer-nav">
             <a href="17.html">← 上一章</a>
