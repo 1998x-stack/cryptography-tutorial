@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -147,6 +153,33 @@ ClientFinished
 
         <p>注意，TLS 1.3彻底移除了不安全的密码套件——不再支持RSA密钥交换（因为没有前向安全性），不再支持CBC模式的分组密码（因为Padding Oracle攻击），不再支持RC4、DES、3DES等老旧算法。所有支持的密码套件都使用AEAD（认证加密模式，如AES-GCM和ChaCha20-Poly1305），同时提供加密和认证。</p>
 
+        <p>握手时双方交换临时公钥做（EC）DH 协商：客户端私钥 <math class="math-inline" aria-label="d 下标 C"><msub><mi>d</mi><mi>C</mi></msub></math> 与服务器公钥 <math class="math-inline" aria-label="Q 下标 S"><msub><mi>Q</mi><mi>S</mi></msub></math> 相乘，服务器侧对称地算，两边得到同一个共享秘密：</p>
+
+        <div class="math-equation" role="group" aria-label="TLS 密钥协商">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="TLS 密钥协商公式，可横向滚动">
+            <math display="block" aria-label="共享秘密 Z 等于 d 下标 C 乘 Q 下标 S 等于 d 下标 S 乘 Q 下标 C">
+              <mrow>
+                <mi>Z</mi><mo>=</mo><msub><mi>d</mi><mi>C</mi></msub><mo>&#x22C5;</mo><msub><mi>Q</mi><mi>S</mi></msub>
+                <mo>=</mo><msub><mi>d</mi><mi>S</mi></msub><mo>&#x22C5;</mo><msub><mi>Q</mi><mi>C</mi></msub>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>再用 HKDF 的带标签扩展（HKDF-Expand-Label）从 <math class="math-inline" aria-label="Z"><mi>Z</mi></math> 派生出握手密钥与应用流量密钥，每个方向独立。带着这些密钥，握手消息和 Finished 都被 AEAD 保护：</p>
+
+        <div class="math-equation" role="group" aria-label="TLS 密钥派生与 AEAD">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="TLS 密钥派生公式，可横向滚动">
+            <math display="block" aria-label="密钥等于 HKDF-Expand-Label 作用于秘密、标签与上下文；密文与标签等于 AEAD 加密作用于密钥、nonce、明文与附加数据">
+              <mrow>
+                <mi>key</mi><mo>=</mo><mi>HKDF-Expand-Label</mi><mo>(</mo><mi>Secret</mi><mo>,</mo><mi>Label</mi><mo>,</mo><mi>Context</mi><mo>)</mo>
+                <mo>,</mo><mspace width="1.2em"/>
+                <mo>(</mo><mi>C</mi><mo>,</mo><mi>tag</mi><mo>)</mo><mo>=</mo><msub><mi>AEAD</mi><mi>key</mi></msub><mo>(</mo><mi>nonce</mi><mo>,</mo><mi>plaintext</mi><mo>,</mo><mi>aad</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <h2>14.2 SSH协议</h2>
 
         <p>SSH（Secure Shell）是远程服务器管理的标配协议。它的协议设计比TLS简单，但同样精妙。SSH的会话建立过程分为三个阶段：</p>
@@ -225,6 +258,28 @@ Alice获取Bob的密钥材料后：
 3. 主密钥 SK = KDF(DH1 || DH2 || DH3 || DH4)
 4. 使用SK派生初始加密密钥</code></pre>
 
+        <p>把四个 DH 共享密钥拼接后过一个 KDF，就得到主密钥——这一串拼接是 X3DH 把多个独立性来源混合在一起的关键：</p>
+
+        <div class="math-equation" role="group" aria-label="X3DH 主密钥">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="X3DH 主密钥公式，可横向滚动">
+            <math display="block" aria-label="DH1 等于 DH 作用于 IK 下标 A 与 SPK 下标 B；DH2 等于 DH 作用于 EK 下标 A 与 IK 下标 B；DH3 等于 DH 作用于 EK 下标 A 与 SPK 下标 B；DH4 等于 DH 作用于 EK 下标 A 与 OPK 下标 B；SK 等于 KDF 作用于 DH1 拼接 DH2 拼接 DH3 拼接 DH4">
+              <mrow>
+                <msub><mi>DH</mi><mn>1</mn></msub><mo>=</mo><mi>DH</mi><mo>(</mo><msub><mi>IK</mi><mi>A</mi></msub><mo>,</mo><msub><mi>SPK</mi><mi>B</mi></msub><mo>)</mo>
+                <mo>,</mo><mspace width="0.8em"/>
+                <msub><mi>DH</mi><mn>2</mn></msub><mo>=</mo><mi>DH</mi><mo>(</mo><msub><mi>EK</mi><mi>A</mi></msub><mo>,</mo><msub><mi>IK</mi><mi>B</mi></msub><mo>)</mo>
+              </mrow>
+              <mrow>
+                <msub><mi>DH</mi><mn>3</mn></msub><mo>=</mo><mi>DH</mi><mo>(</mo><msub><mi>EK</mi><mi>A</mi></msub><mo>,</mo><msub><mi>SPK</mi><mi>B</mi></msub><mo>)</mo>
+                <mo>,</mo><mspace width="0.8em"/>
+                <msub><mi>DH</mi><mn>4</mn></msub><mo>=</mo><mi>DH</mi><mo>(</mo><msub><mi>EK</mi><mi>A</mi></msub><mo>,</mo><msub><mi>OPK</mi><mi>B</mi></msub><mo>)</mo>
+              </mrow>
+              <mrow>
+                <mi>SK</mi><mo>=</mo><mi>KDF</mi><mo>(</mo><msub><mi>DH</mi><mn>1</mn></msub><mo>&#x2016;</mo><msub><mi>DH</mi><mn>2</mn></msub><mo>&#x2016;</mo><msub><mi>DH</mi><mn>3</mn></msub><mo>&#x2016;</mo><msub><mi>DH</mi><mn>4</mn></msub><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <p><strong>双棘轮机制</strong>：在初始密钥建立后，每次消息的发送和接收都会"前进"棘轮，产生新的加密密钥。即使某次会话的密钥被泄露，攻击者也只能解密当前这一条消息——之前的消息（已使用不同的密钥加密）不受影响。这就是<strong>自愈特性</strong>：密钥的泄露不会危及历史消息和未来消息。</p>
 
         <div class="highlight">
@@ -267,6 +322,10 @@ ssl3_write_bytes(s, TLS1_RT_HEARTBEAT, response, ...);</code></pre>
         <p>Heartbleed还催生了<strong>Let's Encrypt</strong>的大规模部署——因为Heartbleed后大量网站需要免费快速更换证书，Let's Encrypt抓住了这个时机。这也证明了：灾难往往催生创新。</p>
 
         <p>至此，我们完成了密码学"核心机制"部分的全部内容——从公钥革命到RSA，从ECC到数字签名，从PKI到国密算法，再到真实世界的密码协议。从下一章开始，我们将进入"密码分析基础"，学习攻击者是如何破解密码系统的。理解攻击者的思维方式，是成为一个优秀的安全工程师的必修课。正如兵法所云："知己知彼，百战不殆。"</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>TLS 1.3 协议、1-RTT/0-RTT 握手、HKDF-Expand-Label 密钥调度与仅保留 AEAD 套件见 E. Rescorla, <em>“The Transport Layer Security (TLS) Protocol Version 1.3,”</em> RFC 8446, 2018（<a href="https://www.rfc-editor.org/rfc/rfc8446">rfc-editor.org/rfc/rfc8446</a>）。SSH 协议架构与 TOFU 主机密钥模型见 T. Ylonen 等，RFC 4251/4253, 2006。IPSec/IKEv2 见 RFC 7296, 2014。Signal 的 X3DH 密钥协商（四个 DH 与 SK = KDF(DH1‖DH2‖DH3‖DH4)）见 M. Marlinspike, T. Perrin, <em>“The X3DH Key Agreement Protocol,”</em> Signal 官方规范；双棘轮见 T. Perrin, M. Marlinspike, <em>“The Double Ratchet Algorithm,”</em> Signal 官方规范。Heartbleed（CVE-2014-0160）见 2014 年 4 月 OpenSSL 安全公告。
+        </div>
 
         <div class="footer-nav">
             <a href="13.html">← 上一章</a>
