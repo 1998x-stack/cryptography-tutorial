@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -251,20 +257,37 @@ openssl s_client -connect example.com:443 -tls1_2</code></pre>
 openssl rand -out session_key.bin 32
 
 # 第二步：用公钥加密对称密钥
-openssl rsautl -encrypt -in session_key.bin \
+# （rsautl 已在 OpenSSL 3.0 弃用，改用 pkeyutl）
+openssl pkeyutl -encrypt -in session_key.bin \
     -pubin -inkey public_key.pem -out session_key.enc
 
 # 第三步：用对称密钥加密大文件
-openssl enc -aes-256-gcm -in secret.txt \
+# 注意：openssl enc 不支持 GCM 等 AEAD 模式（会报 “AEAD ciphers not supported”）
+openssl enc -aes-256-cbc -pbkdf2 -in secret.txt \
     -out secret.enc -pass file:session_key.bin
 
 # 解密时反向操作
-openssl rsautl -decrypt -in session_key.enc \
+openssl pkeyutl -decrypt -in session_key.enc \
     -inkey private_key.pem -out session_key_dec.bin
-openssl enc -d -aes-256-gcm -in secret.enc \
+openssl enc -d -aes-256-cbc -pbkdf2 -in secret.enc \
     -out secret_dec.txt -pass file:session_key_dec.bin</code></pre>
 
         <p>这种"混合加密"模式就是 TLS 握手的本质——用非对称密码交换对称密钥，然后用对称密码加密批量数据。RSA 无法加密超过密钥长度的数据（2048 位 RSA 最多加密 245 字节），所以绝不能直接用公钥加密大文件。</p>
+
+        <p>这个上限有精确公式。对 PKCS#1 v1.5 填充，单次可加密的明文最大字节数为：</p>
+
+        <div class="math-equation" role="group" aria-label="RSA 单次可加密明文上限">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="RSA 单次可加密明文上限公式，可横向滚动">
+            <math display="block" aria-label="单次可加密的最大明文字节数 m_max 等于 模长字节数 k 减 11">
+              <mrow>
+                <msub><mi>m</mi><mtext>max</mtext></msub><mo>=</mo>
+                <mi>k</mi><mo>−</mo><mn>11</mn>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>其中 <math class="math-inline" aria-label="k"><mi>k</mi></math> 是模长字节数：2048 位密钥有 <math class="math-inline" aria-label="k 等于 256"><mrow><mi>k</mi><mo>=</mo><mn>256</mn></mrow></math>，于是 <math class="math-inline" aria-label="256 减 11 等于 245"><mrow><mn>256</mn><mo>−</mo><mn>11</mn><mo>=</mo><mn>245</mn></mrow></math> 字节。若改用更安全的 OAEP 填充，上限收紧为 <math class="math-inline" aria-label="k 减 2 hLen 减 2"><mrow><mi>k</mi><mo>−</mo><mn>2</mn><mtext>hLen</mtext><mo>−</mo><mn>2</mn></mrow></math>；对 SHA-256（<math class="math-inline" aria-label="hLen 等于 32"><mrow><mtext>hLen</mtext><mo>=</mo><mn>32</mn></mrow></math>）的 2048 位密钥只有 190 字节。无论哪种，都远小于一个文件——这正是必须用混合加密的根本原因。（公式依据 RFC 8017。）</p>
 
         <h2>23.7 踩坑故事：Heartbleed 漏洞</h2>
 
@@ -283,6 +306,10 @@ openssl enc -d -aes-256-gcm -in secret.enc \
         </div>
 
         <p>掌握了 OpenSSL 的命令行工具，你距离真实的密码学工程实践就只有一步之遥了。在下一章中，我们将进入 Python 编程的世界，看看如何用代码来操作这些密码学原语——从 Fernet 加密到实现一个加密聊天协议，你会发现命令行里学到的概念在代码中变得格外清晰。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>RSA 加密与填充、单次可加密明文长度上限见 RFC 8017（PKCS #1 v2.2，<a href="https://doi.org/10.17487/RFC8017">DOI 10.17487/RFC8017</a>）；X.509 证书与 CSR（PKCS#10）见 RFC 5280（<a href="https://doi.org/10.17487/RFC5280">DOI 10.17487/RFC5280</a>）与 RFC 2986；TLS 1.3 握手与 s_client/s_server 调试对象见 RFC 8446（<a href="https://doi.org/10.17487/RFC8446">DOI 10.17487/RFC8446</a>）；AES 标准见 FIPS 197（<a href="https://doi.org/10.6028/NIST.FIPS.197">DOI 10.6028/NIST.FIPS.197</a>）；Heartbleed 漏洞见 CVE-2014-0160（<a href="https://nvd.nist.gov/vuln/detail/CVE-2014-0160">NVD 条目</a>）。命令行示例以 OpenSSL 3.x 为准；文中提到的“openssl enc 不支持 AEAD”是 openssl enc 的已知限制。
+        </div>
 
         <div class="footer-nav">
             <a href="22.html">← 上一章</a>
