@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -147,6 +153,23 @@
 
         <p>这个原则在今天看起来理所当然，但在 19 世纪它却是革命性的。当时的密码系统大多依赖"算法保密"（security by obscurity），一旦算法泄露就必须重新发明整个系统。柯克霍夫指出，更稳健的做法是把算法公开、让全世界来审查，安全的核心只系于一串密钥。</p>
 
+        <p>“安全只系于密钥”也可以量化。若密钥的熵为 <math class="math-inline" aria-label="k"><mi>k</mi></math> 比特，即存在 <math class="math-inline" aria-label="2 的 k 次方"><msup><mn>2</mn><mi>k</mi></msup></math> 个等可能的候选密钥，那么对一个除了“穷举”别无他法的攻击者而言，平均需要试探其中一半才能命中：</p>
+
+        <div class="math-equation" role="group" aria-label="暴力搜索期望次数">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="暴力搜索期望次数公式，可横向滚动">
+            <math display="block" aria-label="期望尝试次数 E 约等于 二分之一 乘 2 的 k 次方，即 2 的 k 减 1 次方">
+              <mrow>
+                <mi>E</mi><mo>≈</mo>
+                <mfrac><mn>1</mn><mn>2</mn></mfrac>
+                <mo>·</mo><msup><mn>2</mn><mi>k</mi></msup>
+                <mo>=</mo><msup><mn>2</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>因此，密钥长度 <math class="math-inline" aria-label="k"><mi>k</mi></math> 每减少 1 比特，攻击者的工作量就减半。这也是为什么现代标准把 <math class="math-inline" aria-label="k 大于等于 128"><mrow><mi>k</mi><mo>≥</mo><mn>128</mn></mrow></math> 作为对称密码的安全底线：128 比特密钥对应的穷举空间已达天文数字，使得“猜密钥”在计算上不可行。<em>（该式假设密钥均匀且攻击者只能穷举，是教学示意；实际安全性还取决于算法是否存在更快的分析捷径。）</em></p>
+
         <p>一个有趣的对比是 <strong>"通过隐蔽实现安全"（Security by Obscurity）</strong>——这种做法在今天仍屡见不鲜，比如私有加密算法、隐藏的后门接口。几乎在所有情况下，这些做法最终都被证明比公开审查的算法更加脆弱。用 Bruce Schneier 的话说："Anyone can invent a security system that they themselves cannot break — and then be shocked when someone else does."</p>
 
         <h2>1.4 密码体制的分类</h2>
@@ -200,6 +223,10 @@
         </div>
 
         <p>密码学是一门既古老又年轻的学科。从凯撒大帝的密信到保护量子通信的加密协议，人类对"秘密"的追求从未停止。接下来，让我们从密码学的起点——古典密码——开始这段旅程。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>“安全系于密钥而非算法”源于 A. Kerckhoffs, <em>“La cryptographie militaire,”</em> Journal des sciences militaires, vol. IX, 1883；机密性/完整性/认证的现代框架与“混淆—扩散”见 C. E. Shannon, <em>“Communication Theory of Secrecy Systems,”</em> Bell System Technical Journal 28(4), 1949（<a href="https://doi.org/10.1002/j.1538-7305.1949.tb00928.x">DOI 10.1002/j.1538-7305.1949.tb00928.x</a>）；公钥密码的起点见 W. Diffie & M. E. Hellman, <em>“New Directions in Cryptography,”</em> IEEE Trans. Inf. Theory 22(6), 1976（<a href="https://doi.org/10.1109/TIT.1976.1055638">DOI 10.1109/TIT.1976.1055638</a>）；RSA 见 R. Rivest, A. Shamir & L. Adleman, <em>“A Method for Obtaining Digital Signatures and Public-Key Cryptosystems,”</em> Comm. ACM 21(2), 1978（<a href="https://doi.org/10.1145/359340.359342">DOI 10.1145/359340.359342</a>）。引用的 Bruce Schneier 语为其广为流传的公开表述。
+        </div>
 
         <div class="footer-nav">
             <a href="javascript:void(0)">← 上一章</a>
