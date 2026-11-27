@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -144,7 +150,17 @@
             <li><strong>鼠标/键盘的时序</strong>——人类输入的不确定性</li>
         </ul>
 
-        <p>但TRNG的问题是：它<strong>太慢了</strong>。你不可能每次需要随机数都去测量一次热噪声。所以实际的做法是：用TRNG采集一小段高质量的"种子"（比如256 bits），然后用这个种子驱动一个<strong>密码学安全的伪随机数生成器（CSPRNG）</strong>。</p>
+        <p>但TRNG的问题是：它<strong>太慢了</strong>。你不可能每次需要随机数都去测量一次热噪声。所以实际的做法是：用TRNG采集一小段高质量的"种子"（比如 <math class="math-inline" aria-label="256 比特"><mn>256</mn><mspace width="0.3em"/><mi>bits</mi></math>），然后用这个种子驱动一个<strong>密码学安全的伪随机数生成器（CSPRNG）</strong>。种子的不可预测程度用熵 <math class="math-inline" aria-label="H"><mi>H</mi></math> 度量，它直接决定了攻击者需要搜索的密钥空间大小：</p>
+
+        <div class="math-equation" role="group" aria-label="熵与密钥空间">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="熵与密钥空间公式，可横向滚动">
+            <math display="block" aria-label="密钥空间大小约等于 2 的 H 次方">
+              <mrow>
+                <mo>|</mo><mi>&#x1D4A6;</mi><mo>|</mo><mo>&#x2248;</mo><msup><mn>2</mn><mi>H</mi></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <p><strong>CSPRNG</strong>与普通PRNG的关键区别在于：它生成的随机数序列<strong>在计算上不可区分于真正的随机序列</strong>。这意味着即使攻击者获得了CSPRNG输出的一段序列（比如前1000个随机数），他也无法推断出后续的随机数，更无法反推出种子。</p>
 
@@ -202,6 +218,32 @@
 
         <p>选KDF有一个基本原则：<strong>对于用户密码，用Argon2id（或至少PBKDF2）；对于协议派生，用HKDF。</strong>不要混用，也不要自己发明KDF算法。</p>
 
+        <p>两类 KDF 的代价模型不同。PBKDF2 用可调迭代次数 <math class="math-inline" aria-label="c"><mi>c</mi></math> 抬高暴力破解成本，其防御强度正比于总计算量：</p>
+
+        <div class="math-equation" role="group" aria-label="PBKDF2 代价">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="PBKDF2 代价公式，可横向滚动">
+            <math display="block" aria-label="代价约等于迭代次数 c 乘以单次哈希开销">
+              <mrow>
+                <mi>cost</mi><mo>&#x2248;</mo><mi>c</mi><mo>&#x22C5;</mo><msub><mi>T</mi><mi>hash</mi></msub>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>HKDF 则不做迭代，而是把"提取"与"扩展"分成两步——先从输入密钥材料 <math class="math-inline" aria-label="IKM"><mi>IKM</mi></math> 中用盐提取出一个固定长度的伪随机密钥 <math class="math-inline" aria-label="PRK"><mi>PRK</mi></math>，再用上下文信息 <math class="math-inline" aria-label="info"><mi>info</mi></math> 扩展出所需长度的输出密钥材料 <math class="math-inline" aria-label="OKM"><mi>OKM</mi></math>：</p>
+
+        <div class="math-equation" role="group" aria-label="HKDF 两步结构">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="HKDF 结构公式，可横向滚动">
+            <math display="block" aria-label="PRK 等于 HMAC 作用于盐与 IKM；OKM 等于 Expand 作用于 PRK 与 info 与长度 L">
+              <mrow>
+                <mi>PRK</mi><mo>=</mo><mi>HMAC</mi><mo>(</mo><mi>salt</mi><mo>,</mo><mi>IKM</mi><mo>)</mo>
+                <mo>,</mo><mspace width="1.2em"/>
+                <mi>OKM</mi><mo>=</mo><mi>Expand</mi><mo>(</mo><mi>PRK</mi><mo>,</mo><mi>info</mi><mo>,</mo><mi>L</mi><mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
         <h2>16.4 HSM 与安全飞地</h2>
 
         <p>前面说的都是软件层面的密钥管理。但对于最高安全级别的场景——比如CA根证书私钥、银行的交易签名密钥——密钥必须存储在专门的硬件中。这就是<strong>硬件安全模块（HSM）</strong>的用武之地。</p>
@@ -226,7 +268,17 @@
 
         <p>原因出在随机数生成器上。Android 4.2之前的版本中，<code>SecureRandom</code> 类的实现在特定情况下存在严重的<strong>熵不足</strong>问题。当设备刚启动不久、用户交互较少时，<code>/dev/urandom</code> 的熵池还没有被充分填充。而比特币钱包应用恰恰是在这种情况下一旦生成密钥，就用来创建比特币地址。</p>
 
-        <p>结果是什么？<strong>多个不同的用户生成了完全相同的私钥。</strong>因为RNG的种子缺少足够的熵，导致了私钥空间的严重坍缩——本来2^256的私钥空间，实际只产生了几个有限的值。</p>
+        <p>结果是什么？<strong>多个不同的用户生成了完全相同的私钥。</strong>因为RNG的种子缺少足够的熵，导致了私钥空间的严重坍缩——本来 <math class="math-inline" aria-label="2 的 256 次方"><msup><mn>2</mn><mn>256</mn></msup></math> 的私钥空间，实际只产生了几个有限的值。用生日界估计，如果实际熵只有 <math class="math-inline" aria-label="H"><mi>H</mi></math> 比特，那么在生成约 <math class="math-inline" aria-label="2 的 H 除以 2 次方"><msup><mn>2</mn><mrow><mi>H</mi><mo>/</mo><mn>2</mn></mrow></msup></math> 个密钥后，就很可能出现碰撞：</p>
+
+        <div class="math-equation" role="group" aria-label="生日碰撞界">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="生日碰撞界公式，可横向滚动">
+            <math display="block" aria-label="出现碰撞所需样本数约为 2 的 H 除以 2 次方">
+              <mrow>
+                <msub><mi>q</mi><mi>collision</mi></msub><mo>&#x2248;</mo><msup><mn>2</mn><mrow><mi>H</mi><mo>/</mo><mn>2</mn></mrow></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
 
         <pre><code>// 出问题的伪代码抽象（真实情况更复杂，但本质相同）
 SecureRandom rng = new SecureRandom();     // Android 4.2 之前的 SecureRandom
@@ -236,7 +288,11 @@ rng.nextBytes(privateKey);                 // "随机"私钥——实际上只�
 
         <p>这个漏洞导致了数百万美元的比特币被盗。更讽刺的是，攻击者做的事情很简单：<strong>生成有限几种可能的私钥，然后扫描对应的比特币地址是否有余额。</strong>一旦发现某个地址有币，就直接转账到自己的钱包——密码学的一切安全性都在"密钥生成这个环节出了问题"前面化为了乌有。</p>
 
-        <p>这个故事的教训是：<strong>密码系统的安全性是链条式的，最弱的一环决定整体强度。</strong>你可以用全球最安全的AES-256加密、最完美的TLS协议、最昂贵的HSM来保护密钥——但如果生成密钥的随机数发生器只有20 bits的熵，这些全部是徒劳。</p>
+        <p>这个故事的教训是：<strong>密码系统的安全性是链条式的，最弱的一环决定整体强度。</strong>你可以用全球最安全的AES-256加密、最完美的TLS协议、最昂贵的HSM来保护密钥——但如果生成密钥的随机数发生器只有 <math class="math-inline" aria-label="20 比特"><mn>20</mn><mspace width="0.3em"/><mi>bits</mi></math> 的熵，这些全部是徒劳。</p>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>PBKDF2 见 B. Kaliski, <em>“PKCS #5: Password-Based Cryptography Specification Version 2.0,”</em> RFC 2898, 2000（<a href="https://www.rfc-editor.org/rfc/rfc2898">rfc-editor.org/rfc/rfc2898</a>）；HKDF 的提取/扩展两步结构见 H. Krawczyk, P. Eronen, <em>“HMAC-based Extract-and-Expand Key Derivation Function (HKDF),”</em> RFC 5869, 2010（<a href="https://www.rfc-editor.org/rfc/rfc5869">rfc-editor.org/rfc/rfc5869</a>）。Argon2 见 A. Biryukov, D. Dinu, D. Khovratovich, <em>“Argon2: the memory-hard function for password hashing and other applications,”</em> 2015 密码哈希竞赛报告。NIST 密码学随机数发生器要求与熵源见 NIST SP 800-90A Rev.1, 2015 与 NIST SP 800-90B, 2018。生日界与碰撞概率的推导为标准结果；Android <code>SecureRandom</code> 熵不足与比特币钱包事件见 2013 年公开披露（SecureRandom 漏洞）。
+        </div>
 
         <p>下一章，我们将暂时离开工程实践，回到数学的层面。你会发现，所有公钥密码的"安全感"其实都建立在一些看似简单的数论性质上——质数、模运算、中国剩余定理。这些数学工具不仅是理论，更是工程优化的利器。</p>
 
