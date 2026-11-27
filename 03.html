@@ -11,6 +11,12 @@
         table { display: block; width: 100%; overflow-x: auto; }
         code { overflow-wrap: anywhere; }
         pre code { overflow-wrap: normal; }
+        .math-inline { font-family: "Cambria Math", "STIX Two Math", serif; }
+        .math-equation { max-width: 100%; min-width: 0; }
+        .math-scroll { max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+        .math-scroll math[display="block"] { width: max-content; min-width: 100%; font-size: 1.2rem; }
+        .source-note { margin: 18px 0; padding: 12px 18px; border-left: 6px solid #94a3b8; background: #f8fafc; border-radius: 12px; font-size: 0.9rem; line-height: 1.7; color: #475569; }
+        .source-note a { color: #5b21b6; }
     </style>
 </head>
 <body>
@@ -93,7 +99,26 @@
             <strong>💡 关键认知：</strong>Enigma 的反射器设计导致了一个数学弱点——字母永远不会映射到自身。这意味着如果你知道某个位置出现了某个字母，它的明文就一定不是这个字母。这个看似微小的漏洞，最终成为了破译的关键突破口之一。
         </div>
 
-        <p><strong>插线板</strong>进一步增加了复杂度。它允许操作员将 6-10 对字母两两交换（比如 A↔J, B↔Z 等）。插线板提供了额外的天文数字般的密钥空间。</p>
+        <p>把这个“字母不会映射到自身”的性质写成数学，就是：转子—反射器构成的置换是一个<strong>错排（derangement）</strong>——对所有 26 个字母 <math class="math-inline" aria-label="i"><mi>i</mi></math>，都有映射值不等于 <math class="math-inline" aria-label="i"><mi>i</mi></math>。错排的计数由容斥原理给出：</p>
+
+        <div class="math-equation" role="group" aria-label="错排计数公式">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="错排计数公式，可横向滚动">
+            <math display="block" aria-label="错排数 D_n 等于 n 的阶乘 乘以 从 k 等于 0 到 n 对 负 1 的 k 次方除以 k 的阶乘 求和">
+              <mrow>
+                <msub><mi>D</mi><mi>n</mi></msub><mo>=</mo><mi>n</mi><mo>!</mo>
+                <munderover><mo>Σ</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover>
+                <mfrac>
+                  <msup><mrow><mo>−</mo><mn>1</mn></mrow><mi>k</mi></msup>
+                  <mrow><mi>k</mi><mo>!</mo></mrow>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>若把一次字母重排看作随机置换，它是错排的概率为 <math class="math-inline" aria-label="D_n 除以 n 的阶乘"><mfrac><msub><mi>D</mi><mi>n</mi></msub><mrow><mi>n</mi><mo>!</mo></mrow></mfrac></math>，当 <math class="math-inline" aria-label="n"><mi>n</mi></math> 增大时趋向 <math class="math-inline" aria-label="e 的负一次方"><msup><mi>e</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></math>（约 0.368）。换句话说，随机置换中约有 63% 至少含一个不动点。Enigma 的映射永远无不动点，因此只要 crib 里某个位置恰好出现“明文 = 密文”，该转子设置就可被立即淘汰——这正是 Bombe 大面积筛除错误假设的统计依据。<em>（此处的随机置换比例是教学示意，用于说明无不动点约束的筛选力；Enigma 的真实映射并非均匀随机。）</em></p>
+
+        <p><strong>插线板</strong>进一步增加了复杂度。它允许操作员将 6-10 对字母两两交换(比如 A↔J, B↔Z 等)。插线板提供了额外的天文数字般的密钥空间。</p>
 
         <p>Enigma 的完整密钥包含以下元素：</p>
 
@@ -125,7 +150,27 @@
             </tr>
         </table>
 
-        <p>德国人相信，这个组合产生的密钥空间（约 1.58 × 10²⁰ 种可能）是"不可攻破"的。但他们低估了数学家的智慧。</p>
+        <p>德国人相信，这个组合产生的密钥空间（约 1.59 × 10²⁰ 种可能）是“不可攻破”的。这个数字可以逐项拆解：</p>
+
+        <div class="math-equation" role="group" aria-label="恩尼格玛密钥空间">
+          <div class="math-scroll" data-math-scroll tabindex="0" role="region" aria-label="恩尼格玛密钥空间公式，可横向滚动">
+            <math display="block" aria-label="密钥空间 等于 从 5 个转子中选 3 个的排列数，乘以 26 的 3 次方，再乘以插线板 10 对字母交换的组合数，约等于 1.59 乘以 10 的 20 次方">
+              <mrow>
+                <mtext>密钥空间</mtext><mo>=</mo>
+                <mo>(</mo><mn>5</mn><mo>×</mo><mn>4</mn><mo>×</mo><mn>3</mn><mo>)</mo>
+                <mo>×</mo><msup><mn>26</mn><mn>3</mn></msup>
+                <mo>×</mo>
+                <mfrac>
+                  <mrow><mn>26</mn><mo>!</mo></mrow>
+                  <mrow><mn>10</mn><mo>!</mo><mo>·</mo><mn>6</mn><mo>!</mo><mo>·</mo><msup><mn>2</mn><mn>10</mn></msup></mrow>
+                </mfrac>
+                <mo>≈</mo><mn>1.59</mn><mo>×</mo><msup><mn>10</mn><mn>20</mn></msup>
+              </mrow>
+            </math>
+          </div>
+        </div>
+
+        <p>第一项是从 5 个备选转子中选出并排列 3 个（5×4×3）；第二项是 3 个转子各自的 26 个初始位置；第三项是插线板连接 10 对字母的方案数——从 26 个字母中配对 10 对，剩下的 6 个字母不动。但他们低估了数学家的智慧。</p>
 
         <h2>3.2 波兰数学家的突破</h2>
 
@@ -203,6 +248,10 @@
 
         <div class="highlight">
             <strong>🔗 过渡：</strong>机械密码时代将密码学从手工带入了电气化时代，但它的设计仍然基于经验而非严谨的理论。二战结束后不久，一位名叫克劳德·香农的美国数学家发表了一篇论文，彻底改变了密码学的面貌——他用量化的方法回答了一个基本问题：到底什么是"安全"？下一章，我们将进入信息论与香农的世界。
+        </div>
+
+        <div class="source-note">
+            <strong>📚 来源与出处：</strong>Enigma 结构、密钥空间与破译史见 D. Kahn, <em>The Codebreakers: The Story of Secret Writing</em>, Macmillan, 1967（第三章讨论 Enigma 与 ULTRA）；波兰数学家利用置换群理论重建转子接线的原始工作见 M. Rejewski, <em>“An Application of the Theory of Permutations in Breaking the Enigma Cipher,”</em> Applicationes Mathematicae 16(4), 1980。图灵将贝叶斯统计用于密钥筛选（Banburismus）的手稿见 A. M. Turing, <em>“The Applications of Probability to Cryptography,”</em> 1941，英国国家档案馆 HW 25/37（2012 年解密）。错排计数公式为容斥原理的标准结果；文中“约 63% 随机置换含不动点”的说明为教学示意。
         </div>
 
         <div class="footer-nav">
